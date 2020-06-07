@@ -5,7 +5,7 @@ Version: 0.1.0
 Authors@R: person("Ayush", "Agarwal", email = "ayush.agarwal50@gmail.com",
                   role = c("aut", "cre"))
 Description: A fast implementation of r/d functions for GIG     
-    distribution. This utilises the nmethod as presented in 
+    distribution. This utilises the method as presented in 
     Luc Devroye(2014).
 License: GPL-3
 Encoding: UTF-8
