@@ -1,12 +1,13 @@
 #' @title Generalised Inverse Gaussian
 #'
+#' @aliases rgig dgig
 #'
 #' @description Probability distribution function, Quantile Random generation
 #' for the Generalised Inverse Gaussian with three-parameters a,b,p.
 #'
 #' @details The Generalised Inverse Gaussian distrubtion(GIG), which has the following pdf:
 #'
-#' \deqn{f(x) = x^{\lambda -1}exp{-\frac{\omega}{2}(x + \frac{1}{x})}}{%f(x) = x^{\lambda -1}exp{-\omega/2 (x + 1/x)}}
+#' \deqn{f(x) = x^{\lambda -1}exp{-\frac{\omega}{2}(x + \frac{1}{x})}}{f(x) = x^(\lambda -1) exp{-\omega/2 (x + 1/x)}}
 #'
 #' @name GIGpack
 #' @param p : lambda parameter

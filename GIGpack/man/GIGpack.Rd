@@ -2,6 +2,8 @@
 % Please edit documentation in R/GIG.R
 \name{GIGpack}
 \alias{GIGpack}
+\alias{rgig}
+\alias{dgig}
 \title{Generalised Inverse Gaussian}
 \arguments{
 \item{p}{: lambda parameter}
@@ -27,7 +29,9 @@ Probability distribution function, Quantile Random generation
 for the Generalised Inverse Gaussian with three-parameters a,b,p.
 }
 \details{
+The Generalised Inverse Gaussian distrubtion(GIG), which has the following pdf:
 
+\deqn{f(x) = x^{\lambda -1}exp{-\frac{\omega}{2}(x + \frac{1}{x})}}{f(x) = x^(\lambda -1) exp{-\omega/2 (x + 1/x)}}
 }
 \examples{
 rgig <- function(double P, double a, double b, int n)
