@@ -5,18 +5,23 @@
 \alias{rgig}
 \alias{dgig}
 \title{Generalised Inverse Gaussian}
+\usage{
+dgig(x, a, b, p, log_density)
+
+rgig(P, a, b, n)
+}
 \arguments{
-\item{p}{: lambda parameter}
+\item{x}{: vector of points}
 
 \item{a}{: chi parameter}
 
 \item{b}{: psi parameter}
 
-\item{n}{: number of observations}
+\item{p, P}{: lambda parameter}
 
 \item{log_density}{: returns log density}
 
-\item{x}{: vector of points}
+\item{n}{: number of observations}
 }
 \value{
 \itemize{
@@ -34,8 +39,8 @@ The Generalised Inverse Gaussian distrubtion(GIG), which has the following pdf:
 \deqn{f(x) = x^{\lambda -1}exp{-\frac{\omega}{2}(x + \frac{1}{x})}}{f(x) = x^(\lambda -1) exp{-\omega/2 (x + 1/x)}}
 }
 \examples{
-rgig <- function(double P, double a, double b, int n)
-dgig <-  function(std::vector<double> x, double a, double b, double p,bool log_density)
+rgig (0.5, 1, 2, 1)
+dgig(x=rep(1,2), 1, 2, 0.5,FALSE)
 
 }
 \references{

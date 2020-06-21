@@ -17,7 +17,7 @@
 #' @param n : number of observations
 #' @param plot : creates a basic plot of AL(mu,sigma,p)
 #' @param x,q : quantiles
-#' @param prob       : probability at which to calculate quantile
+#' @param p,prob       : probability at which to calculate quantile
 #' @param lower.tail : decides b/w P(X<=p) or P(X>p) for p/q
 #'
 #' @return
@@ -29,10 +29,10 @@
 #' }
 #'
 #' @examples
-#' rald_mix <- function(1e5,mu=5,sigma=10,p=0.5,plot=TRUE)
-#' dald_mix = function(c(4,5),mu=0,sigma=1,p=0.5)
-#' pald_mix = function(c(1,4),mu=0,sigma=1,p=0.5,lower.tail=TRUE)
-#' qald_mix = function(0.5,mu=0,sigma=1,p=0.5,lower.tail=TRUE)
+#' rald_mix(1e5,mu=5,sigma=10,p=0.5,plot=TRUE)
+#' dald_mix(c(4,5),mu=0,sigma=1,p=0.5)
+#' pald_mix(c(1,4),mu=0,sigma=1,p=0.5,lower.tail=TRUE)
+#' qald_mix(0.5,mu=0,sigma=1,p=0.5,lower.tail=TRUE)
 #'
 #' @references
 #'

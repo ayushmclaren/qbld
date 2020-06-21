@@ -7,6 +7,7 @@ Authors@R: person("Ayush", "Agarwal", email = "ayush.agarwal50@gmail.com",
 Description: A faster implementation of r/q/p/d functions for AL     
     distribution. This utilises the normal-exponential mixture 
     representation presented in Kozumi and Kobayashi (2011).
+Imports: stats
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

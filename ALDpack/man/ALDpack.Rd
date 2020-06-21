@@ -23,13 +23,13 @@ qald_mix(prob, mu = 0, sigma = 1, p = 0.5, lower.tail = TRUE)
 
 \item{sigma}{: scale parameter}
 
+\item{p, prob}{: probability at which to calculate quantile}
+
 \item{plot}{: creates a basic plot of AL(mu,sigma,p)}
 
 \item{x, q}{: quantiles}
 
 \item{lower.tail}{: decides b/w P(X<=p) or P(X>p) for p/q}
-
-\item{prob}{: probability at which to calculate quantile}
 }
 \value{
 \itemize{
@@ -52,10 +52,10 @@ The Asymmetric Laplace distribution (ALD), which has the following pdf:
 If not specified, p=0.5, mu = 0, sigma = 1.
 }
 \examples{
-rald_mix <- function(1e5,mu=5,sigma=10,p=0.5,plot=TRUE)
-dald_mix = function(c(4,5),mu=0,sigma=1,p=0.5)
-pald_mix = function(c(1,4),mu=0,sigma=1,p=0.5,lower.tail=TRUE)
-qald_mix = function(0.5,mu=0,sigma=1,p=0.5,lower.tail=TRUE)
+rald_mix(1e5,mu=5,sigma=10,p=0.5,plot=TRUE)
+dald_mix(c(4,5),mu=0,sigma=1,p=0.5)
+pald_mix(c(1,4),mu=0,sigma=1,p=0.5,lower.tail=TRUE)
+qald_mix(0.5,mu=0,sigma=1,p=0.5,lower.tail=TRUE)
 
 }
 \references{

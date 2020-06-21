@@ -1,3 +1,6 @@
+if(FALSE)
+{
+
 library(testthat)
 library(GIGpack)
 
@@ -191,3 +194,4 @@ for (l in lambda) { for (c in chi) { for (p in psi) {
 
 ## --- end -------------------------------------------------------------------
 
+}

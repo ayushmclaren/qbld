@@ -10,7 +10,7 @@
 #' \deqn{f(x) = x^{\lambda -1}exp{-\frac{\omega}{2}(x + \frac{1}{x})}}{f(x) = x^(\lambda -1) exp{-\omega/2 (x + 1/x)}}
 #'
 #' @name GIGpack
-#' @param p : lambda parameter
+#' @param p,P : lambda parameter
 #' @param a : chi parameter
 #' @param b : psi parameter
 #' @param n : number of observations
@@ -24,8 +24,8 @@
 #' }
 #'
 #' @examples
-#' rgig <- function(double P, double a, double b, int n)
-#' dgig <-  function(std::vector<double> x, double a, double b, double p,bool log_density)
+#' rgig (0.5, 1, 2, 1)
+#' dgig(x=rep(1,2), 1, 2, 0.5,FALSE)
 #'
 #' @references
 #'Devroye, L. Random variate generation for the generalized inverse Gaussian distribution.
@@ -35,7 +35,7 @@
 #' @useDynLib GIGpack
 #' @importFrom Rcpp sourceCpp
 NULL
-#' @rdname ALDpack
+#' @rdname GIGpack
 #' @export
 
 dgig <- function(x, a, b, p, log_density) {
@@ -46,7 +46,7 @@ dgig <- function(x, a, b, p, log_density) {
 #' @importFrom Rcpp sourceCpp
 NULL
 
-#' @rdname ALDpack
+#' @rdname GIGpack
 #' @export
 
 rgig <- function(P, a, b, n) {
