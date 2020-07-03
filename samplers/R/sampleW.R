@@ -12,27 +12,27 @@
 # theta     : paramter from normal-exponential mixture of Laplace dist.
 # lambda    : GIG parameter
 #--------------------------------------------------------------------------
-source("GIG.R") 
-  
+source("GIG.R")
+
 sampleW <-function(z,x,s,beta,alpha,tau2,theta,lambda=0.5)
 {
   k = dim(x)[1]
   m = dim(x)[2]
-  n = din(x)[3]
-  
+  n = dim(x)[3]
+
   tilde_eta = (theta^2)/(tau2) + 2
-  tilde_lambda = matrix(0,nrow=n,ncol=m)
-  w =  matrix(0,nrow=n,ncol=m)
-  
+  tilde_lambda = matrix(0,nrow=m,ncol=n)
+  w =  matrix(0,nrow=m,ncol=n)
+
   for(i in 1:n)
   {
     for(j in 1:m)
     {
-      
-      tilde_lambda(j,i) = ((z[j,i] - t(x[,j,i])%*%beta - t(s[,j,i])%*%alpha[,i])^2)/tau2
-      if(tilde_lambda(j,i)< 10^-8) tilde_lambda(j,i) = 1e-8
-      
-      w(j,i) = rgig(lambda,tilde_eta,tilde_lambda(j,i),1) 
+
+      tilde_lambda[j,i] = ((z[j,i] - t(x[,j,i])%*%beta - t(s[,j,i])%*%alpha[,i])^2)/tau2
+      if(tilde_lambda[j,i]< 10^-8) tilde_lambda[j,i] = 1e-8
+
+      w[j,i] = rgig(lambda,tilde_eta,tilde_lambda[j,i],1)
     }
   }
   return(w)

@@ -61,8 +61,8 @@ std::vector<double> rgig(double P, double a, double b, int n) {
   if (n<=0)
     stop("sample size n must be positive integer.");
 
-  if(a<0 || b<0 || P == R_PosInf || P == R_NegInf || (a==0 && P<=0) || (b==0 &&P>=0))
-    stop("invalid parameters for GIG distribution.");
+  //if(a<0 || b<0 || P == R_PosInf || P == R_NegInf || (a==0 && P<=0) || (b==0 &&P>=0))
+   // stop("invalid parameters for GIG distribution.");     check this line dude some of these are not needed!
 
   double alpha = sqrt(pow(omega,2) + pow(lambda,2)) - lambda;
   y[1] = alpha;

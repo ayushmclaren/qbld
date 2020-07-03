@@ -10,13 +10,11 @@
 ### as well as other outputs will be dealt with next!
 ##################################################################
 
-
 # Loading data
 datax = read.csv("./datax.csv")
 datas = read.csv("./datas.csv")
 dataalpha = read.csv("./dataalpha.csv")
 y = read.csv("./y25.csv")
-z = read.csv("./z25.csv")
 
 l     = 2                       #num of attributes-random effects s1 and 1(intercept)
 n     = ncol(y)                  #number of people at a time
@@ -126,14 +124,8 @@ for (j in 1:m)
 for(nsim in 2:MCMC)
 {
 
-  #--------- Sample beta,z marginally of alpha in a block --------------
-  betap[,nsim] = sampleBeta(z,x,s,w,varphi2[nsim-1,1],tau2,theta,invB0,invB0b0)
-
-
-  #--------- Sample z, marginally of alpha -----------------------------
-  # Draws random numbers from trucnated MVN (Geweke, 1991).
-  zPrev = z
-  z = sampleZ(zPrev,y,x,betap[,nsim],s,theta,w,varphi2[nsim-1,1],tau2,lowerLimits,upperLimits)
+  #---------- Sample beta, alpha in a block ------------------------
+  betap[,nsim] = sampleBeta_2(z,x,s,w,alpha[,,nsim-1],varphi2[nsim-1,1],tau2,theta,invB0, invB0b0)
 
 
   #---------- Sample alpha conditionally on beta,z -------------------
@@ -145,7 +137,10 @@ for(nsim in 2:MCMC)
 
 
   #---------- Sample varphi2 ---------------------
-    varphi2[nsim,1] = sampleVarphi2(alpha[,,nsim],c1,d1)
-}
+  varphi2[nsim,1] = sampleVarphi2(alpha[,,nsim],c1,d1)
 
 
+  #---------- Sample z, marginally of alpha ---------------------------
+  z = sampleZ_2(y,x,s,betap[,nsim],alpha[,,nsim-1],varphi2[nsim,1],w,tau2,theta,lowerLimits,upperLimits)
+
+  }
