@@ -32,7 +32,7 @@ sampleZ <- function(zprev,y,x,beta,s,theta,w,varphi2,tau2,LL,UL)
     meani = t(x[,,i])%*%beta + theta*w[,i]
     VarZi = (varphi2*(t(s[,,i])%*%s[,,i]) + tau2*(diag(w[,i],nrow=m)))
 
-    z[,i] = rtruncnorm(zprev[,i],meani,VarZi,LL[,i],UL[,i])
+    z[,i] = rtruncnorm_gwk(zprev[,i],meani,VarZi,LL[,i],UL[,i])
   }
   return(z)
 }

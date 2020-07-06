@@ -16,7 +16,7 @@
 # upperLimits: upper truncation points, size m x n
 #--------------------------------------------------------------------------
 
-sampleZ_2 <- function(y,x,s,betap,alpha,varphi2,w,tau2,theta,lowerLimits,upperLimits)
+sampleZ_2 <- function(y,x,s,betap,alpha,varphi2,w,tau2,theta)
 {
 
   m = nrow(y)
@@ -32,7 +32,7 @@ sampleZ_2 <- function(y,x,s,betap,alpha,varphi2,w,tau2,theta,lowerLimits,upperLi
       var_comp  = tau2*w[j,i]
 
       if(y[j,i] == 0)
-      z[j,i] = truncnorm::rtruncnorm(1,a=-Inf,b=0,mean = mean_comp, sd = sqrt(var_comp))
+        z[j,i] = truncnorm::rtruncnorm(1,a=-Inf,b=0,mean = mean_comp, sd = sqrt(var_comp))
 
       if(y[j,i] == 1)
         z[j,i] = truncnorm::rtruncnorm(1,a=0,b=Inf,mean = mean_comp, sd = sqrt(var_comp))

@@ -5,6 +5,7 @@
 ## Simulation Study
 ##
 ##Data Generation
+set.seed(10)
 
 n = 500
 m = 10
