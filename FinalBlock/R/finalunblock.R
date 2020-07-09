@@ -1,12 +1,12 @@
-finalblock <- function(mc,p)
-{
+#' @export
 
-set.seed(10)
+finalunblock <- function(mc,p)
+{
 
 ### just in case, don't know if it will build automatically so!
 #source("./R/rald_mix.R")
-#source("./R/sampleBeta.R")
-#source("./R/sampleZ.R")
+#source("./R/sampleBeta_2.R")
+#source("./R/sampleZ_2.R")
 #source("./R/sampleAlpha.R")
 #source("./R/sampleW.R")
 #source("./R/sampleVarphi2.R")
@@ -22,7 +22,7 @@ x2       = matrix(runif(m*n),nrow=m,ncol=n)  #attribute 2 - fixed effect variabl
 x3       = matrix(runif(m*n),nrow=m,ncol=n)  #attribute 3 - fixed effect variable 3
 datas    = matrix(runif(m*n),nrow=m,ncol=n)    #variable of random effects 1            
 datax    = cbind(x1,x2,x3) #collated data
-beta     = matrix(c(-5,6,4),nrow=3,ncol=1)    #true params for fixed effects
+beta     = matrix(c(-2,3,4),nrow=3,ncol=1)    #true params for fixed effects
 z        = matrix(0,nrow=m,ncol=n) #latent variable
 
 ### 25th Quantile
@@ -117,48 +117,12 @@ tau2  = 2/(p*(1-p))
 
 lambdaIndex=0.5  # Index parameter for GIG distribution
 
-## Setting the limits for sampling from Truncated Multivariate Normal
-
-lowerLimits = matrix(0,nrow=m,ncol=n)
-upperLimits = matrix(0,nrow=m,ncol=n)
-
-for (j in 1:m)
-{
-  for (i in 1:n)
-  {
-    if (y[j,i] == 0)
-    {
-      lowerLimits[j,i] = -Inf
-      upperLimits[j,i] = 0
-    }
-    
-    else if (y[j,i] ==1)
-    {
-      lowerLimits[j,i] = 0
-      upperLimits[j,i] = Inf
-    }
-  }
-}
-
-
-###-------------------------------------------------------------------------
-#### GIBBS SAMPLING
-##--------------------------------------------------------------------------------
-## The sequence of sampling is important and follows Algorithm 5 in Chib and Carlin.
-##---------------------------------------------------------------------------------
 
 for(nsim in 2:MCMC)
 {
-  
   print(nsim)
-  #--------- Sample beta,z marginally of alpha in a block --------------
-  betap[,nsim] = sampleBeta(z,x,s,w,varphi2[nsim-1,1],tau2,theta,invB0,invB0b0)
-  
-  
-  #--------- Sample z, marginally of alpha -----------------------------
-  # Draws random numbers from trucnated MVN (Geweke, 1991).
-  zPrev = z
-  z = sampleZ(zPrev,y,x,betap[,nsim],s,theta,w,varphi2[nsim-1,1],tau2,lowerLimits,upperLimits)
+  #---------- Sample beta, alpha in a block ------------------------
+  betap[,nsim] = sampleBeta_2(z,x,s,w,alpha[,,nsim-1],varphi2[nsim-1,1],tau2,theta,invB0, invB0b0)
   
   
   #---------- Sample alpha conditionally on beta,z -------------------
@@ -171,11 +135,12 @@ for(nsim in 2:MCMC)
   
   #---------- Sample varphi2 ---------------------
   varphi2[nsim,1] = sampleVarphi2(alpha[,,nsim],c1,d1)
+  
+  
+  #---------- Sample z, marginally of alpha ---------------------------
+  z = sampleZ_2(y,x,s,betap[,nsim],alpha[,,nsim-1],varphi2[nsim,1],w,tau2,theta)
+  
 }
 
 return(list(betap,varphi2))
-
 }
-
-
-

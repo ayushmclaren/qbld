@@ -5,7 +5,6 @@
 ## Simulation Study
 ##
 ##Data Generation
-set.seed(10)
 
 n = 500
 m = 10
@@ -42,7 +41,7 @@ x3    = datax[ ,2*n+1 : 3*n]    #attribute 1 - fixed effect variable 1
 s1    = datas                #variable of random effects
 alpha = dataalpha              #true params for random effects
 #####
-beta     = matrix(c(-5,6,4),nrow=3,ncol=1)       #true params for fixed effects
+beta     = matrix(c(-1,2,3),nrow=3,ncol=1)       #true params for fixed effects
 z        = matrix(0,nrow=m,ncol=n) #latent variable
 
 ### 25th Quantile

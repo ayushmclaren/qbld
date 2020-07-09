@@ -22,3 +22,4 @@ rgig <- function(P, a, b, n) {
     .Call(`_FinalBlock_rgig`, P, a, b, n)
 }
 
+

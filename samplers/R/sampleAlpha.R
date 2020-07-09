@@ -26,11 +26,11 @@ sampleAlpha <- function(z,x,s,beta,w,tau2,theta,varphi2)
   {
     invD1 = solve(tau2*diag(w[,i])) # do a 1/ instead of solve
 
-    var = s[,,i]%*%invD1%*%t(s[,,i])
-    mean = s[,,i]%*%invD1%*%(z[,i] - t(x[,,i])%*%beta - theta*w[,i]) #change names
+    vari = s[,,i]%*%invD1%*%t(s[,,i])
+    meani = s[,,i]%*%invD1%*%(z[,i] - t(x[,,i])%*%beta - theta*w[,i]) #change names
 
-    Atilde = solve(var + invDvarphi2)
-    atilde = Atilde%*%(mean)
+    Atilde = solve(vari + invDvarphi2)
+    atilde = Atilde%*%(meani)
     alpha[,i] = mvtnorm::rmvnorm(1,mean=atilde,sigma=Atilde)
   }
   return(alpha)
