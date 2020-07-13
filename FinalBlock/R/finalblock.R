@@ -26,7 +26,7 @@ datax    = cbind(x1,x2,x3) #collated data
 beta     = matrix(c(-2,3,4),nrow=3,ncol=1)    #true params for fixed effects
 z        = matrix(0,nrow=m,ncol=n) #latent variable
 
-### 25th Quantile
+### 100*p th Quantile
 ### ------------------
 
 #p = 0.25
