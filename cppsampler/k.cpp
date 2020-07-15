@@ -122,9 +122,9 @@ std::vector<double> rgig(double P, double a, double b, int n) {
   {
     while(1)
     {
-      UVW[0] = (float)std::rand()/RAND_MAX ;
-      UVW[1] = (float)std::rand()/RAND_MAX ;
-      UVW[2] = (float)std::rand()/RAND_MAX ;
+      UVW[0] = R::runif(0,1);
+      UVW[1] = R::runif(0,1);
+      UVW[2] = R::runif(0,1);
       
       if(UVW[0] < (q / (p + q + r)))
         X[i] = -sd + q*UVW[1];
@@ -156,12 +156,12 @@ std::vector<double> rgig(double P, double a, double b, int n) {
   return(X);
 }
 
-arma::vec sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n)
+int sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n, arma::mat* beta,int sim)
 {
   arma::mat sumvar(k,k,arma::fill::zeros);
   arma::vec summean(k,arma::fill::zeros);
-  arma::mat vari(k,k,arma::fill::zeros);
-  arma::vec meani(k,arma::fill::zeros);
+ // arma::mat vari(k,k,arma::fill::zeros);
+//  arma::vec meani(k,arma::fill::zeros);
   arma::mat D1(m,m,arma::fill::zeros);
   arma::mat inv_omega(m,m,arma::fill::zeros);
   
@@ -170,17 +170,20 @@ arma::vec sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, doubl
     D1.diag() = tau2*((*w).col(i));
     inv_omega = (varphi2*((((*S).slice(i)).t())*((*S).slice(i))) + D1).i();
     
-    vari = ((*X).slice(i))*inv_omega*(((*X).slice(i)).t());
-    meani = ((*X).slice(i))*inv_omega*((*z).col(i) - theta*((*w).col(i)));
+    //vari 
+    sumvar  += ((*X).slice(i))*inv_omega*(((*X).slice(i)).t());
+    //meani 
+    summean += ((*X).slice(i))*inv_omega*((*z).col(i) - theta*((*w).col(i)));
     
-    sumvar  += vari;
-    summean += meani;
+   // sumvar  += vari;
+  //  summean += meani;
   }
   
-  vari  = arma::inv_sympd((*invB0) + sumvar);
-  meani = vari*((*invB0b0) + summean);
+  sumvar  = arma::inv_sympd((*invB0) + sumvar);
+  summean = sumvar*((*invB0b0) + summean);
   
-  return(arma::mvnrnd(meani,vari,1));
+  (*beta).col(sim) = arma::mvnrnd(summean,sumvar,1);
+  return(0);
 }
 
 
@@ -248,7 +251,7 @@ double limits(arma::mat*y,int which,int idx1,int idx2)
 
 arma::vec rtruncnorm_gwk(arma::vec z0,arma::vec*mu,arma::mat*sigma,arma::mat*y,int m,int idx)
 {
-  double newLL=0, newUL=0, condMu=0, condVar=0, mu_i=0, sigma11=0;
+  double newLL=0, newUL=0, condMu=0, sq_condVar=0, mu_i=0, sigma11=0;
   arma::mat inv_sigma22(m-1,m-1,arma::fill::zeros);
   arma::vec u = arma::randu(m); 
   
@@ -268,27 +271,27 @@ arma::vec rtruncnorm_gwk(arma::vec z0,arma::vec*mu,arma::mat*sigma,arma::mat*y,i
     sigma22.shed_col(i);
     inv_sigma22 = sigma22.i();
     
-    condVar = (sigma11 - sigma12*inv_sigma22*(sigma12.t())).eval()(0,0); 
+    sq_condVar = sqrt((sigma11 - sigma12*inv_sigma22*(sigma12.t())).eval()(0,0)); 
     
     arma::vec z_less_i = z0;
     z_less_i.shed_row(i);        
     
     condMu = (mu_i + sigma12*inv_sigma22*(z_less_i - mu_less_i)).eval()(0,0);
     
-    newLL  = (limits(y,0,i,idx) - condMu)/sqrt(condVar);
-    newUL= (limits(y,1,i,idx) - condMu)/sqrt(condVar);
+    newLL  = (limits(y,0,i,idx) - condMu)/sq_condVar;
+    newUL= (limits(y,1,i,idx) - condMu)/sq_condVar;
     
-    z0(i) =  condMu + (sqrt(condVar))*(norminv(u(i)*(normcdf(newUL) - normcdf(newLL)) + normcdf(newLL)));
+    z0(i) =  condMu + (sq_condVar)*(norminv(u(i)*(normcdf(newUL) - normcdf(newLL)) + normcdf(newLL)));
     //z0[i] = z[i]
   }
   
   return(z0);
 }
 
-arma::mat sampleZ(arma::mat*zprev, arma::mat*y, arma::cube*X, arma::vec beta, arma::cube*S, double theta, arma::mat*w, double varphi2, double tau2, int m, int n)
+int sampleZ(arma::mat*zprev, arma::mat*y, arma::cube*X, arma::vec beta, arma::cube*S, double theta, arma::mat*w, double varphi2, double tau2, int m, int n, arma::mat*z)
 {
   
-  arma::mat z(m,n,arma::fill::zeros);
+  //arma::mat z(m,n,arma::fill::zeros);
   arma::vec meani(m,arma::fill::zeros);
   arma::mat VarZi(m,m,arma::fill::zeros);
   arma::mat D1(m,m,arma::fill::zeros);
@@ -299,17 +302,17 @@ arma::mat sampleZ(arma::mat*zprev, arma::mat*y, arma::cube*X, arma::vec beta, ar
     meani = (((*X).slice(i)).t())*beta + theta*((*w).col(i));
     VarZi = (varphi2*((((*S).slice(i)).t())*((*S).slice(i))) + D1);
     
-    z.col(i) = rtruncnorm_gwk((*zprev).col(i),&meani,&VarZi,y,m,i);
+    (*z).col(i) = rtruncnorm_gwk((*zprev).col(i),&meani,&VarZi,y,m,i);
   }
-  return(z);
+  return(0);
   
 }
 
 
-arma::mat sampleAlpha(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::mat*w, double tau2, double theta, double varphi2, int l, int m, int n)
+int sampleAlpha(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::mat*w, double tau2, double theta, double varphi2, int l, int m, int n,arma::cube*alpha,int sim)
 {
   
-  arma::mat alpha_out(l,n,arma::fill::zeros);
+  //arma::mat alpha_out(l,n,arma::fill::zeros);
   arma::mat invDvarphi2 = (arma::eye(l,l))/varphi2;
   arma::mat invD1(m,m,arma::fill::zeros);
   arma::vec atilde(l,arma::fill::zeros);
@@ -325,43 +328,43 @@ arma::mat sampleAlpha(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, a
   //  Rcpp::Rcout << "invDvarphi2:" << invDvarphi2 << "\n";
   //  Rcpp::Rcout << "*S:" << (*S).slice(i) << "\n";
     
-    Atilde = (((*S).slice(i))*invD1*(((*S).slice(i)).t())) + invDvarphi2;
+    Atilde = arma::inv_sympd((((*S).slice(i))*invD1*(((*S).slice(i)).t())) + invDvarphi2);
    // Rcpp::Rcout << "Atilde:" << Atilde << "\n";
-    Atilde = arma::inv_sympd(Atilde);
+    //Atilde = arma::inv_sympd(Atilde);
     atilde =  Atilde*(((*S).slice(i))*invD1*((*z).col(i) - (((*X).slice(i)).t())*beta - theta*(*w).col(i)));      
     
-    alpha_out.col(i) = arma::mvnrnd(atilde,Atilde,1);
+    ((*alpha).slice(sim)).col(i) = arma::mvnrnd(atilde,Atilde,1);
   }
-  return(alpha_out);
+  return(0);
 }
 
-arma::mat sampleW(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::mat alpha, double tau2, double theta, double lambda, int k, int m, int n)
+int sampleW(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::cube*alpha, double tau2, double theta, double lambda, int k, int m, int n,arma::mat*w,int sim)
 {
   
   double tilde_eta = (pow(theta,2))/(tau2) + 2;
   double tilde_lambda = 0;
-  arma::mat w(m,n,arma::fill::zeros);
+  //arma::mat w(m,n,arma::fill::zeros);
   
   for(int i=0; i<n; i++)
   {
     for(int j=0; j<m; j++)
     {
-      tilde_lambda = (pow(((*z)(j,i) - ((((*X).slice(i)).col(j)).t())*beta - ((((*S).slice(i)).col(j)).t())*alpha.col(i)),2)/tau2).eval()(0,0);
+      tilde_lambda = (pow(((*z)(j,i) - ((((*X).slice(i)).col(j)).t())*beta - ((((*S).slice(i)).col(j)).t())*(((*alpha).slice(sim)).col(i))),2)/tau2).eval()(0,0);
       if(tilde_lambda < 0.00000001) tilde_lambda = 0.00000001;
       
-      w(j,i) = rgig(lambda,tilde_eta,tilde_lambda,1)[0];
+      (*w)(j,i) = rgig(lambda,tilde_eta,tilde_lambda,1)[0];
     }
   }
-  return(w);
+  return(0);
 }
 
 //--------------------------------------------------------------------------
 
-double sampleVarphi2(arma::mat alpha, double c1, double d1, int l, int n)
+double sampleVarphi2(arma::cube* alpha, double c1, double d1, int l, int n,int sim)
 {
   double sum = 0;
   
-  sum = arma::accu(arma::square(alpha));
+  sum = arma::accu(arma::square((*alpha).slice(sim)));
   
   return(1/R::rgamma((n*l+c1)/2,(sum + d1)/2));
 }
@@ -507,21 +510,25 @@ for(int sim=1;sim<MCMC;sim++)
   //  Rcpp::Rcout << "No. of sim: " << sim << "\n";
     
     ////--------- Sample beta,z marginally of alpha in a block --------------
-    beta_out.col(sim) = sampleBeta(&z,&X,&S,&w,varphi2(sim-1),tau2,theta,&invB0,&invB0b0,k,m,n);
+    //beta_out.col(sim) = 
+    sampleBeta(&z,&X,&S,&w,varphi2(sim-1),tau2,theta,&invB0,&invB0b0,k,m,n,&beta_out,sim);
     
     //////--------- Sample z, marginally of alpha -----------------------------
     ///// Draws random numbers from trucnated MVN (Geweke, 1991).
     zPrev = z;
-    z = sampleZ(&zPrev,&y,&X,beta_out.col(sim),&S,theta,&w,varphi2(sim-1),tau2,m,n);
+    //z = 
+    sampleZ(&zPrev,&y,&X,beta_out.col(sim),&S,theta,&w,varphi2(sim-1),tau2,m,n,&z);
     
     ////---------- Sample alpha conditionally on beta,z -------------------
-    alpha.slice(sim) = sampleAlpha(&z,&X,&S,beta_out.col(sim),&w,tau2,theta,varphi2(sim-1),l,m,n);
+    //alpha.slice(sim) = 
+    sampleAlpha(&z,&X,&S,beta_out.col(sim),&w,tau2,theta,varphi2(sim-1),l,m,n,&alpha,sim);
     
     /////--------- Sample w ---------------------------
-    w = sampleW(&z,&X,&S,beta_out.col(sim),alpha.slice(sim),tau2,theta,lambdaIndex,k,m,n);
+    //w = 
+    sampleW(&z,&X,&S,beta_out.col(sim),&alpha,tau2,theta,lambdaIndex,k,m,n,&w,sim);
     
     ////--------- Sample varphi2 ---------------------
-    varphi2(sim) = sampleVarphi2(alpha.slice(sim),c1,d1,l,n);
+    varphi2(sim) = sampleVarphi2(&alpha,c1,d1,l,n,sim);
     
   }
 
