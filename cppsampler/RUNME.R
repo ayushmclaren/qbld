@@ -1,7 +1,7 @@
 library(RcppDist)
 library(Rcpp)
 library(RcppArmadillo)
-library(mvtnorm)
+#library(mvtnorm)
 library(microbenchmark)
 #library(FinalBlock)
 
