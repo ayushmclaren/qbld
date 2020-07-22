@@ -15,25 +15,23 @@
 
 #sourceCpp("./src/rgig.cpp")
 
-sampleW <-function(z,x,s,beta,alpha,tau2,theta,lambda=0.5)
+sampleW <-function(z,x,s,beta,alpha,tau2,theta,lambda=0.5,k,m,n)
 {
-  k = dim(x)[1]
-  m = dim(x)[2]
-  n = dim(x)[3]
 
   tilde_eta = (theta^2)/(tau2) + 2
-  tilde_lambda = matrix(0,nrow=m,ncol=n)
+  #tilde_lambda = matrix(0,nrow=m,ncol=n)
   w =  matrix(0,nrow=m,ncol=n)
 
   for(i in 1:n)
   {
     for(j in 1:m)
     {
+      tilde_lambda = ((z[j,i] - t(x[,j,i])%*%beta - t(s[,j,i])%*%alpha[,i])^2)/tau2
+      #print(tilde_lambda)
+      
+      if(tilde_lambda < 1e-8||is.nan(tilde_lambda)) tilde_lambda = 1e-8
 
-      tilde_lambda[j,i] = ((z[j,i] - t(x[,j,i])%*%beta - t(s[,j,i])%*%alpha[,i])^2)/tau2
-      if(tilde_lambda[j,i]< 10^-8) tilde_lambda[j,i] = 1e-8
-
-      w[j,i] = rgig(lambda,tilde_eta,tilde_lambda[j,i],1)
+      w[j,i] = rgig(lambda,tilde_eta,tilde_lambda,1)
     }
   }
   return(w)

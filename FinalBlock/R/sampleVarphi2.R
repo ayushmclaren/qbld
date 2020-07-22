@@ -8,10 +8,8 @@
 # d1        : IG prior hyperparameter
 #--------------------------------------------------------------------------
 
-sampleVarphi2 <-function(alpha,c1,d1)
+sampleVarphi2 <-function(alpha,c1,d1,l,n)
 {
-  l = nrow(alpha)
-  n = ncol(alpha)
   scale  = matrix(0,nrow=n,ncol=1)
 
   for(i in 1:n)

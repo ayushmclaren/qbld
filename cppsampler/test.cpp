@@ -2,12 +2,13 @@
 
 // we only include RcppArmadillo.h which pulls Rcpp.h in for us
 #include "RcppArmadillo.h"
+//#include "RcppEigen.h"
 //#include "RcppDist.h"
 
 // via the depends attribute we tell Rcpp to create hooks for
 // RcppArmadillo so that the build process will know what to do
 //
-// [[Rcpp::depends(RcppArmadillo,RcppDist)]]
+// [[Rcpp::depends(RcppArmadillo,RcppEigen)]]
 
 // simple example of creating two matrices and
 // returning the result of an operatioon on them
@@ -16,38 +17,52 @@
 // available from R
 //
 
-
-// [[Rcpp::export]]
-
-arma::mat sampleAlpha(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::mat*w, double tau2, double theta, double varphi2, int l, int m, int n)
-{
-  
-  arma::mat alpha_out(l,n,arma::fill::zeros);
-  arma::mat invDvarphi2 = (arma::eye(l,l))/varphi2;
-  arma::mat invD1(m,m,arma::fill::zeros);
-  arma::vec atilde(l,arma::fill::zeros);
-  arma::mat Atilde(l,l,arma::fill::zeros);
-  
-  for(int i=0; i<n; i++)
+ 
+ /*
+int yo(arma::mat*A, arma::mat*D,int m,int n)
   {
-    invD1.diag() = 1/(tau2*((*w).col(i)));
-    
-    Atilde = inv_sympd((((*S).slice(i))*invD1*(((*S).slice(i)).t())) + invDvarphi2);
-    atilde =  Atilde*(((*S).slice(i))*invD1*((*z).col(i) - (((*X).slice(i)).t())*beta - theta*(*w).col(i)));      
-    
-    alpha_out.col(i) = arma::mvnrnd(atilde,Atilde,1);
+    Eigen::MatrixXd B = Eigen::Map<Eigen::MatrixXd>(*A.memptr(),m,n);
+    Eigen::MatrixXd C = Eigen::MatrixXd(A.n_rows, A.n_rows).setZero().selfadjointView<Eigen::Lower>().rankUpdate(B);
+  //  Rcpp::Rcout << std::endl << C << std::endl;
+    arma::mat c  = arma::mat(C.data(), C.rows(), C.cols(),false, false);
+    //Rcpp::Rcout << std::endl << c << std::endl;
+    *D = c;
+    //Rcpp::Rcout << std::endl << *D << std::endl;
+    return(0);
   }
-  return(alpha_out);
-}
+*/
+ 
+ 
+ // [[Rcpp::export]]
 
-
-
-// [[Rcpp::export]]
-
-arma::vec ok2(int tt)
-{
-  int l  = 5;
-  double varphi = 2;
-  
-  return(Rcpp::rnorm(l,0,varphi));
-}
+ arma::mat ok1(int tt)
+ {
+   int m = 10;
+   int n = 5000;
+   
+  // arma::mat out(m,n,arma::fill::zeros);
+   
+   return(arma::mvnrnd(arma::vec(10,arma::fill::ones),arma::eye(10,10),5000));
+  // return(out);
+ }
+ 
+ 
+ // [[Rcpp::export]]
+ 
+Rcpp::RObject ok2(int n, arma::vec mu,arma::mat sigma,int ncores,bool ischol)
+ {
+   //int m = 10;
+   //int n = 5000;
+   
+   //arma::mat out(m,n,arma::fill::zeros);
+   Rcpp::Environment pkg = Rcpp::Environment::namespace_env("mvnfast");
+   Rcpp::Function f = pkg["rmvnCpp"];
+   //bool fal = FALSE;
+   
+   return(f(n,mu,sigma,ncores,ischol,NULL));
+ }
+ 
+ 
+ 
+ 
+ 

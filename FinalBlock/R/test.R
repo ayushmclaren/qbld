@@ -1,3 +1,6 @@
+if(0)
+{
+
 sampleAlpha <- function(z,x,s,beta,w,tau2,theta,varphi2)
 {
   l = dim(s)[1]
@@ -47,4 +50,5 @@ sampleAlphafast <- function(z,x,s,beta,w,tau,theta,varphi)
     out[,i] = u + (varphi^2)*t(phi)%*%w_i
   }
   return(out)
+}
 }

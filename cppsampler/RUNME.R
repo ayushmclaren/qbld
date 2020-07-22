@@ -98,7 +98,7 @@ p <- 0.25
 
 #runR <- qbldcpp(nsim, p, y_r, x_r, s_r, x_intercept, s_intercept, b0, B0, c1, d1)
 #runcpp <- qbldcpp(nsim, p, y_cpp, x_cpp, s_cpp, x_intercept, s_intercept, b0, B0, c1, d1)
-mbm <- microbenchmark(old = qbldcpp(nsim, p, y_r, x_r, s_r, x_intercept, s_intercept, b0, B0, c1, d1),new = qbldcpp_f(nsim, p, y_cpp, x_cpp, s_cpp, x_intercept, s_intercept, b0, B0, c1, d1),times=1)
+mbm <- microbenchmark(old = qbldcpp(nsim, p, y_cpp, x_cpp, s_cpp, x_intercept, s_intercept, b0, B0, c1, d1),new = qbldcpp_f(nsim, p, y_cpp, x_cpp, s_cpp, x_intercept, s_intercept, b0, B0, c1, d1),times=1)
 print(mbm)
 ### change nsim! 500 samples just to test.
 ### compare with finalblock

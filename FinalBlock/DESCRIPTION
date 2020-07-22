@@ -10,6 +10,6 @@ Description: One paragraph description of what the package does as one or more f
 License: GPL (>= 2)
 Imports: 
     Rcpp
-Depends: mvtnorm, truncnorm
+Depends: mvnfast, truncnorm
 LinkingTo: Rcpp
 RoxygenNote: 7.1.0

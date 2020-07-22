@@ -19,12 +19,8 @@
 #--------------------------------------------------------------------------
 #source("./R/TruncNormGwk.R")
 
-sampleZ <- function(zprev,y,x,beta,s,theta,w,varphi2,tau2,LL,UL)
+sampleZ <- function(zprev,y,x,beta,s,theta,w,varphi2,tau2,m,n)
 {
-
-  m = nrow(y)
-  n = ncol(y)
-
   z = matrix(0,nrow=m,ncol=n)
 
   for(i in 1:n)
@@ -32,7 +28,7 @@ sampleZ <- function(zprev,y,x,beta,s,theta,w,varphi2,tau2,LL,UL)
     meani = t(x[,,i])%*%beta + theta*w[,i]
     VarZi = (varphi2*(t(s[,,i])%*%s[,,i]) + tau2*(diag(w[,i],nrow=m)))
 
-    z[,i] = rtruncnorm_gwk(zprev[,i],meani,VarZi,LL[,i],UL[,i])
+    z[,i] = rtruncnorm_gwk(zprev[,i],meani,VarZi,y,m,i)
   }
   return(z)
 }

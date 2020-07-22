@@ -168,12 +168,12 @@ int sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, double varp
   for(int i=0;i<n;i++)
   {
     D1.diag() = tau2*((*w).col(i));
-    inv_omega = (varphi2*((((*S).slice(i)).t())*((*S).slice(i))) + D1).i();
+    inv_omega = ((*X).slice(i))*((varphi2*((((*S).slice(i)).t())*((*S).slice(i))) + D1).i());
     
     //vari 
-    sumvar  += ((*X).slice(i))*inv_omega*(((*X).slice(i)).t());
+    sumvar  += inv_omega*(((*X).slice(i)).t());
     //meani 
-    summean += ((*X).slice(i))*inv_omega*((*z).col(i) - theta*((*w).col(i)));
+    summean += inv_omega*((*z).col(i) - theta*((*w).col(i)));
     
    // sumvar  += vari;
   //  summean += meani;
@@ -387,7 +387,7 @@ arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept)
 
 // y is the output variable, x is fixed, s is random 
 
-Rcpp::List qbldcpp(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1)
+Rcpp::List qbldcpp(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin)
 {
   
   int m = y.n_rows;
@@ -418,7 +418,13 @@ Rcpp::List qbldcpp(int nsim, double p, arma::mat y, arma::mat datax, arma::mat d
   
   /// MCMC and burnins
   //  nsim  = 12000;
-  int burn  = 0.25*nsim;
+  
+  int burn  = 0;
+  if(burnin = TRUE)
+  {
+    burn = 0.25*nsim;
+  }
+  
   int MCMC  = burn + nsim;    ///Total number of simulation
   
   

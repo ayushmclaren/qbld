@@ -16,12 +16,8 @@
 # upperLimits: upper truncation points, size m x n
 #--------------------------------------------------------------------------
 
-sampleZ_2 <- function(y,x,s,betap,alpha,varphi2,w,tau2,theta)
+sampleZ_2 <- function(y,x,s,betap,alpha,varphi2,w,tau2,theta,m,n)
 {
-
-  m = nrow(y)
-  n = ncol(y)
-
   z = matrix(0,nrow=m,ncol=n)
 
   for(i in 1:n)

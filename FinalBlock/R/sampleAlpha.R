@@ -13,25 +13,18 @@
 # varphi2   : scalar quantity
 #--------------------------------------------------------------------------
 
-sampleAlpha <- function(z,x,s,beta,w,tau2,theta,varphi2)
+sampleAlpha <- function(z,x,s,beta,w,tau2,theta,varphi2,l,m,n)
 {
-  l = dim(s)[1]
-  m = dim(s)[2]
-  n = dim(s)[3]
-
   alpha = matrix(0,nrow=l,ncol=n)
-  invDvarphi2 = solve(varphi2*diag(l))
+  invDvarphi2 = diag(l)/varphi2
 
   for(i in 1:n)
   {
-    invD1 = solve(tau2*diag(w[,i])) # do a 1/ instead of solve
+    invD1 = s[,,i]%*%solve(tau2*diag(w[,i])) # do a 1/ instead of solve
 
-    var = s[,,i]%*%invD1%*%t(s[,,i])
-    mean = s[,,i]%*%invD1%*%(z[,i] - t(x[,,i])%*%beta - theta*w[,i]) #change names
-
-    Atilde = solve(var + invDvarphi2)
-    atilde = Atilde%*%(mean)
-    alpha[,i] = mvtnorm::rmvnorm(1,mean=atilde,sigma=Atilde)
+    Atilde= solve(invD1%*%t(s[,,i]) + invDvarphi2)
+    atilde = Atilde%*%(invD1%*%(z[,i] - t(x[,,i])%*%beta - theta*w[,i])) #change names
+    alpha[,i] = mvntnorm::rmvnorm(1,atilde,Atilde)
   }
   return(alpha)
 }

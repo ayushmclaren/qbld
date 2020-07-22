@@ -14,11 +14,8 @@
 #--------------------------------------------------------------------------
 
 
-sampleAlphafast <- function(z,x,s,beta,w,tau,theta,varphi)
+sampleAlpha_fast <- function(z,x,s,beta,w,tau2,theta,varphi2,l,m,n)
 {
-  l = dim(s)[1]
-  m = dim(s)[2]
-  n = dim(s)[3]
   
   out = matrix(0,nrow=l,ncol=n)
   # D = varphi2*diag(l)
@@ -28,15 +25,15 @@ sampleAlphafast <- function(z,x,s,beta,w,tau,theta,varphi)
   
   for(i in 1:n)
   {
-    invD1 = solve(tau*diag(sqrt(w[,i])))
+    invD1 = diag(1/sqrt(w[,i]*tau2))
     phi = invD1%*%t(s[,,i])
-    u = rnorm(l,0,varphi)
+    u = rnorm(l,0,sqrt(varphi2))
     delta = rnorm(m,0,1) 
     
     v = phi%*%u + delta
     alph = invD1%*%((z[,i] - t(x[,,i])%*%beta - theta*w[,i]))
-    w_i = solve((varphi^2)*phi%*%t(phi) + diag(m), alph - v)
-    out[,i] = u + (varphi^2)*t(phi)%*%w_i
+    w_i = solve((varphi2)*phi%*%t(phi) + diag(m), alph - v)
+    out[,i] = u + (varphi2)*t(phi)%*%w_i
   }
   return(out)
 }

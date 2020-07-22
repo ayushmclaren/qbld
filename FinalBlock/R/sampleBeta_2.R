@@ -15,30 +15,22 @@
 # invB0b0   : prior precision times prior mean
 #--------------------------------------------------------------------------
 
-sampleBeta_2 <- function(z,x,s,w,alpha,varphi2,tau2,theta,invB0,invB0b0)
+sampleBeta_2 <- function(z,x,s,w,alpha,varphi2,tau2,theta,invB0,invB0b0,k,m,n)
 {
-  k = dim(x)[1]
-  m = dim(x)[2]
-  n = dim(x)[3]
-
   sumvar  = matrix(0,nrow=k,ncol=k)
   summean = matrix(0,nrow=k,ncol=1)
 
   for(i in 1:n)
   {
-    D1 = tau2*(diag(w[,i]))
-    inv_phi = solve(D1)
+    inv_phi = x[,,i]%*%(diag(1/w[,i])/tau2)
 
-    vari = x[,,i]%*%inv_phi%*%t(x[,,i])
-    meani = x[,,i]%*%inv_phi%*%(z[,i] - theta*w[,i] - t(s[,,i])%*%alpha[,i])
-
-    sumvar  = sumvar + vari
-    summean = summean + meani
+    sumvar = sumvar + inv_phi%*%t(x[,,i])
+    summean =  summean + inv_phi%*%(z[,i] - theta*w[,i] - t(s[,,i])%*%alpha[,i])
   }
 
   Btilde = solve(invB0+sumvar)
   btilde  = Btilde%*%(invB0b0 + summean)
 
-  beta = mvtnorm::rmvnorm(1,mean=btilde,sigma=Btilde)
+  beta = mvnfast::rmvn(1,btilde,Btilde)
   return(beta)
 }
