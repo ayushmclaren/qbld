@@ -56,14 +56,14 @@ double g(double x,double sd,double td,double f1,double f2)
   return(a+b+c);
 }
 
-std::vector<double> rgig(double P, double a, double b, int n) {
+std::vector<double> rgig(double lambda, double a, double b, int n) {
   
   std::vector<double> X(n);
   std::vector<double> y(3);
   std::vector<double> UVW(3);
   
   // we sample from the two parameter version of the GIG(alpha,omega)
-  double lambda = P;
+  // double lambda = P;
   double omega = sqrt(a*b);
   int check = 0;
   double t=0,s=0,f1=0,f2=0;
@@ -74,14 +74,14 @@ std::vector<double> rgig(double P, double a, double b, int n) {
     check = 1;
   }
   
-  if (n<=0)
-    Rcpp::stop("sample size n must be positive integer.");
+  //if (n<=0)
+  //Rcpp::stop("sample size n must be positive integer.");
   
   //if(a<0 || b<0 || P == R_PosInf || P == R_NegInf || (a==0 && P<=0) || (b==0 &&P>=0))
   // stop("invalid parameters for GIG distribution.");     check this line dude some of these are not needed!
   
-  double alpha = sqrt(pow(omega,2) + pow(lambda,2)) - lambda;
-  y[1] = alpha;
+  y[1] = sqrt(pow(omega,2) + pow(lambda,2)) - lambda;
+  //y[1] = alpha;
   y[2] = lambda;
   
   // Find t
@@ -91,9 +91,9 @@ std::vector<double> rgig(double P, double a, double b, int n) {
   if((x >= 0.5) && (x <= 2))
     t = 1;
   else if(x > 2)
-    t = sqrt(2 / (alpha + lambda));
+    t = sqrt(2 / (y[1] + lambda));
   else if(x < 0.5)
-    t = log(4/(alpha + 2*lambda));
+    t = log(4/(y[1] + 2*lambda));
   
   // Find s
   y[0] = -1;
@@ -101,9 +101,9 @@ std::vector<double> rgig(double P, double a, double b, int n) {
   if((x >= 0.5) && (x <= 2))
     s = 1;
   else if(x > 2)
-    s = sqrt(4/(alpha*cosh(1) + lambda));
+    s = sqrt(4/(y[1]*cosh(1) + lambda));
   else if(x < 0.5)
-    s = minn(1/lambda, log(1 + 1/alpha + sqrt(1/pow(alpha,2)+2/alpha)));
+    s = minn(1/lambda, log(1 + 1/y[1] + sqrt(1/pow(y[1],2)+2/y[1])));
   
   y[0] = t;
   double eta = -psi(y);
@@ -163,16 +163,16 @@ int sampleBeta_2(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, arma::cub
   arma::vec summean(k,arma::fill::zeros);
   //arma::mat vari(k,k,arma::fill::zeros);
   //arma::vec meani(k,arma::fill::zeros);
-  arma::mat inv_phi(m,m,arma::fill::zeros);
+  arma::mat inv_phi(k,m,arma::fill::zeros);
   
   for(int i=0; i<n ; i++)
   {
-    inv_phi.diag() = 1/(tau2*((*w).col(i)));
+    inv_phi = ((*X).slice(i))*arma::diagmat(tau2*((*w).col(i))).i();
     
     //vari 
-    sumvar  += ((*X).slice(i))*inv_phi*(((*X).slice(i)).t());
+    sumvar  += inv_phi*(((*X).slice(i)).t());
     //meani 
-    summean  += ((*X).slice(i))*inv_phi*((*z).col(i) - theta*((*w).col(i)) - (((*S).slice(i)).t())*((*alpha).slice(sim-1)).col(i));
+    summean  += inv_phi*((*z).col(i) - theta*((*w).col(i)) - (((*S).slice(i)).t())*((*alpha).slice(sim-1)).col(i));
     
    // sumvar  = sumvar + vari;
   //  summean = summean + meani;
@@ -208,30 +208,61 @@ int sampleZ_2(arma::mat*y, arma::cube*X, arma::vec beta, arma::cube*S, arma::cub
   return(0);
 }
 
+int sampleAlphafast(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::mat*w, double tau2, double theta, double varphi2, int l, int m, int n,arma::cube*alpha,int sim)
+{
+  arma::mat invD1(m,m,arma::fill::zeros);
+  arma::mat Im(m,m,arma::fill::eye);
+  arma::mat phii(m,m);
+  arma::mat phii_t(m,m); //saving transpose saves time apparently in my tests, hence!
+  arma::vec u(l,arma::fill::randn); //randn is fast and does quick N(0,1) samples
+  u = sqrt(varphi2)*u; 
+  arma::vec delta(m,arma::fill::randn);
+  //arma::vec v(m);
+  arma::vec alph(m);
+  arma::vec w_i(m);
+  
+  //u = Rcpp::rnorm(l,0,varphi);
+  //delta = Rcpp::rnorm(m,0,1); 
+  //double varphi2 = pow(varphi,2);
+  
+  for(int i=0; i<n; i++)
+  {
+    invD1.diag() = 1/(sqrt(tau2*(*w).col(i)));
+    phii = invD1*(((*S).slice(i)).t());
+    //phii_t = phii.t();
+    //v = phii*u + delta;
+    alph = invD1*((*z).col(i) - (((*X).slice(i)).t())*beta - theta*(*w).col(i)) - phii*u - delta; //-v done in this step
+    w_i = solve(varphi2*(phii*phii.t()) + Im, alph,arma::solve_opts::fast); //solve_optss_fast disables some  unnecessary checks and hence is faster
+    ((*alpha).slice(sim)).col(i) = u + varphi2*(phii.t())*w_i; 
+  }
+  return(0);
+}
+
 
 int sampleAlpha(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::mat*w, double tau2, double theta, double varphi2, int l, int m, int n,arma::cube*alpha,int sim)
 {
   
   //arma::mat alpha_out(l,n,arma::fill::zeros);
   arma::mat invDvarphi2 = (arma::eye(l,l))/varphi2;
-  arma::mat invD1(m,m,arma::fill::zeros);
+  arma::mat invD1(l,m,arma::fill::zeros);
   arma::vec atilde(l,arma::fill::zeros);
   arma::mat Atilde(l,l,arma::fill::zeros);
   
   for(int i=0; i<n; i++)
   {
-    invD1.diag() = 1/(tau2*((*w).col(i)));
+    invD1 = ((*S).slice(i))*arma::diagmat(tau2*((*w).col(i))).i();
     
-    //  Rcpp::Rcout << "nsim_alpha:" << i << "\n";
-    //  Rcpp::Rcout << "varphi2" << varphi2 << "\n";
-    //  Rcpp::Rcout << "invD1:" << invD1 << "\n";
-    //  Rcpp::Rcout << "invDvarphi2:" << invDvarphi2 << "\n";
-    //  Rcpp::Rcout << "*S:" << (*S).slice(i) << "\n";
+  //    Rcpp::Rcout << "nsim_alpha:" << i << "\n";
+  //    Rcpp::Rcout << "varphi2" << varphi2 << "\n";
+  //    Rcpp::Rcout << "invD1:" << invD1 << "\n";
+  //    Rcpp::Rcout << "invDvarphi2:" << invDvarphi2 << "\n";
+  //    Rcpp::Rcout << "*S:" << (*S).slice(i) << "\n";
     
-    Atilde = arma::inv_sympd((((*S).slice(i))*invD1*(((*S).slice(i)).t())) + invDvarphi2);
+    Atilde = ((invD1*(((*S).slice(i)).t())) + invDvarphi2).i();
+    //arma::inv_sympd((((*S).slice(i))*invD1*(((*S).slice(i)).t())) + invDvarphi2);
     // Rcpp::Rcout << "Atilde:" << Atilde << "\n";
     //Atilde = arma::inv_sympd(Atilde);
-    atilde =  Atilde*(((*S).slice(i))*invD1*((*z).col(i) - (((*X).slice(i)).t())*beta - theta*(*w).col(i)));      
+    atilde =  Atilde*(invD1*((*z).col(i) - (((*X).slice(i)).t())*beta - theta*(*w).col(i)));      
     
     ((*alpha).slice(sim)).col(i) = arma::mvnrnd(atilde,Atilde,1);
   }
@@ -267,6 +298,7 @@ double sampleVarphi2(arma::cube* alpha, double c1, double d1, int l, int n,int s
   sum = arma::accu(arma::square((*alpha).slice(sim)));
   
   return(1/R::rgamma((n*l+c1)/2,(sum + d1)/2));
+  //return(1/arma::randg<double>(arma::distr_param((n*l+c1)/2,2/(sum + d1))));
 }
 
 arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept) 
@@ -287,7 +319,7 @@ arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept)
 
 // y is the output variable, x is fixed, s is random 
 
-Rcpp::List qbldcpp_2(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1)
+Rcpp::List qbldcpp_unblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin)
 {
   
   int m = y.n_rows;
@@ -305,7 +337,7 @@ Rcpp::List qbldcpp_2(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
     l = floor(datas.n_cols/n) + 1; //add an intercept column in model matrix
   
   arma::mat z = y - 0.5; //start for z
-//  arma::mat zPrev = z;
+  arma::mat zPrev = z;
   arma::cube X(k,m,n);  //model matrix fixed
   arma::cube S(l,m,n);  //model matrix random
   
@@ -318,7 +350,12 @@ Rcpp::List qbldcpp_2(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
   
   /// MCMC and burnins
   //  nsim  = 12000;
-  int burn  = 0.25*nsim;
+  int burn  = 0;
+  if(burnin == TRUE)
+  {
+    burn = 0.25*nsim;
+  }
+  
   int MCMC  = burn + nsim;    ///Total number of simulation
   
   
@@ -407,32 +444,33 @@ Rcpp::List qbldcpp_2(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
     //int sim = 1;
     
     // if(sim/10.0 == sim/10)
-    //  Rcpp::Rcout << "No. of sim: " << sim << "\n";
+     // Rcpp::Rcout << sim << "\n";
     
     ////--------- Sample beta,z marginally of alpha in a block --------------
     //beta_out.col(sim) = 
     sampleBeta_2(&z,&X,&S,&w,&alpha,varphi2(sim-1),tau2,theta,&invB0,&invB0b0,k,m,n,&beta_out,sim);
-    
+    //Rcpp::Rcout << "bet" << "\n";
     
     ////---------- Sample alpha conditionally on beta,z -------------------
     //alpha.slice(sim) = 
     sampleAlpha(&z,&X,&S,beta_out.col(sim),&w,tau2,theta,varphi2(sim-1),l,m,n,&alpha,sim);
-    
+    //sampleAlphafast(&z,&X,&S,beta_out.col(sim),&w,tau2,theta,varphi2(sim-1),l,m,n,&alpha,sim);
+   // Rcpp::Rcout << "alp" << "\n";
     
     /////--------- Sample w ---------------------------
     //w = 
     sampleW(&z,&X,&S,beta_out.col(sim),&alpha,tau2,theta,lambdaIndex,k,m,n,&w,sim);
-    
+    //Rcpp::Rcout << "w" << "\n";
     
     ////--------- Sample varphi2 ---------------------
     varphi2(sim) = sampleVarphi2(&alpha,c1,d1,l,n,sim);
-    
+  //  Rcpp::Rcout << "varphi2" << "\n";
     
     //////--------- Sample z, marginally of alpha -----------------------------
     ///// Draws random numbers from trucnated MVN (Geweke, 1991).
     //z = 
     sampleZ_2(&y,&X,beta_out.col(sim),&S,&alpha,theta,&w,varphi2(sim),tau2,m,n,&z,sim);
-    
+  //  Rcpp::Rcout << "z" << "\n";
   }
   
   return (Rcpp::List::create(Rcpp::Named("Beta", beta_out),Rcpp::Named("Alpha", alpha),Rcpp::Named("Varphi2", varphi2))); 

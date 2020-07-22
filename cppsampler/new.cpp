@@ -103,7 +103,7 @@ std::vector<double> rgig(double lambda, double a, double b, int n) {
   else if(x > 2)
     s = sqrt(4/(y[1]*cosh(1) + lambda));
   else if(x < 0.5)
-    s = minn(1/lambda, log(1 + 1/alpha + sqrt(1/pow(y[1],2)+2/y[1])));
+    s = minn(1/lambda, log(1 + 1/y[1] + sqrt(1/pow(y[1],2)+2/y[1])));
   
   y[0] = t;
   double eta = -psi(y);
@@ -280,8 +280,8 @@ arma::vec rtruncnorm_gwk(arma::vec z0,arma::vec*mu,arma::mat*sigma,arma::mat*y,i
     
     condMu = (mu_i + sigma12*inv_sigma22*(z_less_i - mu_less_i)).eval()(0,0);
     
-    newLL  = (limits(*(y)(i,idx),0) - condMu)/sq_condVar;
-    newUL= (limits(*(y)(i,idx),1) - condMu)/sq_condVar;
+    newLL  = (limits((*y)(i,idx),0) - condMu)/sq_condVar;
+    newUL= (limits((*y)(i,idx),1) - condMu)/sq_condVar;
     
     z0(i) =  condMu + (sq_condVar)*(norminv(u(i)*(normcdf(newUL) - normcdf(newLL)) + normcdf(newLL)));
     //z0[i] = z[i]
@@ -455,7 +455,7 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
   /// MCMC and burnins
   //  nsim  = 12000;
   int burn  = 0;
-  if(burnin = TRUE)
+  if(burnin == TRUE)
   {
     burn = 0.25*nsim;
   }

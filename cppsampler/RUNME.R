@@ -75,7 +75,7 @@ sourceCpp("./old.cpp") ##sampler is here
 sourceCpp("./new.cpp"); #fast sampler is here
 
 #dataR <- datagenR(500,10,0.25)
-datacpp <- datagen(500,10,0.25) 
+lidatacpp <- datagen(500,10,0.25) 
 
 #x_r <- dataR[[2]]
 x_cpp <- datacpp[[2]]
@@ -91,7 +91,7 @@ nsim <- 400
 x_intercept <- FALSE
 s_intercept <- TRUE
 b0 <- rep(0,3)
-B0 <- diag(3)
+B0 <- 10*diag(3)
 c1 <- 10
 d1 <- 9
 p <- 0.25

@@ -420,7 +420,7 @@ Rcpp::List qbldcpp(int nsim, double p, arma::mat y, arma::mat datax, arma::mat d
   //  nsim  = 12000;
   
   int burn  = 0;
-  if(burnin = TRUE)
+  if(burnin == TRUE)
   {
     burn = 0.25*nsim;
   }
