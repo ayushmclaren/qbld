@@ -38,7 +38,7 @@ arma::vec rald_mix(double n,double mu,double sigma,double p)
   arma::vec z = Rcpp::rexp(n,1);
   arma::vec u = arma::randn<arma::vec>(n);
   
-  arma::vec r = theta*z + tau*((arma::sqrt(z))%u);
+  arma::vec r = sigma*(theta*z + tau*((arma::sqrt(z))%u));
   r = r + mu;
   return(r);
 }

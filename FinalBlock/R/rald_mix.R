@@ -13,7 +13,7 @@ rald_mix <- function(n,mu=0,sigma=1,p=0.5,plot=FALSE)
   z <- rexp(n,rate=1)
   u <- rnorm(n,mean=0,sd=1)
 
-  r <- theta*z + tau* sqrt(z) * u
+  r <- (theta*z + tau* sqrt(z) * u)*sigma
   r <- r + rep(mu,n)
 
   if(plot == TRUE) #creates a sample plot for the ALD
