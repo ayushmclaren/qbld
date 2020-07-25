@@ -13,7 +13,7 @@ dgig <- function(x, a, b, p, log_density) {
 #' @importFrom Rcpp sourceCpp
 NULL
 
-rgig <- function(P, a, b, n) {
-    .Call('_GIGpack_rgig', PACKAGE = 'GIGpack', P, a, b, n)
+rgig <- function(n, lambda, a, b) {
+    .Call('_GIGpack_rgig', PACKAGE = 'GIGpack', n, lambda, a, b)
 }
 

@@ -1,3 +1,4 @@
+// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
 #include <RcppArmadillo.h>
 
 // [[Rcpp::depends(RcppArmadillo)]]
@@ -7,7 +8,7 @@
 double mode(double lambda,double omega)
 {
   if(lambda>=1)
-    return((sqrt((lambda-1)*(lambda-1)+omega*omega)+(lambda-1))/omega);
+  return((sqrt((lambda-1)*(lambda-1)+omega*omega)+(lambda-1))/omega);
   
   return(omega/(sqrt((1-lambda)*(1-lambda)+omega*omega)+(1-lambda)));
 }
@@ -44,7 +45,7 @@ int rgig_shift(arma::vec*out, int n, double lambda, int check, double omega, dou
   s = 0.25*omega;
   
   xm = mode(lambda,omega);
-  nc = t*log(xm) - s*(xm + 1/xm);
+  nc = t*log(xm) - s*(xm + 1/xm); 
   
   a = -(2*(lambda+1)/omega +xm);
   b = (2*(lambda-1)*xm/omega -1);
@@ -53,13 +54,26 @@ int rgig_shift(arma::vec*out, int n, double lambda, int check, double omega, dou
   p = b - a*a/3;
   q = (2*a*a*a)/27 - (a*b)/3 + c;
   
+  //Rcpp::Rcout << "a:" << a << "\n";//
+  //Rcpp::Rcout << "b:" << b << "\n";//
+  //Rcpp::Rcout << "p:" << p << "\n";//
+  
   fi = acos(-q/(2*sqrt(-p*p*p/27)));
   fak = 2*sqrt(-p/3);
   y1 = fak*cos(fi/3) - a/3;
-  y2 = fak*cos(fi/3 + (4./3.)*M_PI) - a/3;
+  y2 = fak*cos(fi/3 + 4./3.*M_PI) - a/3;
+  
+ // Rcpp::Rcout  << fi << "\n";//
+//  Rcpp::Rcout  << fak << "\n";//
+//  Rcpp::Rcout << y1 << "\n";//
+//  Rcpp::Rcout << y2 << "\n";//
   
   uplus = (y1-xm)*exp(t*log(y1) - s*(y1 + 1/y1) -nc);
   uminus =  (y2-xm)*exp(t*log(y2) - s*(y2 + 1/y2) -nc);
+  
+  // Rcpp::Rcout  << uplus << "\n";//
+  //  Rcpp::Rcout  << uminus << "\n";//
+  //  Rcpp::Rcout  << alpha << "\n";//
   
   for(int i=0; i<n; i++)
   {
@@ -155,7 +169,7 @@ int rgig_conc(arma::vec*out, int n, double lambda, int check, double omega, doub
 
 
 // [[Rcpp::export]]
-arma::vec rgig(double n,double lambda,double a,double b)
+arma::vec rgig_my(double n,double lambda,double a,double b)
 {
   arma::vec out(n);
   int check = 0;
@@ -164,9 +178,9 @@ arma::vec rgig(double n,double lambda,double a,double b)
     Rcpp::stop("sample size 'n' must be a positive integer");
   
   if ( !(R_FINITE(lambda) && R_FINITE(b) && R_FINITE(a)) ||
-       (b <  0. || a < 0)      ||
+       (b <  0. || a < 0)      || 
        (b == 0. && lambda <= 0.) ||
-       (a == 0. && lambda >= 0.) )
+       (a == 0. && lambda >= 0.) ) 
     Rcpp::stop("Invalid Parameters");
   
   if(b==0)

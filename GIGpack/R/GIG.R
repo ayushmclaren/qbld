@@ -32,8 +32,14 @@
 #'Stat Comput 24, 239–246 (2014). https://doi.org/10.1007/s11222-012-9367-z
 #'
 
+## usethis namespace: start
+#' @useDynLib GIGpack, .registration = TRUE
+## usethis namespace: end
+NULL
+
 #' @useDynLib GIGpack
 #' @importFrom Rcpp sourceCpp
+## usethis namespace: end
 NULL
 #' @rdname GIGpack
 #' @export
@@ -44,6 +50,7 @@ dgig <- function(x, a, b, p, log_density) {
 
 #' @useDynLib GIGpack
 #' @importFrom Rcpp sourceCpp
+## usethis namespace: end
 NULL
 
 #' @rdname GIGpack

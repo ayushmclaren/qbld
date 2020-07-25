@@ -11,5 +11,7 @@ License: GPL (>= 2)
 Imports: 
     Rcpp
 Depends: mvnfast, truncnorm
-LinkingTo: Rcpp
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
 RoxygenNote: 7.1.0

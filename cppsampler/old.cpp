@@ -21,139 +21,223 @@
   //  return(((*a).slice(1))(1,1));
 //  }
 
-double minn(double z, double zz)
+
+double mode(double lambda,double omega)
 {
-  if(z<=zz)
-    return(z);
-  return(zz);
+  if(lambda>=1)
+    return((sqrt((lambda-1)*(lambda-1)+omega*omega)+(lambda-1))/omega);
+  
+  return(omega/(sqrt((1-lambda)*(1-lambda)+omega*omega)+(1-lambda)));
 }
 
-double psi(std::vector<double> k)
+int rgig_noshift(arma::vec*out, int n, double lambda, int check, double omega, double alpha)
 {
-  return(-k[1]*(cosh(k[0])-1) -k[2]*(exp(k[0])-k[0]-1));
-}
-
-double dpsi(std::vector<double> m)
-{
-  return(-m[1]*(sinh(m[0])) -m[2]*(exp(m[0])-1));
-}
-
-double g(double x,double sd,double td,double f1,double f2)
-{
-  double a = 0;
-  double b = 0;
-  double c = 0;
+  double xm,nc,ym,um,s,t,U,V,X;
   
-  if((x >= -sd) && (x <= td))
-    a = 1;
+  t = 0.5*(lambda-1);
+  s = 0.25*omega;
   
-  else if(x > td)
-    b = f1;
+  xm = mode(lambda,omega);
+  nc = t*log(xm) - s*(xm + 1/xm);
+  ym = ((lambda+1) + sqrt((lambda+1)*(lambda+1) + omega*omega))/omega;
+  um = exp(0.5*(lambda+1)*log(ym) - s*(ym + 1/ym) - nc);
   
-  else if(x < -sd)
-    c = f2;
-  
-  return(a+b+c);
-}
-
-std::vector<double> rgig(double P, double a, double b, int n) {
-  
-  std::vector<double> X(n);
-  std::vector<double> y(3);
-  std::vector<double> UVW(3);
-  
-  // we sample from the two parameter version of the GIG(alpha,omega)
-  double lambda = P;
-  double omega = sqrt(a*b);
-  int check = 0;
-  double t=0,s=0,f1=0,f2=0;
-  
-  if(lambda<0)
+  for(int i=0; i<n; i++)
   {
-    lambda = lambda*-1;
-    check = 1;
+    do{
+      U = um*arma::randu<double>();
+      V = arma::randu<double>();
+      X = U/V;
+    } while ((log(V)) > (t*log(X) - s*(X+1/X)- nc));
+    (*out)(i) = (check==1) ? (alpha/X) : (alpha*X);
+  }
+  return(0);
+}
+
+int rgig_shift(arma::vec*out, int n, double lambda, int check, double omega, double alpha)
+{
+  double xm,nc,s,t,U,V,X,a,b,c,p,q,fi,fak,y1,y2,uplus,uminus;
+  
+  t = 0.5*(lambda-1);
+  s = 0.25*omega;
+  
+  xm = mode(lambda,omega);
+  nc = t*log(xm) - s*(xm + 1/xm); 
+  
+  a = -(2*(lambda+1)/omega +xm);
+  b = (2*(lambda-1)*xm/omega -1);
+  c = xm;
+  
+  p = b - a*a/3;
+  q = (2*a*a*a)/27 - (a*b)/3 + c;
+  
+  fi = acos(-q/(2*sqrt(-p*p*p/27)));
+  fak = 2*sqrt(-p/3);
+  y1 = fak*cos(fi/3) - a/3;
+  y2 = fak*cos(fi/3 + (4./3.)*M_PI) - a/3;
+  
+  uplus = (y1-xm)*exp(t*log(y1) - s*(y1 + 1/y1) -nc);
+  uminus =  (y2-xm)*exp(t*log(y2) - s*(y2 + 1/y2) -nc);
+  
+  for(int i=0; i<n; i++)
+  {
+    do{
+      U = uminus + arma::randu<double>() * (uplus-uminus);
+      V = arma::randu<double>();
+      X = U/V + xm;
+    } while ((X<=0) || ((log(V)) > (t*log(X) - s*(X+1/X)- nc)));
+    (*out)(i) = (check==1) ? (alpha/X) : (alpha*X);
+  }
+  return(0);
+}
+
+
+int rgig_conc(arma::vec*out, int n, double lambda, int check, double omega, double alpha)
+{
+  arma::vec A(3);
+  double Atot,k0,k1,k2,xm,x0,a,U,V,X,hx;
+  
+  if(lambda >=1 || omega > 1)
+    Rcpp::stop("Invalid parameters.");
+  
+  xm = mode(lambda,omega);
+  x0 = omega/(1-lambda);
+  
+  k0 = exp((lambda-1)*log(xm) - 0.5*omega*(xm + 1/xm));
+  A(0) = k0*x0;
+  
+  if(x0 >= 2/omega)
+  {
+    k1 = 0;
+    A(1) = 0;
+    k2 = pow(x0,lambda-1);
+    A(2) = k2*2*exp(-omega*x0/2)/omega;
   }
   
-  if (n<=0)
-    Rcpp::stop("sample size n must be positive integer.");
-  
-  //if(a<0 || b<0 || P == R_PosInf || P == R_NegInf || (a==0 && P<=0) || (b==0 &&P>=0))
-  // stop("invalid parameters for GIG distribution.");     check this line dude some of these are not needed!
-  
-  double alpha = sqrt(pow(omega,2) + pow(lambda,2)) - lambda;
-  y[1] = alpha;
-  y[2] = lambda;
-  
-  // Find t
-  y[0] = 1;
-  double x = -psi(y);
-  
-  if((x >= 0.5) && (x <= 2))
-    t = 1;
-  else if(x > 2)
-    t = sqrt(2 / (alpha + lambda));
-  else if(x < 0.5)
-    t = log(4/(alpha + 2*lambda));
-  
-  // Find s
-  y[0] = -1;
-  x = -psi(y);
-  if((x >= 0.5) && (x <= 2))
-    s = 1;
-  else if(x > 2)
-    s = sqrt(4/(alpha*cosh(1) + lambda));
-  else if(x < 0.5)
-    s = minn(1/lambda, log(1 + 1/alpha + sqrt(1/pow(alpha,2)+2/alpha)));
-  
-  y[0] = t;
-  double eta = -psi(y);
-  double zeta = -dpsi(y);
-  y[0] = s;
-  double theta = -psi(y);
-  double xi = dpsi(y);
-  
-  double p = 1/xi;
-  double r = 1/zeta;
-  double td = t - r*eta;
-  double sd = s - p*theta;
-  double q = td + sd;
-  
-  for(int i=0;i<n;i++)
+  else
   {
-    while(1)
-    {
-      UVW[0] = R::runif(0,1);
-      UVW[1] = R::runif(0,1);
-      UVW[2] = R::runif(0,1);
+    k1 = exp(-omega);
+    A(1) = (lambda==0) ? (k1*log(2/(omega*omega))) : ((k1/lambda)*(pow(2/omega,lambda) - pow(x0,lambda)));
+    k2 = pow(2/omega,lambda-1);
+    A(2) = k2*2*exp(-1)/omega;
+  }
+  
+  Atot = A(0) + A(1) + A(2);
+  
+  for(int i=0; i<n; i++)
+  {
+    do{
+      V = Atot*(arma::randu<double>());
       
-      if(UVW[0] < (q / (p + q + r)))
-        X[i] = -sd + q*UVW[1];
-      
-      else if(UVW[0] < ((q + r) / (p + q + r)))
-        X[i] = td - r*log(UVW[1]);
-      
-      else
-        X[i] = -sd + p*log(UVW[1]);
-      
-      f1 = exp(-eta - zeta*(X[i]-t));
-      f2 = exp(-theta + xi*(X[i]+s));
-      
-      y[0] = X[i];
-      if( UVW[2]*g(X[i], sd, td, f1, f2) <= exp(psi(y)) )
+      do{
+        
+        if(V <= A(0))
+        {
+          X = x0*V/A(0);
+          hx = k0;
+          break;
+        }
+        
+        V -= A(0);
+        if (V <= A(1)) {
+          if (lambda == 0) {
+            X = omega * exp(exp(omega)*V);
+            hx = k1 / X;
+          }
+          else {
+            X = pow(pow(x0, lambda) + (lambda / k1 * V), 1/lambda);
+            hx = k1 * pow(X, lambda-1);
+          }
+          break;
+        }
+        
+        V -= A(1);
+        a = (x0 > 2/omega) ? x0 : 2/omega;
+        X = -2/omega * log(exp(-omega/2 * a) - omega/(2*k2) * V);
+        hx = k2 * exp(-omega/2 * X);
         break;
-    }
+        
+      } while(0);
+      
+      U = hx*(arma::randu<double>());
+      
+      if(log(U) <= (lambda-1)*log(X) - omega/2 * (X+1/X))
+      {
+        (*out)(i) = (check==1) ? (alpha/X) : (alpha*X);
+        break;
+      }
+    } while(1);
+  }
+  return(0);
+}
+
+
+// [[Rcpp::export]]
+arma::vec rgig(double n,double lambda,double a,double b)
+{
+  arma::vec out(n);
+  int check = 0;
+  
+  if(n<=0||std::floor(n) !=n)
+    Rcpp::stop("sample size 'n' must be a positive integer");
+  
+  if ( !(R_FINITE(lambda) && R_FINITE(b) && R_FINITE(a)) ||
+       (b <  0. || a < 0)      || 
+       (b == 0. && lambda <= 0.) ||
+       (a == 0. && lambda >= 0.) ) 
+    Rcpp::stop("Invalid Parameters");
+  
+  if(b==0)
+  {
+    if(lambda>0)
+      return(Rcpp::rgamma(n,lambda,2/a));
+    else
+      return(1/Rcpp::rgamma(n,-lambda,2/a));
   }
   
-  for(int j=0;j<n;j++)
+  else if(a==0)
   {
-    X[j] = exp(X[j]) * (lambda / omega + sqrt(1 + pow((lambda/omega),2)));
-    
-    if(check==1)
-      X[j] = 1/X[j];
-    
-    X[j] = X[j] * sqrt(b/a);
+    if(lambda>0)
+      return(Rcpp::rgamma(n,lambda,2/b));
+    else
+      return(1/Rcpp::rgamma(n,-lambda,2/b));
   }
-  return(X);
+  
+  else
+  {
+    
+    if(lambda<0)
+    {
+      lambda = -lambda;
+      check = 1;
+    }
+    double alpha = sqrt(b/a);
+    double omega = sqrt(a*b);
+    
+    if(lambda > 2 || omega > 3)
+    {
+      //RoU shift
+      rgig_shift(&out,n,lambda,check,omega,alpha);
+      return(out);
+    }
+    
+    if(lambda >= 1 - 2.25*a*b || omega > 0.2)
+    {
+      //RoU no shift
+      rgig_noshift(&out,n,lambda,check,omega,alpha);
+      return(out);
+    }
+    
+    if(lambda>=0 && omega>0)
+    {
+      //log-concave
+      rgig_conc(&out,n,lambda,check,omega,alpha);
+      return(out);
+    }
+    
+    Rcpp::stop("Invalid parameters.");
+  }
+  return(out);
 }
 
 int sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n, arma::mat* beta,int sim)
@@ -352,7 +436,7 @@ int sampleW(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::cube*
       tilde_lambda = (pow(((*z)(j,i) - ((((*X).slice(i)).col(j)).t())*beta - ((((*S).slice(i)).col(j)).t())*(((*alpha).slice(sim)).col(i))),2)/tau2).eval()(0,0);
       if(tilde_lambda < 0.00000001) tilde_lambda = 0.00000001;
       
-      (*w)(j,i) = rgig(lambda,tilde_eta,tilde_lambda,1)[0];
+      (*w)(j,i) = rgig(1,lambda,tilde_eta,tilde_lambda)(0);
     }
   }
   return(0);
@@ -366,7 +450,7 @@ double sampleVarphi2(arma::cube* alpha, double c1, double d1, int l, int n,int s
   
   sum = arma::accu(arma::square((*alpha).slice(sim)));
   
-  return(1/R::rgamma((n*l+c1)/2,(sum + d1)/2));
+  return(1/R::rgamma((n*l+c1)/2,2/(sum + d1)));
 }
 
 arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept) 

@@ -27,7 +27,7 @@ double sampleVarphi2(arma::mat alpha, double c1, double d1, int l, int n)
   
   sum = arma::accu(arma::square(alpha));
   
-  return(1/R::rgamma((n*l+c1)/2,(sum + d1)/2));
+  return(1/R::rgamma((n*l+c1)/2,2/(sum + d1)));
 }
 
 //--------------------------------------------------------------------------

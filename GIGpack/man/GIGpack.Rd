@@ -8,7 +8,7 @@
 \usage{
 dgig(x, a, b, p, log_density)
 
-rgig(P, a, b, n)
+rgig(n, lambda, a, b)
 }
 \arguments{
 \item{x}{: vector of points}

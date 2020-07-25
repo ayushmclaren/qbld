@@ -4,11 +4,11 @@
 #include <Rcpp.h>
 
 //GIG distbn functions
-double minn(double z, double zz);
-double psi(std::vector<double> k);
-double dpsi(std::vector<double> m);
-double g(double x,double sd,double td,double f1,double f2);
-std::vector<double> rgig(double P, double a, double b, int n);
+double mode(double lambda,double omega);
+int rgig_noshift(arma::vec*out, int n, double lambda, int check, double omega, double alpha);
+int rgig_shift(arma::vec*out, int n, double lambda, int check, double omega, double alpha);
+int rgig_conc(arma::vec*out, int n, double lambda, int check, double omega, double alpha);
+arma::vec rgig(double n,double lambda,double a,double b);
 
 //AL distbn function
 arma::vec rald_mix(double n,double mu,double sigma,double p);

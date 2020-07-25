@@ -40,7 +40,7 @@ arma::mat sampleW(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma:
       tilde_lambda = (pow(((*z)(j,i) - ((((*X).slice(i)).col(j)).t())*beta - ((((*S).slice(i)).col(j)).t())*alpha.col(i)),2)/tau2).eval()(0,0);
       if(tilde_lambda < 0.00000001) tilde_lambda = 0.00000001;
       
-      w(j,i) = rgig(lambda,tilde_eta,tilde_lambda,1)[0];
+      w(j,i) = rgig(1,lambda,tilde_eta,tilde_lambda)(0);
     }
   }
   return(w);
