@@ -1,20 +1,11 @@
 ## GSoC_QBLD
 QBLD - Quantile Regression for Binary Longitudinal Data, GSoC 2020 
 
-## Model
+![1](https://github.com/ayushmclaren/gsoc_qbld/blob/master/Images/1.png?raw=true "1")
 
-![Model](https://github.com/ayushmclaren/gsoc_qbld/blob/master/model.png?raw=true "Model")
+![2](https://github.com/ayushmclaren/gsoc_qbld/blob/master/Images/2.png?raw=true "2")
 
+![3](https://github.com/ayushmclaren/gsoc_qbld/blob/master/Images/3.png?raw=true "3")
 
-## Model with Priors
-![Model Priors](https://github.com/ayushmclaren/gsoc_qbld/blob/master/model_prior.png?raw=true "Model prior")
+![4](https://github.com/ayushmclaren/gsoc_qbld/blob/master/Images/4.png?raw=true "4")
 
-## Algorithm - Blocked
-
-![Block1](https://github.com/ayushmclaren/gsoc_qbld/blob/master/algo_block1.png?raw=true "block1")
-
-![Block2](https://github.com/ayushmclaren/gsoc_qbld/blob/master/algo_block2.png?raw=true "block2")
-
-## Algorithm - UnBlocked
-
-![Unblock](https://github.com/ayushmclaren/gsoc_qbld/blob/master/algo_noblock.png?raw=true "noblock")
