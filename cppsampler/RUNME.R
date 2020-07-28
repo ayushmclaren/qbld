@@ -75,7 +75,7 @@ sourceCpp("./old.cpp") ##sampler is here
 sourceCpp("./new.cpp"); #fast sampler is here
 
 #dataR <- datagenR(500,10,0.25)
-lidatacpp <- datagen(500,10,0.25) 
+datacpp <- datagen(500,10,0.25) 
 
 #x_r <- dataR[[2]]
 x_cpp <- datacpp[[2]]

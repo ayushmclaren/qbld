@@ -61,7 +61,7 @@ z_{i} = X_{i}\beta+S_{i}\alpha_{i}+w_{i}\theta + D_{\tau\sqrt{w_{i}}}u_{i},\\y_{
 * Sample $(\beta,z_{i})$ in one block. These are sampled in following two substeps. 
 
   (1) Sample $\beta$
-  \begin{equation}\begin{gathered}\label{eq4}\\\beta|z,w,\varphi^{2}\sim N(\tilde{\beta},\tilde{B}),\\where,\hspace{10pt}\tilde{B}^{-1}=(\sum_{i=1}^{n}X_{i}^{'}\Omega_{i}^{-1}X_{i}+B_{0}^{-1}),\\\tilde{\beta}=(\sum_{i=1}^{n}X_{i}^{'}\Omega_{i}^{-1}(z_{i}-w_{i}\theta)+B_{0}^{-1}\beta_{0}),\\\Omega_{i}=(\varphi^{2}S_{i}S_{i}^{'}+D^{2}_{\tau\sqrt{w_{i}}}).\end{gathered}\end{equation}  
+  \begin{equation}\begin{gathered}\label{eq4}\\\beta|z,w,\varphi^{2}\sim N(\tilde{\beta},\tilde{B}),\\where,\hspace{10pt}\tilde{B}^{-1}=(\sum_{i=1}^{n}X_{i}^{'}\Omega_{i}^{-1}X_{i}+B_{0}^{-1}),\\\tilde{\beta}=\tilde{B}(\sum_{i=1}^{n}X_{i}^{'}\Omega_{i}^{-1}(z_{i}-w_{i}\theta)+B_{0}^{-1}\beta_{0}),\\\Omega_{i}=(\varphi^{2}S_{i}S_{i}^{'}+D^{2}_{\tau\sqrt{w_{i}}}).\end{gathered}\end{equation}  
   
   (2) Sample the vector $z_{i}|y_{i},\beta,w_{i},\varphi^{2}\sim TMVN_{B_{i}}(X_{i}\beta+w_{i}\theta,\Omega_{i})$ for all $i=1,...,n$, where $B_{i}=(B_{i1}*B_{i2}*...*B_{iT_{i}})$ and $B_{it}$ are interval $(0,\infty)$ if $y_{it}=1$, and the interval $(-\infty,0]$ if $y_{it}=0$. This is done by sampling $z_{i}$ at the $j^{th}$ pass of the MCMC iteration using a series of conditional posteriors:  
   
@@ -75,7 +75,7 @@ z_{i} = X_{i}\beta+S_{i}\alpha_{i}+w_{i}\theta + D_{\tau\sqrt{w_{i}}}u_{i},\\y_{
 
 * Sample $w$
 
-\begin{equation}\begin{gathered}\label{eq7}w_{it}|z_{it},\beta,\alpha_{i}\sim GIG(0.5,\tilde{\lambda_{it}},\tilde{\eta})\forall i = 1,...,n;  t = 1,...,T_{i},\\where,\hspace{10pt} \tilde{\lambda_{it}}=(\frac{z_{it}-x_{it}^{'}\beta-s_{it}^{'}\alpha_{i}}{\tau})^{2}\\\tilde{\eta}=(\frac{\theta^{2}}{\tau^{2}}+2).\end{gathered}\end{equation}  
+\begin{equation}\begin{gathered}\label{eq7}w_{it}|z_{it},\beta,\alpha_{i}\sim GIG(0.5,\tilde{\lambda_{it}},\tilde{\eta})\hspace{10pt} \forall i = 1,...,n;  t = 1,...,T_{i},\\where,\hspace{10pt} \tilde{\lambda_{it}}=(\frac{z_{it}-x_{it}^{'}\beta-s_{it}^{'}\alpha_{i}}{\tau})^{2}\\\tilde{\eta}=(\frac{\theta^{2}}{\tau^{2}}+2).\end{gathered}\end{equation}  
 
 * Sample $\varphi^{2}$
 
