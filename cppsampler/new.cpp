@@ -7,7 +7,7 @@
 // via the depends attribute we tell Rcpp to create hooks for
 // RcppArmadillo so that the build process will know what to do
 //
-// [[Rcpp::depends(RcppArmadillo,RcppDist)]]
+// [[Rcpp::depends(RcppArmadillo)]]
 
 // simple example of creating two matrices and
 // returning the result of an operatioon on them
@@ -21,6 +21,10 @@
 //  return(((*a).slice(1))(1,1));
 //  }
 
+
+/////////// GIG SAMPLER- start//////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 double mode(double lambda,double omega)
 {
   if(lambda>=1)
@@ -61,7 +65,7 @@ int rgig_shift(arma::vec*out, int n, double lambda, int check, double omega, dou
   s = 0.25*omega;
   
   xm = mode(lambda,omega);
-  nc = t*log(xm) - s*(xm + 1/xm); 
+  nc = t*log(xm) - s*(xm + 1/xm);
   
   a = -(2*(lambda+1)/omega +xm);
   b = (2*(lambda-1)*xm/omega -1);
@@ -181,9 +185,9 @@ arma::vec rgig(double n,double lambda,double a,double b)
     Rcpp::stop("sample size 'n' must be a positive integer");
   
   if ( !(R_FINITE(lambda) && R_FINITE(b) && R_FINITE(a)) ||
-       (b <  0. || a < 0)      || 
+       (b <  0. || a < 0)      ||
        (b == 0. && lambda <= 0.) ||
-       (a == 0. && lambda >= 0.) ) 
+       (a == 0. && lambda >= 0.) )
     Rcpp::stop("Invalid Parameters");
   
   if(b==0)
@@ -239,6 +243,14 @@ arma::vec rgig(double n,double lambda,double a,double b)
   return(out);
 }
 
+/////////// GIG SAMPLER - end //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+/////////// BETA SAMPLER - start - equation (4) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 int sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n, arma::mat* beta,int sim)
 {
   arma::mat sumvar(k,k,arma::fill::zeros);
@@ -270,6 +282,10 @@ int sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, double varp
   return(0);
 }
 
+/////////// BETA SAMPLER - end - equation (4) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
 /*
 double erf_my(double x, bool inverse) 
 {
@@ -289,10 +305,14 @@ double erf_my(double x, bool inverse)
 }
 */
 
+/////////// Z SAMPLER - end - equation (5) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
 double erfc_my(double x, bool inverse) 
 {
   if (inverse) {
-    double ans = R::qnorm(x/2,0,1,0,0)/sqrt(2);
+    double ans = R::qnorm(x/2,0,1,false,false)/sqrt(2);
     
     if(x <  0) ans = NA_REAL;
     if(x > 2) ans = NA_REAL;
@@ -302,7 +322,7 @@ double erfc_my(double x, bool inverse)
     return(ans);
   } 
   else {
-    return(2*(R::pnorm(x*sqrt(2),0,1,0,0)));
+    return(2*(R::pnorm(x*sqrt(2),0,1,false,false)));
   }
 }
 
@@ -360,7 +380,8 @@ arma::vec rtruncnorm_gwk(arma::vec z0,arma::vec*mu,arma::mat*sigma,arma::mat*y,i
     arma::vec z_less_i = z0;
     z_less_i.shed_row(i);        
     
-    condMu = (mu_i + sigma12*inv_sigma22*(z_less_i - mu_less_i)).eval()(0,0);
+    condMu = (mu_i + sigma12*inv_sigma22*(z_less_i + mu_less_i)).eval()(0,0);
+      //(mu_i + sigma12*inv_sigma22*(z_less_i - mu_less_i)).eval()(0,0);
     
     newLL  = (limits((*y)(i,idx),0) - condMu)/sq_condVar;
     newUL= (limits((*y)(i,idx),1) - condMu)/sq_condVar;

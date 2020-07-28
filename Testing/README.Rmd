@@ -65,7 +65,7 @@ z_{i} = X_{i}\beta+S_{i}\alpha_{i}+w_{i}\theta + D_{\tau\sqrt{w_{i}}}u_{i},\\y_{
   
   (2) Sample the vector $z_{i}|y_{i},\beta,w_{i},\varphi^{2}\sim TMVN_{B_{i}}(X_{i}\beta+w_{i}\theta,\Omega_{i})$ for all $i=1,...,n$, where $B_{i}=(B_{i1}*B_{i2}*...*B_{iT_{i}})$ and $B_{it}$ are interval $(0,\infty)$ if $y_{it}=1$, and the interval $(-\infty,0]$ if $y_{it}=0$. This is done by sampling $z_{i}$ at the $j^{th}$ pass of the MCMC iteration using a series of conditional posteriors:  
   
-  \begin{equation}\begin{gathered}\label{eq5}z_{it}^{j}|z_{i1}^{j},...z_{i(t-1)}^{j},z_{i(t+1)}^{j-1},...,z_{iT_{i}}^{j-1}\sim TN_{B_{i}}(\mu_{t|-t},\Sigma_{t|-t}),\hspace{20pt}t=1,...,T_{i}.\\where,\hspace{10pt}\mu_{t|-t}=x_{it}^{'}\beta+w_{it}\theta + \Sigma_{t,-t}\Sigma_{-t,-t}^{-1}(z_{i,-t}^{j}+(X_{i}\beta+w_{i}\theta)_{-t}),\\\Sigma_{t|-t}=\Sigma_{t,t}-\Sigma_{t,-t}\Sigma_{-t,-t}^{-1}\Sigma_{-t,t},\end{gathered}\end{equation}  
+  \begin{equation}\begin{gathered}\label{eq5}z_{it}^{j}|z_{i1}^{j},...z_{i(t-1)}^{j},z_{i(t+1)}^{j-1},...,z_{iT_{i}}^{j-1}\sim TN_{B_{i}}(\mu_{t|-t},\Sigma_{t|-t}),\hspace{20pt}t=1,...,T_{i}.\\where,\hspace{10pt}\mu_{t|-t}=x_{it}^{'}\beta+w_{it}\theta + \Sigma_{t,-t}\Sigma_{-t,-t}^{-1}(z_{i,-t}^{j}-(X_{i}\beta+w_{i}\theta)_{-t}),\\\Sigma_{t|-t}=\Sigma_{t,t}-\Sigma_{t,-t}\Sigma_{-t,-t}^{-1}\Sigma_{-t,t},\end{gathered}\end{equation}  
   
   where $z_{i,-t}^{j}=(z_{i1}^{j},...z_{i(t-1)}^{j},z_{i(t+1)}^{j-1},...,z_{iT_{i}}^{j-1})$, $(X_{i}\beta+w_{i}\theta)_{-t}$ is column vector with $t^{th}$ element removed, $\Sigma_{t,t},\Sigma_{t,-t},\Sigma_{-t,-t}$ are $(t,t)^{th}$ element, $t^{th}$ row with $t^{th}$ element removed, and $t^{th}$ row and column removed respectively.  
   
