@@ -71,7 +71,7 @@ z_{i} = X_{i}\beta+S_{i}\alpha_{i}+w_{i}\theta + D_{\tau\sqrt{w_{i}}}u_{i},\\y_{
   
 * Sample $\alpha$
 
-\begin{equation}\begin{gathered}\label{eq6}\alpha_{i}|z,\beta,w,\varphi^{2}\sim N(\tilde{a},\tilde{A}),\hspace{10pt} \forall i = 1,...,n\\where,\hspace{10pt}\tilde{A^{-1}}=(S_{i}^{'}D^{2}_{\tau\sqrt{w_{i}}}S_{i}+\frac{1}{\varphi^{2}}I_{l}),\\\tilde{a}=\tilde{A}(S_{i}^{'}D^{2}_{\tau\sqrt{w_{i}}}(z_{i}-X_{i}\beta-w_{i}\theta)).\end{gathered}\end{equation}  
+\begin{equation}\begin{gathered}\label{eq6}\alpha_{i}|z,\beta,w,\varphi^{2}\sim N(\tilde{a},\tilde{A}),\hspace{10pt} \forall i = 1,...,n\\where,\hspace{10pt}\tilde{A^{-1}}=(S_{i}^{'}D^{-2}_{\tau\sqrt{w_{i}}}S_{i}+\frac{1}{\varphi^{2}}I_{l}),\\\tilde{a}=\tilde{A}(S_{i}^{'}D^{-2}_{\tau\sqrt{w_{i}}}(z_{i}-X_{i}\beta-w_{i}\theta)).\end{gathered}\end{equation}  
 
 * Sample $w$
 
