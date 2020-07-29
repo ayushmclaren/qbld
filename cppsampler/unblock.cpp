@@ -21,6 +21,10 @@
 //  return(((*a).slice(1))(1,1));
 //  }
 
+
+/////////// GIG SAMPLER- start//////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 double mode(double lambda,double omega)
 {
   if(lambda>=1)
@@ -61,7 +65,7 @@ int rgig_shift(arma::vec*out, int n, double lambda, int check, double omega, dou
   s = 0.25*omega;
   
   xm = mode(lambda,omega);
-  nc = t*log(xm) - s*(xm + 1/xm); 
+  nc = t*log(xm) - s*(xm + 1/xm);
   
   a = -(2*(lambda+1)/omega +xm);
   b = (2*(lambda-1)*xm/omega -1);
@@ -181,9 +185,9 @@ arma::vec rgig(double n,double lambda,double a,double b)
     Rcpp::stop("sample size 'n' must be a positive integer");
   
   if ( !(R_FINITE(lambda) && R_FINITE(b) && R_FINITE(a)) ||
-       (b <  0. || a < 0)      || 
+       (b <  0. || a < 0)      ||
        (b == 0. && lambda <= 0.) ||
-       (a == 0. && lambda >= 0.) ) 
+       (a == 0. && lambda >= 0.) )
     Rcpp::stop("Invalid Parameters");
   
   if(b==0)
@@ -239,6 +243,15 @@ arma::vec rgig(double n,double lambda,double a,double b)
   return(out);
 }
 
+/////////// GIG SAMPLER - end //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+
+/////////// BETA SAMPLER - start - equation (9) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 int sampleBeta_2(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, arma::cube *alpha ,double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n,arma::mat* beta,int sim)
 {
   arma::mat sumvar(k,k,arma::fill::zeros);
@@ -249,7 +262,7 @@ int sampleBeta_2(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, arma::cub
   
   for(int i=0; i<n ; i++)
   {
-    inv_phi = ((*X).slice(i))*arma::diagmat(tau2*((*w).col(i))).i();
+    inv_phi = ((*X).slice(i))*(arma::diagmat(tau2*((*w).col(i))).i());
     
     //vari 
     sumvar  += inv_phi*(((*X).slice(i)).t());
@@ -266,8 +279,15 @@ int sampleBeta_2(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, arma::cub
   (*beta).col(sim) = arma::mvnrnd(summean,sumvar,1);
   return(0);
 }
+/////////// BETA SAMPLER - end - equation (9) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
 
+
+/////////// Z SAMPLER - start - equation (10) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 int sampleZ_2(arma::mat*y, arma::cube*X, arma::vec beta, arma::cube*S, arma::cube* alpha ,double theta, arma::mat*w, double varphi2, double tau2, int m, int n,arma::mat*z,int sim)
 {
   //arma::mat z(m,n,arma::fill::zeros);
@@ -277,8 +297,8 @@ int sampleZ_2(arma::mat*y, arma::cube*X, arma::vec beta, arma::cube*S, arma::cub
   {
     for(int j=0; j<m; j++)
     {
-      mean_comp = (((((*X).slice(i)).col(j)).t())*beta + ((((*S).slice(i)).col(j)).t())*((*alpha).slice(sim)).col(i) + theta*(*w)(j,i)).eval()(0,0);
-      sd_comp  = tau2*(*w)(j,i);
+      mean_comp = (((((*X).slice(i)).col(j)).t())*beta + ((((*S).slice(i)).col(j)).t())*(((*alpha).slice(sim)).col(i)) + theta*(*w)(j,i)).eval()(0,0);
+      sd_comp  = sqrt(tau2*(*w)(j,i));
       
       if((*y)(j,i) == 0)
         (*z)(j,i) = r_truncnorm(mean_comp, sd_comp, R_NegInf,0);
@@ -289,6 +309,14 @@ int sampleZ_2(arma::mat*y, arma::cube*X, arma::vec beta, arma::cube*S, arma::cub
   }
   return(0);
 }
+/////////// Z SAMPLER - end - equation (10) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+/////////// Alpha SAMPLER - start - equation (6) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
 int sampleAlphafast(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::mat*w, double tau2, double theta, double varphi2, int l, int m, int n,arma::cube*alpha,int sim)
 {
@@ -332,13 +360,14 @@ int sampleAlpha(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::m
   
   for(int i=0; i<n; i++)
   {
-    invD1 = ((*S).slice(i))*arma::diagmat(tau2*((*w).col(i))).i();
+    invD1 = ((*S).slice(i))*(arma::diagmat(tau2*((*w).col(i))).i());
+    //diagmat(1/(tau2*((*w).col(i))));
     
-  //    Rcpp::Rcout << "nsim_alpha:" << i << "\n";
-  //    Rcpp::Rcout << "varphi2" << varphi2 << "\n";
-  //    Rcpp::Rcout << "invD1:" << invD1 << "\n";
-  //    Rcpp::Rcout << "invDvarphi2:" << invDvarphi2 << "\n";
-  //    Rcpp::Rcout << "*S:" << (*S).slice(i) << "\n";
+    //  Rcpp::Rcout << "nsim_alpha:" << i << "\n";
+    //  Rcpp::Rcout << "varphi2" << varphi2 << "\n";
+    //  Rcpp::Rcout << "invD1:" << invD1 << "\n";
+    //  Rcpp::Rcout << "invDvarphi2:" << invDvarphi2 << "\n";
+    //  Rcpp::Rcout << "*S:" << (*S).slice(i) << "\n";
     
     Atilde = ((invD1*(((*S).slice(i)).t())) + invDvarphi2).i();
     //arma::inv_sympd((((*S).slice(i))*invD1*(((*S).slice(i)).t())) + invDvarphi2);
@@ -351,6 +380,14 @@ int sampleAlpha(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::m
   return(0);
 }
 
+/////////// Alpha SAMPLER - end - equation (6) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+/////////// W SAMPLER - start - equation (7) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 int sampleW(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::cube*alpha, double tau2, double theta, double lambda, int k, int m, int n,arma::mat*w,int sim)
 {
   
@@ -371,6 +408,16 @@ int sampleW(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::cube*
   return(0);
 }
 
+/////////// W SAMPLER - end - equation (7) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+
+
+/////////// Varphi2 SAMPLER - start - equation (8) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 //--------------------------------------------------------------------------
 
 double sampleVarphi2(arma::cube* alpha, double c1, double d1, int l, int n,int sim)
@@ -382,6 +429,16 @@ double sampleVarphi2(arma::cube* alpha, double c1, double d1, int l, int n,int s
   return(1/R::rgamma((n*l+c1)/2,2/(sum + d1)));
   //return(1/arma::randg<double>(arma::distr_param((n*l+c1)/2,2/(sum + d1))));
 }
+
+/////////// Varphi2 SAMPLER - end - equation (8) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+
+/////////// Combined Unblocked SAMPLER - start  //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
 arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept) 
 {
@@ -559,3 +616,6 @@ Rcpp::List qbldcpp_unblock(int nsim, double p, arma::mat y, arma::mat datax, arm
   // return (Rcpp::List::create(Rcpp::Named("w", w))); 
 }
 
+/////////// Combined unblocked SAMPLER - end //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////

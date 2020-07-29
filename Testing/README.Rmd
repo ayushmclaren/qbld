@@ -86,7 +86,7 @@ z_{i} = X_{i}\beta+S_{i}\alpha_{i}+w_{i}\theta + D_{\tau\sqrt{w_{i}}}u_{i},\\y_{
 
 * Sample $\beta$  
 
-\begin{equation}\begin{gathered}\label{eq9}\\\beta|z,w,\varphi^{2}\sim N(\tilde{\beta},\tilde{B}),\\where,\hspace{10pt}\tilde{B}^{-1}=(\sum_{i=1}^{n}X_{i}^{'}\Psi_{i}^{-1}X_{i}+B_{0}^{-1}),\\\tilde{\beta}=(\sum_{i=1}^{n}X_{i}^{'}\Psi_{i}^{-1}(z_{i}-w_{i}\theta-S_{i}\alpha_{i})+B_{0}^{-1}\beta_{0}),\\\Psi_{i}=D^{2}_{\tau\sqrt{w_{i}}}.\end{gathered}\end{equation}  
+\begin{equation}\begin{gathered}\label{eq9}\\\beta|z,w,\varphi^{2}\sim N(\tilde{\beta},\tilde{B}),\\where,\hspace{10pt}\tilde{B}^{-1}=(\sum_{i=1}^{n}X_{i}^{'}\Psi_{i}^{-1}X_{i}+B_{0}^{-1}),\\\tilde{\beta}=\tilde{B}(\sum_{i=1}^{n}X_{i}^{'}\Psi_{i}^{-1}(z_{i}-w_{i}\theta-S_{i}\alpha_{i})+B_{0}^{-1}\beta_{0}),\\\Psi_{i}=D^{2}_{\tau\sqrt{w_{i}}}.\end{gathered}\end{equation}  
 
 * Sample $\alpha$ as in (\ref{eq6}).  
 

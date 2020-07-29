@@ -305,7 +305,7 @@ double erf_my(double x, bool inverse)
 }
 */
 
-/////////// Z SAMPLER - end - equation (5) //////////
+/////////// Z SAMPLER - start - equation (5) //////////
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
@@ -380,7 +380,7 @@ arma::vec rtruncnorm_gwk(arma::vec z0,arma::vec*mu,arma::mat*sigma,arma::mat*y,i
     arma::vec z_less_i = z0;
     z_less_i.shed_row(i);        
     
-    condMu = (mu_i + sigma12*inv_sigma22*(z_less_i + mu_less_i)).eval()(0,0);
+    condMu = (mu_i + sigma12*inv_sigma22*(z_less_i - mu_less_i)).eval()(0,0);
       //(mu_i + sigma12*inv_sigma22*(z_less_i - mu_less_i)).eval()(0,0);
     
     newLL  = (limits((*y)(i,idx),0) - condMu)/sq_condVar;
@@ -413,6 +413,16 @@ int sampleZ(arma::mat*zprev, arma::mat*y, arma::cube*X, arma::vec beta, arma::cu
   
 }
 
+/////////// Z SAMPLER - end - equation (5) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+
+
+/////////// Alpha SAMPLER - start - equation (6) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
 int sampleAlphafast(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::mat*w, double tau2, double theta, double varphi2, int l, int m, int n,arma::cube*alpha,int sim)
 {
@@ -456,7 +466,8 @@ int sampleAlpha(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::m
   
   for(int i=0; i<n; i++)
   {
-    invD1 = ((*S).slice(i))*diagmat(1/(tau2*((*w).col(i))));
+    invD1 = ((*S).slice(i))*(arma::diagmat(tau2*((*w).col(i))).i());
+      //diagmat(1/(tau2*((*w).col(i))));
     
     //  Rcpp::Rcout << "nsim_alpha:" << i << "\n";
     //  Rcpp::Rcout << "varphi2" << varphi2 << "\n";
@@ -475,7 +486,14 @@ int sampleAlpha(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::m
   return(0);
 }
 
+/////////// Alpha SAMPLER - end - equation (6) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
+
+/////////// W SAMPLER - start - equation (7) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 int sampleW(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::cube*alpha, double tau2, double theta, double lambda, int k, int m, int n,arma::mat*w,int sim)
 {
   
@@ -496,6 +514,16 @@ int sampleW(arma::mat*z, arma::cube*X, arma::cube*S, arma::vec beta, arma::cube*
   return(0);
 }
 
+/////////// W SAMPLER - end - equation (7) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+
+
+/////////// Varphi2 SAMPLER - start - equation (8) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 //--------------------------------------------------------------------------
 
 double sampleVarphi2(arma::cube* alpha, double c1, double d1, int l, int n,int sim)
@@ -507,6 +535,17 @@ double sampleVarphi2(arma::cube* alpha, double c1, double d1, int l, int n,int s
   return(1/R::rgamma((n*l+c1)/2,2/(sum + d1)));
   //return(1/arma::randg<double>(arma::distr_param((n*l+c1)/2,2/(sum + d1))));
 }
+
+/////////// Varphi2 SAMPLER - end - equation (8) //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+
+
+/////////// Combined blocked SAMPLER - start  //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
 
 arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept) 
 {
@@ -596,7 +635,7 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
   
   // w
   ////-------------------
-  arma::mat w(Rcpp::rexp(m*n,1));
+  arma::mat w(Rcpp::rexp(m*n,1.0));
   w.reshape(m,n);
   
   
@@ -681,3 +720,7 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
   // return (Rcpp::List::create(Rcpp::Named("w", w))); 
 }
 
+
+/////////// Combined blocked SAMPLER - end  //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////

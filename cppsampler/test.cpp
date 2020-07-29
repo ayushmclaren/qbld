@@ -32,36 +32,29 @@ int yo(arma::mat*A, arma::mat*D,int m,int n)
   }
 */
  
- 
- // [[Rcpp::export]]
-
- arma::mat ok1(int tt)
+ arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept) 
  {
-   int m = 10;
-   int n = 5000;
-   
-  // arma::mat out(m,n,arma::fill::zeros);
-   
-   return(arma::mvnrnd(arma::vec(10,arma::fill::ones),arma::eye(10,10),5000));
-  // return(out);
+    arma::uvec IDX = arma::regspace<arma::uvec>(start,  j,  (*X).n_cols-1);
+    
+    if(intercept == TRUE)
+    {
+       int rw = (*X).n_rows;
+       return(arma::join_rows(arma::vec(rw,arma::fill::ones),(*X).cols(IDX)));
+    }
+    
+    return (*X).cols(IDX);
  }
  
  
  // [[Rcpp::export]]
- 
-Rcpp::RObject ok2(int n, arma::vec mu,arma::mat sigma,int ncores,bool ischol)
- {
-   //int m = 10;
-   //int n = 5000;
-   
-   //arma::mat out(m,n,arma::fill::zeros);
-   Rcpp::Environment pkg = Rcpp::Environment::namespace_env("mvnfast");
-   Rcpp::Function f = pkg["rmvnCpp"];
-   //bool fal = FALSE;
-   
-   return(f(n,mu,sigma,ncores,ischol,NULL));
- }
- 
+    arma::mat ok(int tt)
+    {
+       int m = 3;
+       int n = 4;
+       arma::mat w(Rcpp::rexp(m*n,1.0));
+       w.reshape(m,n);
+       return(w);
+    }
  
  
  
