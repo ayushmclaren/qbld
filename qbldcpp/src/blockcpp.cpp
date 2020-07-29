@@ -1,4 +1,4 @@
-//' @useDynLib Gqbldcpp
+//' @useDynLib qbldcpp
 //' @importFrom Rcpp sourceCpp
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
 #include "qbld.h"

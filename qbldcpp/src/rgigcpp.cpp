@@ -1,5 +1,5 @@
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
-//' @useDynLib Gqbldcpp
+//' @useDynLib qbldcpp
 //' @importFrom Rcpp sourceCpp
 #include <RcppArmadillo.h>
 #include"qbld.h"
