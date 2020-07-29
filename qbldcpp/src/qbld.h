@@ -11,7 +11,7 @@ int rgig_conc(arma::vec*out, int n, double lambda, int check, double omega, doub
 arma::vec rgig(double n,double lambda,double a,double b);
 
 //AL distbn function
-arma::vec rald_mix(double n,double mu,double sigma,double p);
+arma::vec raldmix(double n,double mu,double sigma,double p);
 
 // Generic data generator for the model 
 Rcpp::List datagen(int n,int m,double p);
@@ -19,7 +19,7 @@ Rcpp::List datagen(int n,int m,double p);
 // Samplers
 
 //sampleBeta - Block
-arma::vec sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n);
+int sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n, arma::mat* beta,int sim);
 
 //sampleZ - Block
 int sampleZ(arma::mat*zprev, arma::mat*y, arma::cube*X, arma::vec beta, arma::cube*S, double theta, arma::mat*w, double varphi2, double tau2, int m, int n, arma::mat*z);
@@ -48,6 +48,7 @@ int sampleBeta_2(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, arma::cub
 
 //FinalBlock
 arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept);
-Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin);
+Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin);
+Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin);
 
 #endif

@@ -1,8 +1,9 @@
+//' @useDynLib Gqbldcpp
+//' @importFrom Rcpp sourceCpp
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
-
+#include "qbld.h"
 // we only include RcppArmadillo.h which pulls Rcpp.h in for us
 #include "RcppArmadillo.h"
-#include "qbld.h"
 //#include "RcppDist.h"
 
 // via the depends attribute we tell Rcpp to create hooks for
@@ -22,7 +23,6 @@
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
-
 arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept) 
 {
   arma::uvec IDX = arma::regspace<arma::uvec>(start,  j,  (*X).n_cols-1);
@@ -36,12 +36,9 @@ arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept)
   return (*X).cols(IDX);
 }
 
-
-// [[Rcpp::export]]
-
 // y is the output variable, x is fixed, s is random 
-
-Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin)
+// [[Rcpp::export]]
+Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin)
 {
   
   int m = y.n_rows;

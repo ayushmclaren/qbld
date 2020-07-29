@@ -11,7 +11,9 @@
 // [[Rcpp::depends(RcppArmadillo,RcppDist)]]
 
 
-// This function draws the fixed effects parameter beta marginally (unblocked)
+
+// This function draws the fixed effects parameter beta marginally
+// Note that pointers are passed to avoid unneccesary copy!
 //--------------------------------------------------------------------------
 // Output
 // beta      : Gibbs draw of beta, a column vector (k x 1)
@@ -19,7 +21,7 @@
 // z         : Latent response variable, matrix of size (m x n)
 // x         : covariates including a column of ones, size (k x m x n)
 // s         : random-effects covariates, size (l x m x n)
-// alpha     : random-effects parameter, matrix of size (l x n)
+// alpha     : random-effects parameter has been integrated out
 // w         : matrix, size (m x n)
 // varphi2   : scalar quantity
 // tau2      : parameter from normal-exponential mixture of Laplace dist.
@@ -28,36 +30,40 @@
 // invB0b0   : prior precision times prior mean
 //--------------------------------------------------------------------------
 
-/////////// BETA SAMPLER - start - equation (9) //////////
+/////////// BETA SAMPLER - start - equation (4) //////////
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
-int sampleBeta_2(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, arma::cube *alpha ,double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n,arma::mat* beta,int sim)
+int sampleBeta(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n, arma::mat* beta,int sim)
 {
   arma::mat sumvar(k,k,arma::fill::zeros);
   arma::vec summean(k,arma::fill::zeros);
-  //arma::mat vari(k,k,arma::fill::zeros);
-  //arma::vec meani(k,arma::fill::zeros);
-  arma::mat inv_phi(k,m,arma::fill::zeros);
+  // arma::mat vari(k,k,arma::fill::zeros);
+  //  arma::vec meani(k,arma::fill::zeros);
+  //arma::mat D1(m,m,arma::fill::zeros);
+  arma::mat inv_omega(k,m,arma::fill::zeros);
   
-  for(int i=0; i<n ; i++)
+  for(int i=0;i<n;i++)
   {
-    inv_phi = ((*X).slice(i))*(arma::diagmat(tau2*((*w).col(i))).i());
+    //D1.diag() = tau2*((*w).col(i));
+    inv_omega = ((*X).slice(i))*((varphi2*((((*S).slice(i)).t())*((*S).slice(i))) + arma::diagmat(tau2*((*w).col(i)))).i());
     
     //vari 
-    sumvar  += inv_phi*(((*X).slice(i)).t());
+    sumvar  += inv_omega*(((*X).slice(i)).t());
     //meani 
-    summean  += inv_phi*((*z).col(i) - theta*((*w).col(i)) - (((*S).slice(i)).t())*((*alpha).slice(sim-1)).col(i));
+    summean += inv_omega*((*z).col(i) - theta*((*w).col(i)));
     
-    // sumvar  = sumvar + vari;
-    //  summean = summean + meani;
+    // sumvar  += vari;
+    //  summean += meani;
   }
   
-  sumvar  = arma::inv_sympd((*invB0) + sumvar);
+  sumvar  = ((*invB0) + sumvar).i();
+  //arma::inv_sympd((*invB0) + sumvar);
   summean = sumvar*((*invB0b0) + summean);
   
   (*beta).col(sim) = arma::mvnrnd(summean,sumvar,1);
   return(0);
 }
-/////////// BETA SAMPLER - end - equation (9) //////////
+
+/////////// BETA SAMPLER - end - equation (4) //////////
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////

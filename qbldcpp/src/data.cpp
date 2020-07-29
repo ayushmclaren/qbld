@@ -1,8 +1,10 @@
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+//' @useDynLib Gqbldcpp
+//' @importFrom Rcpp sourceCpp
 
 // we only include RcppArmadillo.h which pulls Rcpp.h in for us
 #include "RcppArmadillo.h"
-//#include "qbld.h"
+#include "qbld.h"
 //#include "RcppDist.h"
 
 // via the depends attribute we tell Rcpp to create hooks for
@@ -16,7 +18,6 @@
 // via the exports attribute we tell Rcpp to make this function
 // available from R
 //
-
 
 ////////////////////////////////////////////////////
 // Data Generation
@@ -42,7 +43,7 @@ Rcpp::List datagen(int n,int m,double p)
   arma::mat y(m,n);
   
   //double p = 0.25;
-  arma::mat epsilon(rald_mix(m*n,0,1,p));
+  arma::mat epsilon(raldmix(m*n,0,1,p));
   epsilon.reshape(m,n);
   
   
@@ -65,3 +66,4 @@ Rcpp::List datagen(int n,int m,double p)
   
   return (Rcpp::List::create(Rcpp::Named("y", y),Rcpp::Named("x", datax),Rcpp::Named("s", datas)));
 }
+

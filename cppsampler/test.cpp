@@ -45,8 +45,6 @@ int yo(arma::mat*A, arma::mat*D,int m,int n)
     return (*X).cols(IDX);
  }
  
- 
- // [[Rcpp::export]]
     arma::mat ok(int tt)
     {
        int m = 3;

@@ -1,10 +1,11 @@
+
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
-
+//' @useDynLib Gqbldcpp
+//' @importFrom Rcpp sourceCpp
 // we only include RcppArmadillo.h which pulls Rcpp.h in for us
-#include "RcppArmadillo.h"
 #include "qbld.h"
-//#include "RcppDist.h"
-
+#include "RcppArmadillo.h"
+#include "RcppDist.h"
 // via the depends attribute we tell Rcpp to create hooks for
 // RcppArmadillo so that the build process will know what to do
 //
@@ -17,31 +18,18 @@
 // available from R
 //
 
-// picks out every jth column from a matrix from start to end
-/////////// Combined blocked SAMPLER - start  //////////
+//double o(arma::cube *a)
+//{
+//  return(((*a).slice(1))(1,1));
+//  }
+
+/////////// Combined Unblocked SAMPLER - start  //////////
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
-
-
-arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept) 
-{
-  arma::uvec IDX = arma::regspace<arma::uvec>(start,  j,  (*X).n_cols-1);
-  
-  if(intercept == TRUE)
-  {
-    int rw = (*X).n_rows;
-    return(arma::join_rows(arma::vec(rw,arma::fill::ones),(*X).cols(IDX)));
-  }
-  
-  return (*X).cols(IDX);
-}
-
-
-// [[Rcpp::export]]
 
 // y is the output variable, x is fixed, s is random 
-
-Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin)
+// [[Rcpp::export]]
+Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin)
 {
   
   int m = y.n_rows;
@@ -111,7 +99,7 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
   
   // w
   ////-------------------
-  arma::mat w(Rcpp::rexp(m*n,1.0));
+  arma::mat w(Rcpp::rexp(m*n,1));
   w.reshape(m,n);
   
   
@@ -166,37 +154,40 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
     //int sim = 1;
     
     // if(sim/10.0 == sim/10)
-    //  Rcpp::Rcout << "No. of sim: " << sim << "\n";
+    // Rcpp::Rcout << sim << "\n";
     
     ////--------- Sample beta,z marginally of alpha in a block --------------
     //beta_out.col(sim) = 
-    sampleBeta(&z,&X,&S,&w,varphi2(sim-1),tau2,theta,&invB0,&invB0b0,k,m,n,&beta_out,sim);
-    
-    //////--------- Sample z, marginally of alpha -----------------------------
-    ///// Draws random numbers from trucnated MVN (Geweke, 1991).
-    zPrev = z;
-    //z = 
-    sampleZ(&zPrev,&y,&X,beta_out.col(sim),&S,theta,&w,varphi2(sim-1),tau2,m,n,&z);
+    sampleBeta_2(&z,&X,&S,&w,&alpha,varphi2(sim-1),tau2,theta,&invB0,&invB0b0,k,m,n,&beta_out,sim);
+    //Rcpp::Rcout << "bet" << "\n";
     
     ////---------- Sample alpha conditionally on beta,z -------------------
     //alpha.slice(sim) = 
     sampleAlpha(&z,&X,&S,beta_out.col(sim),&w,tau2,theta,varphi2(sim-1),l,m,n,&alpha,sim);
     //sampleAlphafast(&z,&X,&S,beta_out.col(sim),&w,tau2,theta,varphi2(sim-1),l,m,n,&alpha,sim);
+    // Rcpp::Rcout << "alp" << "\n";
     
     /////--------- Sample w ---------------------------
     //w = 
     sampleW(&z,&X,&S,beta_out.col(sim),&alpha,tau2,theta,lambdaIndex,k,m,n,&w,sim);
+    //Rcpp::Rcout << "w" << "\n";
     
     ////--------- Sample varphi2 ---------------------
     varphi2(sim) = sampleVarphi2(&alpha,c1,d1,l,n,sim);
+    //  Rcpp::Rcout << "varphi2" << "\n";
     
+    //////--------- Sample z, marginally of alpha -----------------------------
+    ///// Draws random numbers from trucnated MVN (Geweke, 1991).
+    //z = 
+    sampleZ_2(&y,&X,beta_out.col(sim),&S,&alpha,theta,&w,varphi2(sim),tau2,m,n,&z,sim);
+    //  Rcpp::Rcout << "z" << "\n";
   }
   
   return (Rcpp::List::create(Rcpp::Named("Beta", beta_out),Rcpp::Named("Alpha", alpha),Rcpp::Named("Varphi2", varphi2))); 
   // return (Rcpp::List::create(Rcpp::Named("w", w))); 
 }
 
+/////////// Combined unblocked SAMPLER - end //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
-/////////// Combined blocked SAMPLER - end  //////////
-//////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////

@@ -1,3 +1,5 @@
+if(0)
+{
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
 
 // we only include RcppArmadillo.h which pulls Rcpp.h in for us
@@ -619,3 +621,5 @@ Rcpp::List qbldcpp_unblock(int nsim, double p, arma::mat y, arma::mat datax, arm
 /////////// Combined unblocked SAMPLER - end //////////
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
+
+}
