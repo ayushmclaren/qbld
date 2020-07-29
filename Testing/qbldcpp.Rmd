@@ -1,0 +1,290 @@
+---
+title: "QBLD"
+author: "Ayush Agarwal"
+date: "29/07/2020"
+output: pdf_document
+---
+
+## How to get qbldcpp?  
+
+* Download the qbldcpp folder from the **[GitHub repo](https://github.com/ayushmclaren/gsoc_qbld/tree/master/qbldcpp)**,  
+* Run the following commands :-  
+  * R CMD build qbldcpp
+  * R CMD install qbldcpp_1.0.tar.gz  
+  
+After finishing the steps:
+```{r,message=FALSE}
+library(qbldcpp)
+library(mcmcse)
+library(microbenchmark)
+library(knitr)
+
+set.seed(10)
+#Load the datasets
+data(y25) #25th quantile
+data(y50) #50th quantile
+data(y75) #75th quantile
+data("datas") #random effects covariates
+data("datax") #fixed effects covariates
+
+##Common Parameters
+nsim = 5000
+x_intercept = FALSE
+s_intercept = TRUE #add the column of 1s to model matrix
+b0 = rep(0,3)
+B0 = 10*diag(3)
+c1 = 10
+d1 = 9
+burnin = FALSE
+```
+\newpage
+
+## Blocked Sampler
+
+### 25th quantile
+
+```{r,results='hide'}
+p = 0.25
+time_a = Sys.time()
+run25 <- qbldf(nsim,p,y25,datax,datas,x_intercept,s_intercept,b0,B0,c1,d1,burnin)
+time_b = Sys.time() #Time elapsed
+
+saveRDS(run25,file="run25.rds")
+beta25 = t(run25[[1]])
+varphi25 = run25[[3]]
+
+```
+
+```{r,echo=FALSE}
+paste0("Time elapsed = ",round(time_b-time_a,2)," min")
+
+df <- data.frame(Parameter=c("Beta1","Beta2","Beta3","Varphi2"),True=c(-5.0,6.0,4.0,1.0),
+                 Paper_mean = c(-5.33,6.16,4.34,0.95),Paper_sd=c(0.22,0.28,0.24,0.16),
+                 My_mean= round(c(colMeans(beta25),mean(varphi25)),2),
+              My_sd=round(c(sd(beta25[,1]),sd(beta25[,2]),sd(beta25[,3]),sd(varphi25)),2))
+
+kable(df)
+```
+
+**Plots**
+```{r}
+par(mfrow=c(2,2))
+plot.ts(beta25[,1],main="Beta1")
+plot.ts(beta25[,2],main="Beta2")
+plot.ts(beta25[,3],main="Beta3")
+plot.ts(varphi25,main="Varphi2")
+
+par(mfrow=c(2,2))
+acf(beta25[,1],main="Beta1")
+acf(beta25[,2],main="Beta2")
+acf(beta25[,3],main="Beta3")
+acf(varphi25,main="Varphi2")
+```
+
+
+### 50th quantile
+
+```{r,results='hide'}
+p = 0.50
+time_a = Sys.time()
+run50 <- qbldf(nsim,p,y50,datax,datas,x_intercept,s_intercept,b0,B0,c1,d1,burnin)
+time_b = Sys.time() #Time elapsed
+
+saveRDS(run50,file="run50.rds")
+beta50 = t(run50[[1]])
+varphi50 = run50[[3]]
+
+```
+
+```{r,echo=FALSE}
+paste0("Time elapsed = ",round(time_b-time_a,2)," min")
+
+df <- data.frame(Parameter=c("Beta1","Beta2","Beta3","Varphi2"),True=c(-5.0,6.0,4.0,1.0),
+                 Paper_mean = c(-5.06,5.96,3.88,0.66),Paper_sd=c(0.18,0.22,0.19,0.11),
+                 My_mean= round(c(colMeans(beta50),mean(varphi50)),2),
+              My_sd=round(c(sd(beta50[,1]),sd(beta50[,2]),sd(beta50[,3]),sd(varphi50)),2))
+
+kable(df)
+```
+
+**Plots**
+```{r}
+par(mfrow=c(2,2))
+plot.ts(beta50[,1],main="Beta1")
+plot.ts(beta50[,2],main="Beta2")
+plot.ts(beta50[,3],main="Beta3")
+plot.ts(varphi50,main="Varphi2")
+
+par(mfrow=c(2,2))
+acf(beta50[,1],main="Beta1")
+acf(beta50[,2],main="Beta2")
+acf(beta50[,3],main="Beta3")
+acf(varphi50,main="Varphi2")
+```
+
+
+### 75th quantile
+
+```{r,results='hide'}
+p = 0.75
+time_a = Sys.time()
+run75 <- qbldf(nsim,p,y75,datax,datas,x_intercept,s_intercept,b0,B0,c1,d1,burnin)
+time_b = Sys.time() #Time elapsed
+
+saveRDS(run75,file="run75.rds")
+beta75 = t(run75[[1]])
+varphi75 = run75[[3]]
+
+```
+
+```{r,echo=FALSE}
+paste0("Time elapsed = ",round(time_b-time_a,2)," min")
+
+df <- data.frame(Parameter=c("Beta1","Beta2","Beta3","Varphi2"),True=c(-5.0,6.0,4.0,1.0),
+                 Paper_mean = c(-5.08,6.16,3.88,0.81),Paper_sd=c(0.24,0.27,0.23,0.15),
+                 My_mean= round(c(colMeans(beta75),mean(varphi75)),2),
+              My_sd=round(c(sd(beta75[,1]),sd(beta75[,2]),sd(beta75[,3]),sd(varphi75)),2))
+
+kable(df)
+```
+
+**Plots**
+```{r}
+par(mfrow=c(2,2))
+plot.ts(beta75[,1],main="Beta1")
+plot.ts(beta75[,2],main="Beta2")
+plot.ts(beta75[,3],main="Beta3")
+plot.ts(varphi75,main="Varphi2")
+
+par(mfrow=c(2,2))
+acf(beta75[,1],main="Beta1")
+acf(beta75[,2],main="Beta2")
+acf(beta75[,3],main="Beta3")
+acf(varphi75,main="Varphi2")
+```
+
+
+## Unblocked Sampler  
+
+### 25th quantile
+
+```{r,results='hide'}
+nsim = 12000
+p = 0.25
+time_a = Sys.time()
+run25_unblock <- qbldunblock(nsim,p,y25,datax,datas,x_intercept,s_intercept,b0,B0,c1,d1,burnin)
+time_b = Sys.time() #Time elapsed
+
+saveRDS(run25_unblock,file="run25_unblock.rds")
+beta25 = t(run25_unblock[[1]])
+varphi25 = run25_unblock[[3]]
+
+```
+
+```{r,echo=FALSE}
+paste0("Time elapsed = ",round(time_b-time_a,2)," min")
+
+df <- data.frame(Parameter=c("Beta1","Beta2","Beta3","Varphi2"),True=c(-5.0,6.0,4.0,1.0),
+                 Paper_mean = c(-5.32,6.15,4.35,0.95),Paper_sd=c(0.22,0.27,0.24,0.16),
+                 My_mean= round(c(colMeans(beta25),mean(varphi25)),2),
+              My_sd=round(c(sd(beta25[,1]),sd(beta25[,2]),sd(beta25[,3]),sd(varphi25)),2))
+
+kable(df)
+```
+
+**Plots**
+```{r}
+par(mfrow=c(2,2))
+plot.ts(beta25[,1],main="Beta1")
+plot.ts(beta25[,2],main="Beta2")
+plot.ts(beta25[,3],main="Beta3")
+plot.ts(varphi25,main="Varphi2")
+
+par(mfrow=c(2,2))
+acf(beta25[,1],main="Beta1")
+acf(beta25[,2],main="Beta2")
+acf(beta25[,3],main="Beta3")
+acf(varphi25,main="Varphi2")
+```
+
+
+### 50th quantile
+
+```{r,results='hide'}
+p = 0.50
+time_a = Sys.time()
+run50_unblock <- qbldunblock(nsim,p,y50,datax,datas,x_intercept,s_intercept,b0,B0,c1,d1,burnin)
+time_b = Sys.time() #Time elapsed
+
+saveRDS(run50_unblock,file="run50_unblock.rds")
+beta50 = t(run50_unblock[[1]])
+varphi50 = run50_unblock[[3]]
+
+```
+
+```{r,echo=FALSE}
+paste0("Time elapsed = ",round(time_b-time_a,2)," min")
+
+df <- data.frame(Parameter=c("Beta1","Beta2","Beta3","Varphi2"),True=c(-5.0,6.0,4.0,1.0),
+                 Paper_mean = c(-5.05,5.95,3.88,0.66),Paper_sd=c(0.20,0.23,0.20,0.11),
+                 My_mean= round(c(colMeans(beta50),mean(varphi50)),2),
+              My_sd=round(c(sd(beta50[,1]),sd(beta50[,2]),sd(beta50[,3]),sd(varphi50)),2))
+
+kable(df)
+```
+
+**Plots**
+```{r}
+par(mfrow=c(2,2))
+plot.ts(beta50[,1],main="Beta1")
+plot.ts(beta50[,2],main="Beta2")
+plot.ts(beta50[,3],main="Beta3")
+plot.ts(varphi50,main="Varphi2")
+
+par(mfrow=c(2,2))
+acf(beta50[,1],main="Beta1")
+acf(beta50[,2],main="Beta2")
+acf(beta50[,3],main="Beta3")
+acf(varphi50,main="Varphi2")
+```
+
+
+### 75th quantile
+
+```{r,results='hide'}
+p = 0.75
+time_a = Sys.time()
+run75_unblock <- qbldunblock(nsim,p,y75,datax,datas,x_intercept,s_intercept,b0,B0,c1,d1,burnin)
+time_b = Sys.time() #Time elapsed
+
+saveRDS(run75_unblock,file="run75_unblock.rds")
+beta75 = t(run75_unblock[[1]])
+varphi75 = run75_unblock[[3]]
+
+```
+
+```{r,echo=FALSE}
+paste0("Time elapsed = ",round(time_b-time_a,2)," min")
+
+df <- data.frame(Parameter=c("Beta1","Beta2","Beta3","Varphi2"),True=c(-5.0,6.0,4.0,1.0),
+                 Paper_mean = c(-5.08,6.16,3.88,0.81),Paper_sd=c(0.24,0.27,0.23,0.15),
+                 My_mean= round(c(colMeans(beta75),mean(varphi75)),2),
+              My_sd=round(c(sd(beta75[,1]),sd(beta75[,2]),sd(beta75[,3]),sd(varphi75)),2))
+
+kable(df)
+```
+
+**Plots**
+```{r}
+par(mfrow=c(2,2))
+plot.ts(beta75[,1],main="Beta1")
+plot.ts(beta75[,2],main="Beta2")
+plot.ts(beta75[,3],main="Beta3")
+plot.ts(varphi75,main="Varphi2")
+
+par(mfrow=c(2,2))
+acf(beta75[,1],main="Beta1")
+acf(beta75[,2],main="Beta2")
+acf(beta75[,3],main="Beta3")
+acf(varphi75,main="Varphi2")
+```
