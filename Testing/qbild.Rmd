@@ -1,0 +1,115 @@
+---
+title: "Qbild"
+author: "Ayush Agarwal"
+date: "8/7/2020"
+output: pdf_document
+---
+
+## How to get Qbild?  
+
+* Download the qbldcpp folder from the **[GitHub repo](https://github.com/ayushmclaren/gsoc_qbld)**,  
+* Run the following commands :-  
+  * R CMD build qbild
+  * R CMD install qbildcpp_1.0.tar.gz  
+  
+After finishing the steps:  
+
+**Load and Manipulate Data**  
+
+```{r,message=FALSE}
+library(qbild)
+library(knitr)
+
+set.seed(10)
+
+##############
+## Loading and manipulation of the data set
+##############
+
+data <- readRDS("~/airpollution.rda")
+
+## extract names for fixed variables, to be used in plots/summary
+names_fixed <- names(data[,3:5])
+
+### response variable, check that we have 4 outcomes per id
+y = matrix(data[,2],nrow=4) ## y is of the form m*n, here m = 4
+
+### for numeric entries
+x1 = matrix(data[,3],nrow=4)
+x3 = matrix(data[,5],nrow=4)
+
+### for factor entries, convert to numeric 
+data[,4] = as.numeric(levels(data[,4]))[data[,4]]
+x2 = matrix(data[,4],nrow=4)
+
+fixed = cbind(x1,x2,x3) #of the form m*kn; where k is the number of covariates
+
+##### if no random(fixed) covariates present, add an intercept matrix as follows
+random = matrix(1,nrow=4,ncol=ncol(y)) #of the form m*ln; where k is the number of covariates
+
+##Set Parameters
+nsim = 5000
+p = 0.25 ##default for the sampler as well
+fixed_intercept = TRUE #add the column of 1s to model matrix
+random_intercept = FALSE #already added as a matrix
+
+### Note : b0, B0, c1, d1 are set by default and need not be specified
+#### Burn is set to 0 buy default
+### Summarize prints the summary and is TRUE by default
+#### Method defaults to blocked, and uses regex to avoid issues with capitalizations
+```
+
+
+### Blocked  
+
+**Running the sampler**  
+
+```{r}
+time_a = Sys.time()
+out <- model.qbld(nsim=nsim, p=p, y=y, fixed=fixed, random=random, 
+                  fixed_intercept=fixed_intercept, 
+                  random_intercept=random_intercept, method = "block", 
+                  summarize = TRUE, names_fixed=names_fixed) 
+time_b = Sys.time() 
+paste0("Time elapsed = ",round(time_b-time_a,2)," sec")
+```
+
+**Plotting the output**  
+
+```{r}
+plot(out) #rugplot allows for coda type points concentration
+```
+
+### Unblocked  
+
+**Running the sampler**  
+
+```{r}
+time_a = Sys.time()
+out2 <- model.qbld(nsim=nsim, p=p, y=y, fixed=fixed, random=random, 
+                  fixed_intercept=fixed_intercept, 
+                  random_intercept=random_intercept, method = "Unblock", 
+                  summarize = TRUE,names_fixed = NULL) #names not added and will be auto generated
+time_b = Sys.time() 
+paste0("Time elapsed = ",round(time_b-time_a,2)," sec")
+```
+
+**Plotting the output**  
+
+```{r}
+plot(out2)  #rugplot allows for coda type points concentration
+```
+
+```{r}
+### load an exisiting run and try summary/plot on it
+run25 <- readRDS("~/Desktop/gsoc_qbld/Testing/run25.rds")
+run25[[1]] = t(run25[[1]])
+
+### make a qbld object out of existing object
+out3 <- make.qbld(run25,p=0.25,nsim=5000,burn=0,
+        varnames.fixed = c("beta1","beta2","beta3","varphi2")
+        ,which="blocked")
+
+summary(out3) ##AIC,BIC,loglike missing as cannot be calculated
+plot(out3)
+```
