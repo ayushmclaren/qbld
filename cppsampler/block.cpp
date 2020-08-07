@@ -1,5 +1,3 @@
-if(0)
-{
 
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
 
@@ -568,22 +566,22 @@ arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept)
 
 // y is the output variable, x is fixed, s is random 
 
-Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,bool burnin)
+Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l)
 {
   
-  int m = y.n_rows;
-  int n = y.n_cols;
-  int k =0,l=0;
+  // int m = y.n_rows;
+  //int n = y.n_cols;
+  //int k =0,l=0;
   
-  if(x_intercept == FALSE)
-    k = floor(datax.n_cols/n); 
-  else
-    k = floor(datax.n_cols/n) + 1; //add an intercept column in model matrix
+  //if(x_intercept == FALSE)
+  //k = floor(datax.n_cols/n); 
+  //else
+  //k = floor(datax.n_cols/n) + 1; //add an intercept column in model matrix
   
-  if(s_intercept == FALSE)
-    l = floor(datas.n_cols/n);
-  else
-    l = floor(datas.n_cols/n) + 1; //add an intercept column in model matrix
+  //if(s_intercept == FALSE)
+  //  l = floor(datas.n_cols/n);
+  //else
+  //l = floor(datas.n_cols/n) + 1; //add an intercept column in model matrix
   
   arma::mat z = y - 0.5; //start for z
   arma::mat zPrev = z;
@@ -599,13 +597,13 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
   
   /// MCMC and burnins
   //  nsim  = 12000;
-  int burn  = 0;
-  if(burnin == TRUE)
-  {
-    burn = 0.25*nsim;
-  }
+  //int burn  = 0;
+  //if(burnin == TRUE)
+  //{
+  //burn = 0.25*nsim;
+  //}
   
-  int MCMC  = burn + nsim;    ///Total number of simulation
+  int MCMC  = nsim;    ///Total number of simulation
   
   
   //// Prior Distributions and Initializations!
@@ -675,10 +673,10 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
   //    }
   
   
-  Rcpp::Rcout << "The sampler generates about 1250-1350 samples a minute, please wait while we're processing your request.\n";
-  Rcpp::Rcout << "I recommend listening to Vienna by Billy Joel while you wait for every 5000 samples.\n";
+  Rcpp::Rcout << "Please wait while we're processing your request.\n";
+  Rcpp::Rcout << "I recommend listening to Vienna by Billy Joel while you wait.\n";
   Rcpp::Rcout << "https://music.apple.com/in/album/vienna/158617952?i=158618071\n";
-  Rcpp::Rcout << "OR Everywhere by Fleetwood Mac, Make it 10,000 XD.\n";
+  Rcpp::Rcout << "OR Everywhere by Fleetwood Mac.\n";
   Rcpp::Rcout << "https://music.apple.com/in/album/everywhere/202271826?i=202272247\n";
   
   
@@ -692,8 +690,8 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
   {
     //int sim = 1;
     
-    // if(sim/10.0 == sim/10)
-    //  Rcpp::Rcout << "No. of sim: " << sim << "\n";
+    if(sim%100 == 0)
+      Rcpp::Rcout << "No. of sim: " << sim << "\n";
     
     ////--------- Sample beta,z marginally of alpha in a block --------------
     //beta_out.col(sim) = 
@@ -719,7 +717,7 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
     
   }
   
-  return (Rcpp::List::create(Rcpp::Named("Beta", beta_out),Rcpp::Named("Alpha", alpha),Rcpp::Named("Varphi2", varphi2))); 
+  return (Rcpp::List::create(Rcpp::Named("Beta", beta_out.t()),Rcpp::Named("Alpha", alpha),Rcpp::Named("Varphi2", varphi2))); 
   // return (Rcpp::List::create(Rcpp::Named("w", w))); 
 }
 
@@ -727,4 +725,3 @@ Rcpp::List qbldcpp_f(int nsim, double p, arma::mat y, arma::mat datax, arma::mat
 /////////// Combined blocked SAMPLER - end  //////////
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
-}

@@ -1,24 +1,24 @@
-\name{qbldcpp-package}
-\alias{qbldcpp-package}
-\alias{qbldcpp}
+\name{qbild-package}
+\alias{qbild-package}
+\alias{qbild}
 \docType{package}
 \title{
-\packageTitle{qbldcpp}
+\packageTitle{qbild}
 }
 \description{
-\packageDescription{qbldcpp}
+\packageDescription{qbild}
 }
 \details{
 
 The DESCRIPTION file:
-\packageDESCRIPTION{qbldcpp}
-\packageIndices{qbldcpp}
+\packageDESCRIPTION{qbild}
+\packageIndices{qbild}
 ~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
-\packageAuthor{qbldcpp}
+\packageAuthor{qbild}
 
-Maintainer: \packageMaintainer{qbldcpp}
+Maintainer: \packageMaintainer{qbild}
 }
 \references{
 ~~ Literature or other references for background information ~~

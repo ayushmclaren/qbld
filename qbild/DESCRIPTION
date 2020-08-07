@@ -1,0 +1,22 @@
+Package: qbild
+Type: Package
+Title: Quantile Regression for Binary Longitudinal Data
+Version: 1.0
+Date: 2020-07-29
+Authors@R: person("Ayush", "Agarwal", email = "ayush.agarwal50@gmail.com",
+                  role = c("aut", "cre"))
+Description: This project follows Rahman and Vossmeyer (2019) as its motivating literature,    
+   and contributes to the three literatures by extending the various methodologies to a 
+   hierarchical Bayesian quantile regression model for binary longitudinal data (QBLD) 
+   and proposing a Markov chain Monte Carlo (MCMC) algorithm to estimate the model. 
+   The model handles both common (fixed) and individual-specific (random) parameters 
+   (commonly referred to as mixed effects in statistics). The algorithm implements 
+   a blocking procedure that is computationally efficient and the distributions involved 
+   allow for straightforward calculations of covariate effects.
+License: GPL-3
+Imports: 
+    Rcpp,stats,stableGR,mcmcse,grDevices,graphics
+LinkingTo: Rcpp, RcppArmadillo,RcppDist
+Depends: 
+    R (>= 2.10),stableGR,mcmcse
+RoxygenNote: 7.1.0

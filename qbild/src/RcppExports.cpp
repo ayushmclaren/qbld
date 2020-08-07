@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // qbldf
-Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1, bool burnin);
-RcppExport SEXP _qbldcpp_qbldf(SEXP nsimSEXP, SEXP pSEXP, SEXP ySEXP, SEXP dataxSEXP, SEXP datasSEXP, SEXP x_interceptSEXP, SEXP s_interceptSEXP, SEXP b0SEXP, SEXP B0SEXP, SEXP c1SEXP, SEXP d1SEXP, SEXP burninSEXP) {
+Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l);
+RcppExport SEXP _qbild_qbldf(SEXP nsimSEXP, SEXP pSEXP, SEXP ySEXP, SEXP dataxSEXP, SEXP datasSEXP, SEXP x_interceptSEXP, SEXP s_interceptSEXP, SEXP b0SEXP, SEXP B0SEXP, SEXP c1SEXP, SEXP d1SEXP, SEXP mSEXP, SEXP nSEXP, SEXP kSEXP, SEXP lSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,14 +23,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type B0(B0SEXP);
     Rcpp::traits::input_parameter< double >::type c1(c1SEXP);
     Rcpp::traits::input_parameter< double >::type d1(d1SEXP);
-    Rcpp::traits::input_parameter< bool >::type burnin(burninSEXP);
-    rcpp_result_gen = Rcpp::wrap(qbldf(nsim, p, y, datax, datas, x_intercept, s_intercept, b0, B0, c1, d1, burnin));
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type l(lSEXP);
+    rcpp_result_gen = Rcpp::wrap(qbldf(nsim, p, y, datax, datas, x_intercept, s_intercept, b0, B0, c1, d1, m, n, k, l));
     return rcpp_result_gen;
 END_RCPP
 }
 // datagen
 Rcpp::List datagen(int n, int m, double p);
-RcppExport SEXP _qbldcpp_datagen(SEXP nSEXP, SEXP mSEXP, SEXP pSEXP) {
+RcppExport SEXP _qbild_datagen(SEXP nSEXP, SEXP mSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -43,7 +46,7 @@ END_RCPP
 }
 // raldmix
 arma::vec raldmix(double n, double mu, double sigma, double p);
-RcppExport SEXP _qbldcpp_raldmix(SEXP nSEXP, SEXP muSEXP, SEXP sigmaSEXP, SEXP pSEXP) {
+RcppExport SEXP _qbild_raldmix(SEXP nSEXP, SEXP muSEXP, SEXP sigmaSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -57,7 +60,7 @@ END_RCPP
 }
 // rgig
 arma::vec rgig(double n, double lambda, double a, double b);
-RcppExport SEXP _qbldcpp_rgig(SEXP nSEXP, SEXP lambdaSEXP, SEXP aSEXP, SEXP bSEXP) {
+RcppExport SEXP _qbild_rgig(SEXP nSEXP, SEXP lambdaSEXP, SEXP aSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -70,8 +73,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // qbldunblock
-Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1, bool burnin);
-RcppExport SEXP _qbldcpp_qbldunblock(SEXP nsimSEXP, SEXP pSEXP, SEXP ySEXP, SEXP dataxSEXP, SEXP datasSEXP, SEXP x_interceptSEXP, SEXP s_interceptSEXP, SEXP b0SEXP, SEXP B0SEXP, SEXP c1SEXP, SEXP d1SEXP, SEXP burninSEXP) {
+Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l);
+RcppExport SEXP _qbild_qbldunblock(SEXP nsimSEXP, SEXP pSEXP, SEXP ySEXP, SEXP dataxSEXP, SEXP datasSEXP, SEXP x_interceptSEXP, SEXP s_interceptSEXP, SEXP b0SEXP, SEXP B0SEXP, SEXP c1SEXP, SEXP d1SEXP, SEXP mSEXP, SEXP nSEXP, SEXP kSEXP, SEXP lSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -86,22 +89,25 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type B0(B0SEXP);
     Rcpp::traits::input_parameter< double >::type c1(c1SEXP);
     Rcpp::traits::input_parameter< double >::type d1(d1SEXP);
-    Rcpp::traits::input_parameter< bool >::type burnin(burninSEXP);
-    rcpp_result_gen = Rcpp::wrap(qbldunblock(nsim, p, y, datax, datas, x_intercept, s_intercept, b0, B0, c1, d1, burnin));
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type l(lSEXP);
+    rcpp_result_gen = Rcpp::wrap(qbldunblock(nsim, p, y, datax, datas, x_intercept, s_intercept, b0, B0, c1, d1, m, n, k, l));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_qbldcpp_qbldf", (DL_FUNC) &_qbldcpp_qbldf, 12},
-    {"_qbldcpp_datagen", (DL_FUNC) &_qbldcpp_datagen, 3},
-    {"_qbldcpp_raldmix", (DL_FUNC) &_qbldcpp_raldmix, 4},
-    {"_qbldcpp_rgig", (DL_FUNC) &_qbldcpp_rgig, 4},
-    {"_qbldcpp_qbldunblock", (DL_FUNC) &_qbldcpp_qbldunblock, 12},
+    {"_qbild_qbldf", (DL_FUNC) &_qbild_qbldf, 15},
+    {"_qbild_datagen", (DL_FUNC) &_qbild_datagen, 3},
+    {"_qbild_raldmix", (DL_FUNC) &_qbild_raldmix, 4},
+    {"_qbild_rgig", (DL_FUNC) &_qbild_rgig, 4},
+    {"_qbild_qbldunblock", (DL_FUNC) &_qbild_qbldunblock, 15},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_qbldcpp(DllInfo *dll) {
+RcppExport void R_init_qbild(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
