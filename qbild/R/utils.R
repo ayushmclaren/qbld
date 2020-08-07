@@ -43,7 +43,7 @@ model.qbld <- function(nsim, p=0.25, y, fixed, random, fixed_intercept=TRUE, ran
   if(missing(d1))
     d1 = 10
   
-  if(is.null(names_fixed))
+  if(missing(names_fixed)||is.null(names_fixed))
   {
     if(fixed_intercept)
       varnames.fixed = c(paste("beta", 1:(k-1), sep = ""),"Varphi2") #Naming Beta1 to Betak
@@ -58,11 +58,11 @@ model.qbld <- function(nsim, p=0.25, y, fixed, random, fixed_intercept=TRUE, ran
     varnames.fixed = c("Intercept",varnames.fixed) #If intercept
   
   if(regexec("block",method,ignore.case=TRUE)[[1]][1]==1) #blocked
-    out = .Call(qbldf(nsim, p, y, fixed, random, fixed_intercept,
+    out = (qbldf(nsim, p, y, fixed, random, fixed_intercept,
                     random_intercept, b0, B0, c1, d1, m, n, k, l))
   
   if(regexec("unblock",method,ignore.case=TRUE)[[1]][1]==1) #unblocked
-    out = .Call(qbldunblock(nsim, p, y, fixed, random, fixed_intercept,
+    out = (qbldunblock(nsim, p, y, fixed, random, fixed_intercept,
                       random_intercept, b0, B0, c1, d1, m, n, k, l))
   
   if(is.null(out))
@@ -216,12 +216,12 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
     ## RGA replaced with safespec0
     #sp0 <- function(x) spectrum0(x)$spec
     if (is.list(data)) {
-      xmean <- c(round(colMeans(data[[1]]),2),mean(data[[3]]))
-      xsd <- c(round(apply(data[[1]], 2, sd),2),sd(data[[3]]))
+      xmean <- round(c(colMeans(data[[1]]),mean(data[[3]])),2)
+      xsd <- c(round(apply(data[[1]], 2, sd),2),round(sd(data[[3]]),2))
       xmcse <- c(round(mcse.mat(data[[1]]),3)[,2],round(mcse.mat(data[[3]]),3)[2])
       xess <- round(c(ess(data[[1]]), ess(data[[3]])),2)
       xsgr <- round(c(stable.GR((data[[1]]))$psrf,stable.GR((data[[3]]))$psrf),3)
-      varquant <- rbind(t(apply(data[[1]], 2, quantile, quantiles)), t(apply(data[[3]], 2, quantile, quantiles)))
+      varquant <- round(rbind(t(apply(data[[1]], 2, quantile, quantiles)), t(apply(data[[3]], 2, quantile, quantiles))),3)
       rownames(varquant) <- attr(data,"varnames")
     }
     else {
