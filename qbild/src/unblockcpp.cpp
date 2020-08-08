@@ -29,7 +29,7 @@
 
 // y is the output variable, x is fixed, s is random 
 // [[Rcpp::export]]
-Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,int m, int n, int k, int l)
+Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,int m, int n, int k, int l,bool verbose)
 {
   
   // int m = y.n_rows;
@@ -135,11 +135,11 @@ Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::m
   //      }
   //    }
   
-  Rcpp::Rcout << "Please wait while we're processing your request.\n";
-  Rcpp::Rcout << "I recommend listening to Vienna by Billy Joel while you wait.\n";
-  Rcpp::Rcout << "https://music.apple.com/in/album/vienna/158617952?i=158618071\n";
-  Rcpp::Rcout << "OR Everywhere by Fleetwood Mac.\n";
-  Rcpp::Rcout << "https://music.apple.com/in/album/everywhere/202271826?i=202272247\n";
+ // Rcpp::Rcout << "Please wait while we're processing your request.\n";
+//  Rcpp::Rcout << "I recommend listening to Vienna by Billy Joel while you wait.\n";
+//  Rcpp::Rcout << "https://music.apple.com/in/album/vienna/158617952?i=158618071\n";
+//  Rcpp::Rcout << "OR Everywhere by Fleetwood Mac.\n";
+//  Rcpp::Rcout << "https://music.apple.com/in/album/everywhere/202271826?i=202272247\n";
   
   
   ///-------------------------------------------------------------------------
@@ -152,7 +152,7 @@ Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::m
   {
     //int sim = 1;
     
-     if(sim%200 == 0)
+     if(verbose && sim%200 == 0)
       Rcpp::Rcout << "No. of sim: " << sim << "\n";
     
     ////--------- Sample beta,z marginally of alpha in a block --------------

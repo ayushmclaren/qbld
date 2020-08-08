@@ -48,7 +48,7 @@ int sampleBeta_2(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, arma::cub
 
 //FinalBlock
 arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept);
-Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l);
-Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,int m, int n, int k, int l);
+Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l,bool verbose);
+Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,int m, int n, int k, int l,bool verbose);
 
 #endif

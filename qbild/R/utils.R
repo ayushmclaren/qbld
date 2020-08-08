@@ -1,7 +1,8 @@
 #' @rdname qbild
 #' @export
-model.qbld <- function(nsim, p=0.25, y, fixed, random, fixed_intercept=TRUE, random_intercept=TRUE,
-                      b0, B0, c1, d1, burn=0, method="block", summarize=TRUE, names_fixed)
+model.qbld <- function(nsim, p=0.25, y, fixed, random, b0, B0, c1, d1,
+                      fixed_intercept=TRUE, random_intercept=TRUE, burn=0,
+                      method="block", names_fixed, summarize=FALSE, verbose=FALSE)
 {
   
   if(missing(nsim)||nsim==0||nsim%%1!=0)
@@ -59,11 +60,11 @@ model.qbld <- function(nsim, p=0.25, y, fixed, random, fixed_intercept=TRUE, ran
   
   if(regexec("block",method,ignore.case=TRUE)[[1]][1]==1) #blocked
     out = (qbldf(nsim, p, y, fixed, random, fixed_intercept,
-                    random_intercept, b0, B0, c1, d1, m, n, k, l))
+                    random_intercept, b0, B0, c1, d1, m, n, k, l, verbose))
   
   if(regexec("unblock",method,ignore.case=TRUE)[[1]][1]==1) #unblocked
     out = (qbldunblock(nsim, p, y, fixed, random, fixed_intercept,
-                      random_intercept, b0, B0, c1, d1, m, n, k, l))
+                      random_intercept, b0, B0, c1, d1, m, n, k, l, verbose))
   
   if(is.null(out))
     stop("Method is either 'block' or 'unblock'.")
@@ -299,19 +300,16 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
 
 "myplot" <- function (dat, l="covariate", trace, density) 
   {
-    
-        mn = mean(dat)
-    
         if(trace)
         {
           plot.ts(x=dat, main=paste("Trace of", l))
-          abline(h=mn,col="red")
+        #  abline(h=mn,col="red")
         }
   
         if(density)
         {
           plot(density(dat), main=paste("Density of", l))
-          abline(v=mn,col="blue")
+         # abline(v=mn,col="blue")
           rug(dat,col="red")
         }
   }
