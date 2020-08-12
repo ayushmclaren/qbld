@@ -47,8 +47,8 @@ int sampleZ_2(arma::mat*y, arma::cube*X, arma::vec beta, arma::cube*S, arma::cub
 int sampleBeta_2(arma::mat*z, arma::cube*X, arma::cube*S, arma::mat*w, arma::cube *alpha ,double varphi2, double tau2, double theta, arma::mat*invB0, arma::mat*invB0b0, int k, int m, int n,arma::mat* beta,int sim);
 
 //FinalBlock
-arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept);
-Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l,bool verbose);
-Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,int m, int n, int k, int l,bool verbose);
+arma::mat subset_mat(arma::mat* X, int start, int j);
+Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l,bool verbose);
+Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, arma::vec b0, arma::mat B0, double c1, double d1,int m, int n, int k, int l,bool verbose);
 
 #endif

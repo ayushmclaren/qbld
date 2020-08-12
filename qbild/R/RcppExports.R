@@ -5,8 +5,8 @@
 #' @importFrom Rcpp sourceCpp
 NULL
 
-qbldf <- function(nsim, p, y, datax, datas, x_intercept, s_intercept, b0, B0, c1, d1, m, n, k, l, verbose) {
-    .Call(`_qbild_qbldf`, nsim, p, y, datax, datas, x_intercept, s_intercept, b0, B0, c1, d1, m, n, k, l, verbose)
+qbldf <- function(nsim, p, y, datax, datas, b0, B0, c1, d1, m, n, k, l, verbose) {
+    .Call(`_qbild_qbldf`, nsim, p, y, datax, datas, b0, B0, c1, d1, m, n, k, l, verbose)
 }
 
 #' @useDynLib qbild
@@ -37,7 +37,7 @@ rgig <- function(n, lambda, a, b) {
 #' @importFrom Rcpp sourceCpp
 NULL
 
-qbldunblock <- function(nsim, p, y, datax, datas, x_intercept, s_intercept, b0, B0, c1, d1, m, n, k, l, verbose) {
-    .Call(`_qbild_qbldunblock`, nsim, p, y, datax, datas, x_intercept, s_intercept, b0, B0, c1, d1, m, n, k, l, verbose)
+qbldunblock <- function(nsim, p, y, datax, datas, b0, B0, c1, d1, m, n, k, l, verbose) {
+    .Call(`_qbild_qbldunblock`, nsim, p, y, datax, datas, b0, B0, c1, d1, m, n, k, l, verbose)
 }
 

@@ -18,10 +18,6 @@
 // available from R
 //
 
-//double o(arma::cube *a)
-//{
-//  return(((*a).slice(1))(1,1));
-//  }
 
 /////////// Combined Unblocked SAMPLER - start  //////////
 //////////////////////////////////////////////////////////
@@ -29,7 +25,7 @@
 
 // y is the output variable, x is fixed, s is random 
 // [[Rcpp::export]]
-Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1,int m, int n, int k, int l,bool verbose)
+Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, arma::vec b0, arma::mat B0, double c1, double d1,int m, int n, int k, int l,bool verbose)
 {
   
   // int m = y.n_rows;
@@ -53,8 +49,8 @@ Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::m
   
   for(int i=0;i<n;i++)
   {
-    X.slice(i) = subset_mat(&datax,i,n,x_intercept).t(); 
-    S.slice(i) = subset_mat(&datas,i,n,s_intercept).t(); 
+    X.slice(i) = subset_mat(&datax,i,n).t(); 
+    S.slice(i) = subset_mat(&datas,i,n).t(); 
   }
   
   

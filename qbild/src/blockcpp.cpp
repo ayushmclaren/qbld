@@ -23,25 +23,18 @@
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
-arma::mat subset_mat(arma::mat* X, int start, int j, bool intercept) 
+arma::mat subset_mat(arma::mat* X, int start, int j) 
 {
   arma::uvec IDX = arma::regspace<arma::uvec>(start,  j,  (*X).n_cols-1);
-  
-  if(intercept == TRUE)
-  {
-    int rw = (*X).n_rows;
-    return(arma::join_rows(arma::vec(rw,arma::fill::ones),(*X).cols(IDX)));
-  }
-  
   return (*X).cols(IDX);
 }
 
 // y is the output variable, x is fixed, s is random 
 // [[Rcpp::export]]
-Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, bool x_intercept, bool s_intercept, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l, bool verbose)
+Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l, bool verbose)
 {
   
- // int m = y.n_rows;
+  // int m = y.n_rows;
   //int n = y.n_cols;
   //int k =0,l=0;
   
@@ -51,7 +44,7 @@ Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat dat
     //k = floor(datax.n_cols/n) + 1; //add an intercept column in model matrix
   
   //if(s_intercept == FALSE)
-  //  l = floor(datas.n_cols/n);
+    //  l = floor(datas.n_cols/n);
   //else
     //l = floor(datas.n_cols/n) + 1; //add an intercept column in model matrix
   
@@ -62,8 +55,8 @@ Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat dat
   
   for(int i=0;i<n;i++)
   {
-    X.slice(i) = subset_mat(&datax,i,n,x_intercept).t(); 
-    S.slice(i) = subset_mat(&datas,i,n,s_intercept).t(); 
+    X.slice(i) = subset_mat(&datax,i,n).t(); 
+    S.slice(i) = subset_mat(&datas,i,n).t(); 
   }
   
   

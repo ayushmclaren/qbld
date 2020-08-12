@@ -1,38 +1,69 @@
 #' @rdname qbild
 #' @export
-model.qbld <- function(nsim, p=0.25, y, fixed, random, b0, B0, c1, d1,
-                      fixed_intercept=TRUE, random_intercept=TRUE, burn=0,
-                      method="block", names_fixed, summarize=FALSE, verbose=FALSE)
+
+model.qbld <- function(data, id="id", fixed_formula, random_formula, nsim, p=0.25, b0, B0, 
+                       c1, d1, method="block", burn=0, summarize=FALSE, verbose=FALSE)
 {
   
   if(missing(nsim)||nsim==0||nsim%%1!=0)
     stop("n must be specified correctly.")
   
-  if(missing(y)||missing(fixed)||missing(random)
-     ||(sum(y[is.na(y)==TRUE]) > 0)||(sum(fixed[is.na(fixed)==TRUE]) > 0)
-     ||(sum(random[is.na(random)==TRUE]) > 0))
-    stop("Either the data isn't provided or contains NAs.")
+  if(missing(data)||(sum(is.na(data)) > 0)|| !is.data.frame(data))
+    stop("Either the data isn't provided as a data frame or contains NAs.")
   
-  if (!(all(sapply(fixed, is.numeric))) || !(all(sapply(random, is.numeric)))) {
-    stop ("Data frame contains non-numeric values. Consider conversion of Factor variables.")
-  }
-  
+  if(is.null(names(data)))
+    stop("objects in data.frame must have a name")
   
   if(burn<0 || burn>1)
     stop("burn should be a number in [0,1].")
   
-  m = nrow(y)
-  n = ncol(y)
+  if(missing(fixed_formula) || missing(random_formula))
+    stop("Please provide valid formulas for both fixed and random effects.")
   
-  if(fixed_intercept)
-    k = floor(ncol(fixed)/n) + 1 ##add an intercept column in model matrix
-  else
-    k = floor(ncol(fixed)/n) 
+  must_convert<-sapply(data,is.factor)       # logical vector telling if a variable needs to be displayed as numeric
+  if(sum(must_convert))
+  {
+    df2 <-sapply(data[,must_convert,drop=FALSE],unclass) # data.frame of all categorical variables now displayed as numeric
+    #colnames(df2) <-names(data)[must_convert]
+    data<-cbind(data[,!must_convert],df2)  #converted back appropriately 
+  }
   
-  if(random_intercept)
-    l = floor(ncol(random)/n) + 1 ##add an intercept column in model matrix
-  else
-    l = floor(ncol(random)/n)
+  if(!missing(id)) {indvs<-as.vector(data[[id]])}
+  if (missing(id)){ if (all(is.na(match(names(data), "id")))) stop ("id must be defined")
+    else indvs<-as.vector(data$id)}
+  
+  
+  m = sum(indvs==1) #no. of rows for my data by counting no. of entries for each individual 
+  
+  fixed_formula = formula(fixed_formula)
+  expr1 = terms(fixed_formula, data=data)
+  expr <- attr(expr1, "variables")
+  var.names <- attr(expr1, "term.labels")
+  
+  if(any(is.na(match(all.vars(expr), names(data)))))
+    stop("Variables in formula not contained in the data.frame")
+  
+  response <- as.character(expr[[2]])
+  if(attr(expr1,"response")==0 || is.null(response))
+    stop("Please provide response variable in fixed_formula correctly.")
+  y = matrix(as.matrix(data[response]),nrow=m)
+  n = ncol(y) # second dimension
+  
+  fixed_intercept = attr(expr1,"intercept")
+  if(fixed_intercept == 1)
+    var.names = c("Intercept",var.names)
+  
+  fixed = model.matrix(fixed_formula,data=data)
+  fixed = matrix(fixed,nrow=m)
+  k = floor(ncol(fixed)/n)
+  
+  random_formula = formula(random_formula)
+  expr2 = terms(random_formula, data=data)
+  random_intercept = attr(expr2,"intercept")
+  random = model.matrix(random_formula,data=data)
+  random = matrix(random,nrow=m)
+  l = floor(ncol(random)/n)
+  
   
   if(missing(b0))
     b0 = rep(0,k) #start from 0
@@ -44,41 +75,28 @@ model.qbld <- function(nsim, p=0.25, y, fixed, random, b0, B0, c1, d1,
   if(missing(d1))
     d1 = 10
   
-  if(missing(names_fixed)||is.null(names_fixed))
-  {
-    if(fixed_intercept)
-      varnames.fixed = c(paste("beta", 1:(k-1), sep = ""),"Varphi2") #Naming Beta1 to Betak
-    
-    else
-      varnames.fixed = c(paste("beta", 1:k, sep = ""),"Varphi2") #Naming Beta1 to Betak
-  }
-  else
-    varnames.fixed = c(names_fixed,"Varphi2") #Take names form the data frame
   
-  if(fixed_intercept)
-    varnames.fixed = c("Intercept",varnames.fixed) #If intercept
+  var.names = c(var.names,"Varphi2") #Take names form the data frame and add varphi2
   
   if(regexec("block",method,ignore.case=TRUE)[[1]][1]==1) #blocked
-    out = (qbldf(nsim, p, y, fixed, random, fixed_intercept,
-                    random_intercept, b0, B0, c1, d1, m, n, k, l, verbose))
+    out = (qbldf(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose))
   
   if(regexec("unblock",method,ignore.case=TRUE)[[1]][1]==1) #unblocked
-    out = (qbldunblock(nsim, p, y, fixed, random, fixed_intercept,
-                      random_intercept, b0, B0, c1, d1, m, n, k, l, verbose))
+    out = (qbldunblock(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose))
   
   if(is.null(out))
     stop("Method is either 'block' or 'unblock'.")
   
-  out = make.qbld(out, p, nsim, burn, varnames.fixed, method) 
+  out = make.qbld(out, p, nsim, burn, var.names, method) 
   
   if(summarize==TRUE)
   {
     beta  = matrix(colMeans(out[[1]]),ncol=1)
     alpha = rowMeans(out[[2]],dims=2)
     varphi2 = mean(out[[3]])
-      
+    
     model_fit = mofit(y, fixed, random, beta, alpha, varphi2, p, 
-                    fixed_intercept, random_intercept, k, l, m, n)
+                      fixed_intercept, random_intercept, k, l, m, n)
     
     print(summary(out))
     
@@ -90,6 +108,7 @@ model.qbld <- function(nsim, p=0.25, y, fixed, random, b0, B0, c1, d1,
   
   return(out)
 }
+
 
 
 pald <- function(q,mu=0,sigma=1,p=0.5,lower.tail=TRUE)
@@ -106,15 +125,10 @@ pald <- function(q,mu=0,sigma=1,p=0.5,lower.tail=TRUE)
   ifelse(test=lower.tail == TRUE,yes=return(pald),no=return(1-pald))
 }
 
-subset_mat <- function(X,start,j,intercept)
+subset_mat <- function(X,start,j,m)  
 {
   idx = seq(start,ncol(X),j)
-  
-  if(intercept == TRUE)
-  {
-    return(cbind(matrix(1,nrow=nrow(X),ncol=1),X[,idx]))
-  }
-  return(matrix(X[,idx],ncol=1))
+  return(matrix(X[,idx],nrow=m))
 }
 
 #' @rdname qbild
@@ -130,9 +144,9 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
   
   for (i in 1:n)
   {
-    x[,,i] = t(subset_mat(fixed,i,n,fixed_intercept))   ##model matrix fixed + intercept
-    s[,,i] = t(subset_mat(random,i,n,random_intercept)) ##model matrix random + intercept
-    meani = subset_mat(fixed,i,n,fixed_intercept)%*%beta + subset_mat(random,i,n,random_intercept)%*%alpha[,i]
+    x[,,i] = t(subset_mat(fixed,i,n,m))   ##model matrix fixed + intercept
+    s[,,i] = t(subset_mat(random,i,n,m)) ##model matrix random + intercept
+    meani = subset_mat(fixed,i,n,m)%*%beta + subset_mat(random,i,n,m)%*%alpha[,i]
     
     for(j in 1:m)
     {
@@ -210,7 +224,7 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
   function (data, quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975), ...) 
   {
     x <- as.qbld(data)
-    statnames <- c("Mean", "SD", "ESS", "GR Diagnostic","MCSE")
+    statnames <- c("Mean", "SD", "MCSE", "ESS", "GR Diagnostic")
     
     varstats <- matrix(0,nrow = length(attr(data,"varnames")), ncol = length(statnames),
                        dimnames = list(attr(data,"varnames"),statnames)) # dimnames = list(varnames(x), statnames)
@@ -221,7 +235,7 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
       xsd <- c(round(apply(data[[1]], 2, sd),2),round(sd(data[[3]]),2))
       xmcse <- c(round(mcse.mat(data[[1]]),3)[,2],round(mcse.mat(data[[3]]),3)[2])
       xess <- round(c(ess(data[[1]]), ess(data[[3]])),2)
-      xsgr <- round(c(stable.GR((data[[1]]))$psrf,stable.GR((data[[3]]))$psrf),3)
+      xsgr <- c(stable.GR((data[[1]]))$psrf,stable.GR((data[[3]]))$psrf)
       varquant <- round(rbind(t(apply(data[[1]], 2, quantile, quantiles)), t(apply(data[[3]], 2, quantile, quantiles))),3)
       rownames(varquant) <- attr(data,"varnames")
     }
@@ -230,9 +244,9 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
     }
     varstats[, 1] <- xmean
     varstats[, 2] <- xsd
-    varstats[, 3] <- xess
-    varstats[, 4] <- xsgr
-    varstats[, 5] <- xmcse 
+    varstats[, 3] <- xmcse
+    varstats[, 4] <- xess
+    varstats[, 5] <- xsgr
     varstats <- drop(varstats)
     nsim <- attr(data,"nsim")
     burnin <- attr(data,"burn")
