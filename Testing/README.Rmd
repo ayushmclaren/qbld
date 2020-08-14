@@ -99,7 +99,41 @@ z_{i} = X_{i}\beta+S_{i}\alpha_{i}+w_{i}\theta + D_{\tau\sqrt{w_{i}}}u_{i},\\y_{
 \begin{equation}\label{eq10}z_{it}|y,\beta,w=\begin{cases}{TN_{(-\infty,0]}(x_{it}^{'}\beta+s_{it}^{'}\alpha_{i}+w_{it}\theta,\tau^{2}w_{it})}&\quad{if\,y_{it}=0}\\{TN_{(0,\infty)}(x_{it}^{'}\beta+s_{it}^{'}\alpha_{i}+w_{it}\theta,\tau^{2}w_{it})}&\quad {if\,y_{it}=1}\\\end{cases}\end{equation}.
 
 
+## How to get Qbild?  
+
+* Download the qbldcpp folder from the **[GitHub repo](https://github.com/ayushmclaren/gsoc_qbld)**,  
+* Run the following commands :-  
+  * R CMD build qbild
+  * R CMD install qbildcpp_1.0.tar.gz  
   
+After finishing the steps:  
+
+```{r,message=FALSE}
+library(qbild)
+library(knitr)
+
+set.seed(10)
+
+##############
+## Loading and manipulation of the data set
+##############
+
+data <- readRDS("~/airpollution.rda") #contains factor variables as well
+
+nsim = 5000
+p = 0.25
+
+##with intercept
+time_a = Sys.time()
+out <- model.qbld(data, id = "id", fixed_formula = wheeze~age+I(age^2)+smoking+counts,
+                  random_formula = ~counts , nsim, p = 0.25, summarize = TRUE, 
+                  verbose = FALSE)  #intercept true for both, added manipulation of symbols
+time_b = Sys.time() 
+paste0("Time elapsed = ",round(time_b-time_a,2)," sec")
+
+plot(out)
+```
+
 
 
 

@@ -15,8 +15,14 @@ Description: This project follows Rahman and Vossmeyer (2019) as its motivating 
    allow for straightforward calculations of covariate effects.
 License: GPL-3
 Imports: 
-    Rcpp,stats,stableGR,mcmcse,grDevices,graphics
+    Rcpp,stats,grDevices,graphics
 LinkingTo: Rcpp, RcppArmadillo,RcppDist
 Depends: 
     R (>= 2.10),stableGR,mcmcse
+VignetteBuilder: R.rsp
 RoxygenNote: 7.1.0
+Suggests: 
+    knitr,
+    rmarkdown,
+    R.rsp
+

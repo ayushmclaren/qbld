@@ -69,7 +69,7 @@ Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat dat
   //}
   
   int MCMC  = nsim;    ///Total number of simulation
-  
+  int count = MCMC/10;
   
   //// Prior Distributions and Initializations!
   /// -------------------------------------------------------------------------
@@ -155,8 +155,11 @@ Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat dat
   {
     //int sim = 1;
     
-    if(verbose && sim%100 == 0)
+    if(verbose && sim+1 == count)
+    {
       Rcpp::Rcout << "No. of sim: " << sim << "\n";
+      count += MCMC/10;
+    }
     
     ////--------- Sample beta,z marginally of alpha in a block --------------
     //beta_out.col(sim) = 

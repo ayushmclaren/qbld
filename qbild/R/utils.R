@@ -1,8 +1,74 @@
-#' @rdname qbild
+#' @title QBLD sampler!
+#'
+#' @description Runs the QBLD sampler and outputs a qbld class object which consists of a list of markov chains
+#' for Beta(the fixed effects estimate), Alpha(the random effects estimate), and Varphi2 (as per the model),
+#' of which Beta and Varphi2 are of interest.  
+#'
+#' @details For a detailed information on the sampler, please check README.pdf 
+#' data are contained in a data.frame. Each element of the data argument must be identifiable by
+#' a name. The simplest situation occurs when all subjects are observed at the same time points. The
+#' response variable represent the individual profiles of each subject, it is expected a variable in the
+#' data.frame that identifies the correspondence of each component of the response variable to the
+#' subject that it belongs, by default is named id variable. Hence NA values are not valid.
+#' 
+#' `qbld` object contains markov chains and sampler run information as attributes , and is compatible 
+#' with S3 methods like summary,plot. make.qbld function can be used to convert a similar
+#' type-object to `qbld` class. Check qbild/qbild2.pdf and the code to check for different additional options
+#' in summary and plots.
+#'
+#' @name model.qbld
+#' @aliases qbld
+#' @param fixed_formula : a description of the model to be fitted of the form 
+#' response~fixed effects predictors i.e Xi in the model.
+#' @param data : data frame, NAs not allowed and should throw errors, factor variables are auto-converted, 
+#' find airpollution.rda and locust.rda built into the package.
+#' @param id : variable name in the dataset, that specifies individual profile. By default, id="id" and
+#' data is expected to conatin an id variable.  
+#' @param random_formula : a description of the model to be fitted of the form 
+#' response~random effects predictors i.e Si in the model. This defaults to Si being only an intercept.
+#' @param p : quantile for the AL distribution on the error term, p=0.25 by default.
+#' @param nsim : number of simultions to run the sampler.
+#' @param b0,B0 : Prior model parameters for Beta. See README for details.
+#' @param c1,d1 : Prior model parameters for Varphi2. See README for details.
+#' @param method : Choose between the "block" vs "Unblock" sampler, regex is used to counter 
+#' the effects of small/large cases.
+#' @param burn : number between (0,1). Burn-in values are discarded and not used for summary calculations
+#' @param summarize : Outputs a summary table (same as summary(output)), in addition also prints Model fit
+#' AIC/BIC/Log-likelihood values (same as calling the 'mofit' function with appropriate inputs). False by default.
+#' @param verbose : False by default. Spits out progress reports while the sampler is running.
+#'
+#' @return
+#' \itemize{
+#' \item {\code{model.qbld}} {Returns `qbld` class object.}
+#' }
+#' 
+#' @examples
+#' data = load("airpollution")
+#' data2 = load("locust")
+#' output <- (fixed_formula = wheeze~smoking+I(age^2)-1, data = data, id="id", 
+#'             random_formula = ~-., p=0.25, 
+#'            nsim=1000, method="block", burn=0, 
+#'            summarize=FALSE, verbose=FALSE)
+#' summary(output)
+#' plot(output) 
+#' output2 <- (fixed_formula = move~sex+I(time^2), data = data2, id="id", 
+#'             random_formula = ~-., p=0.50, 
+#'            nsim=1000, method="block", burn=0, 
+#'            summarize=TRUE, verbose=FALSE)
+#'
+#' @references
+#'
+#' Rahman and Vossmyer 2019, https://home.iitk.ac.in/~marshad/RahmanVossmeyer2019.pdf?
+#'
+#'
+
+
+#' @rdname model.qbld
 #' @export
 
-model.qbld <- function(data, id="id", fixed_formula, random_formula, nsim, p=0.25, b0, B0, 
-                       c1, d1, method="block", burn=0, summarize=FALSE, verbose=FALSE)
+model.qbld <- function(fixed_formula, data, id="id", random_formula = ~-., p=0.25, 
+                       nsim, b0, B0, c1, d1, method="block", burn=0, 
+                       summarize=FALSE, verbose=FALSE)
 {
   
   if(missing(nsim)||nsim==0||nsim%%1!=0)
@@ -17,25 +83,25 @@ model.qbld <- function(data, id="id", fixed_formula, random_formula, nsim, p=0.2
   if(burn<0 || burn>1)
     stop("burn should be a number in [0,1].")
   
-  if(missing(fixed_formula) || missing(random_formula))
-    stop("Please provide valid formulas for both fixed and random effects.")
+  if(missing(fixed_formula))
+    stop("Please provide valid formulas for fixed effects.")
   
   must_convert<-sapply(data,is.factor)       # logical vector telling if a variable needs to be displayed as numeric
   if(sum(must_convert))
   {
     df2 <-sapply(data[,must_convert,drop=FALSE],unclass) # data.frame of all categorical variables now displayed as numeric
     #colnames(df2) <-names(data)[must_convert]
-    data<-cbind(data[,!must_convert],df2)  #converted back appropriately 
+    data<-cbind(data[,!must_convert],df2)  #converted and joined back appropriately 
   }
-  
-  if(!missing(id)) {indvs<-as.vector(data[[id]])}
+   
+  if(!missing(id)) {indvs<-as.vector(data[[id]])} #to creeate individual profile.
   if (missing(id)){ if (all(is.na(match(names(data), "id")))) stop ("id must be defined")
     else indvs<-as.vector(data$id)}
   
   
   m = sum(indvs==1) #no. of rows for my data by counting no. of entries for each individual 
   
-  fixed_formula = formula(fixed_formula)
+  fixed_formula = formula(fixed_formula) # processing fixed formula
   expr1 = terms(fixed_formula, data=data)
   expr <- attr(expr1, "variables")
   var.names <- attr(expr1, "term.labels")
@@ -44,31 +110,39 @@ model.qbld <- function(data, id="id", fixed_formula, random_formula, nsim, p=0.2
     stop("Variables in formula not contained in the data.frame")
   
   response <- as.character(expr[[2]])
-  if(attr(expr1,"response")==0 || is.null(response))
+  if(attr(expr1,"response")==0 || is.null(response)) #response for fixed is needed
     stop("Please provide response variable in fixed_formula correctly.")
-  y = matrix(as.matrix(data[response]),nrow=m)
+  y = matrix(as.matrix(data[response]),nrow=m) 
   n = ncol(y) # second dimension
   
-  fixed_intercept = attr(expr1,"intercept")
+  fixed_intercept = attr(expr1,"intercept") 
   if(fixed_intercept == 1)
     var.names = c("Intercept",var.names)
   
-  fixed = model.matrix(fixed_formula,data=data)
+  fixed = model.matrix(fixed_formula,data=data) #model matrix
+  if(ncol(fixed)==0)
+    stop("Invalid/Empty fixed_formula resulting in empty model matrix.")
   fixed = matrix(fixed,nrow=m)
-  k = floor(ncol(fixed)/n)
+  k = floor(ncol(fixed)/n) #no. of covariates
   
-  random_formula = formula(random_formula)
+  random_formula = formula(random_formula) #processing random formula 
   expr2 = terms(random_formula, data=data)
   random_intercept = attr(expr2,"intercept")
-  random = model.matrix(random_formula,data=data)
+  random = model.matrix(random_formula,data=data) #random model matrix
+  if(ncol(random)==0)
+    stop("Invalid/Empty random_formula resulting in empty model matrix.")
   random = matrix(random,nrow=m)
-  l = floor(ncol(random)/n)
+  l = floor(ncol(random)/n) #no. of covariates
   
   
   if(missing(b0))
-    b0 = rep(0,k) #start from 0
+    b0 = rep(0,k) #start from 0 if not specified
+  if(length(b0)!=k)
+    stop("b0 dimensions are not compatible with fixed_formula.")
   if(missing(B0))
-    B0 = diag(k) 
+    B0 = diag(k) #identity matrix
+  if(nrow(B0)!=k ||ncol(B0)!=k)
+    stop("B0 dimensions are not compatible with fixed_formula.")
   
   if(missing(c1))
     c1 = 9
@@ -79,24 +153,25 @@ model.qbld <- function(data, id="id", fixed_formula, random_formula, nsim, p=0.2
   var.names = c(var.names,"Varphi2") #Take names form the data frame and add varphi2
   
   if(regexec("block",method,ignore.case=TRUE)[[1]][1]==1) #blocked
-    out = (qbldf(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose))
+    out = (qbldf(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose)) #check block.cpp
   
   if(regexec("unblock",method,ignore.case=TRUE)[[1]][1]==1) #unblocked
-    out = (qbldunblock(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose))
+    out = (qbldunblock(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose)) #check unblock.cpp
+  
   
   if(is.null(out))
     stop("Method is either 'block' or 'unblock'.")
   
-  out = make.qbld(out, p, nsim, burn, var.names, method) 
+  out = make.qbld(out, p, nsim, burn, var.names, method)  #make qbld object
   
   if(summarize==TRUE)
   {
-    beta  = matrix(colMeans(out[[1]]),ncol=1)
+    beta  = matrix(colMeans(out[[1]]),ncol=1) #for model fit
     alpha = rowMeans(out[[2]],dims=2)
     varphi2 = mean(out[[3]])
     
     model_fit = mofit(y, fixed, random, beta, alpha, varphi2, p, 
-                      fixed_intercept, random_intercept, k, l, m, n)
+                      fixed_intercept, random_intercept, k, l, m, n) #AIC/BIC
     
     print(summary(out))
     
@@ -110,7 +185,7 @@ model.qbld <- function(data, id="id", fixed_formula, random_formula, nsim, p=0.2
 }
 
 
-
+#### AL distribution CDF
 pald <- function(q,mu=0,sigma=1,p=0.5,lower.tail=TRUE)
 {
   if(length(q) == 0) stop("Provide quantile q.")
@@ -130,6 +205,7 @@ subset_mat <- function(X,start,j,m)
   idx = seq(start,ncol(X),j)
   return(matrix(X[,idx],nrow=m))
 }
+
 
 #' @rdname qbild
 #' @export
@@ -181,7 +257,7 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
   
 #' @rdname qbild
 #' @export
-"make.qbld" <- function(data,p=0.25,nsim=0,burn=0,varnames.fixed="missing",which="Blocked")
+"make.qbld" <- function(data,p=0.25,nsim=0,burn=0,varnames.fixed="missing",which="Blocked") #make qbld object
 {
   if(missing(data))
     stop("Data must be provided.")
@@ -218,46 +294,51 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
 "as.qbld.default" <- function (x, ...) 
   if (is.qbld(x)) x else make.qbld(x)
 
+
 #' @rdname qbild
 #' @export
 "summary.qbld" <-
-  function (data, quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975), ...) 
+  function (object, quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975), ...) 
   {
-    x <- as.qbld(data)
-    statnames <- c("Mean", "SD", "MCSE", "ESS", "GR Diagnostic")
+    object <- as.qbld(object)
+    nsim <- attr(object,"nsim")
+    statnames <- c("Mean", "SD", "MCSE", "ESS", "Gelman-Rubin","Signif.") #create matrix to output
     
-    varstats <- matrix(0,nrow = length(attr(data,"varnames")), ncol = length(statnames),
-                       dimnames = list(attr(data,"varnames"),statnames)) # dimnames = list(varnames(x), statnames)
-    ## RGA replaced with safespec0
-    #sp0 <- function(x) spectrum0(x)$spec
-    if (is.list(data)) {
-      xmean <- round(c(colMeans(data[[1]]),mean(data[[3]])),2)
-      xsd <- c(round(apply(data[[1]], 2, sd),2),round(sd(data[[3]]),2))
-      xmcse <- c(round(mcse.mat(data[[1]]),3)[,2],round(mcse.mat(data[[3]]),3)[2])
-      xess <- round(c(ess(data[[1]]), ess(data[[3]])),2)
-      xsgr <- c(stable.GR((data[[1]]))$psrf,stable.GR((data[[3]]))$psrf)
-      varquant <- round(rbind(t(apply(data[[1]], 2, quantile, quantiles)), t(apply(data[[3]], 2, quantile, quantiles))),3)
-      rownames(varquant) <- attr(data,"varnames")
+    varstats <- matrix(0,nrow = length(attr(object,"varnames")), ncol = length(statnames),
+                       dimnames = list(attr(object,"varnames"),statnames)) # dimnames = list(varnames(x), statnames)
+  
+    
+    if (is.list(object)) {
+      xmean <- round(c(colMeans(object[[1]]),mean(object[[3]])),2) #Mean
+      xsd <- c(round(apply(object[[1]], 2, sd),2),round(sd(object[[3]]),2)) #SD
+      xmcse <- c(round(mcse.mat(object[[1]]),3)[,2],round(mcse.mat(object[[3]]),3)[2]) #MCSE
+      xess <- floor(c(ess(object[[1]]), ess(object[[3]]))) #ESS
+      xsgr <- sqrt((nsim-1/nsim) +  1/xess) #Rhat via ESS
+      varquant <- round(rbind(t(apply(object[[1]], 2, quantile, quantiles)), t(apply(object[[3]], 2, quantile, quantiles))),3)
+      rownames(varquant) <- attr(object,"varnames")
     }
     else {
       stop("Error in summary, Not a List!")
     }
-    varstats[, 1] <- xmean
+    targetpsrfuni = target.psrf(m = 1, p = 1, epsilon = 0.10)$psrf #targte psrf
+    varstats[, 1] <- xmean 
     varstats[, 2] <- xsd
     varstats[, 3] <- xmcse
     varstats[, 4] <- xess
     varstats[, 5] <- xsgr
+    varstats[, 6] <- ifelse( test = xsgr < targetpsrfuni, yes = 1, no = 0) #to add the signif stars
     varstats <- drop(varstats)
-    nsim <- attr(data,"nsim")
-    burnin <- attr(data,"burn")
-    wich <- attr(data,"which")
-    quantile = attr(data,"quantile")
-    multiess = c(multiESS(data[[1]]),multiESS(data[[3]]))
-
+    burnin <- attr(object,"burn")
+    wich <- attr(object,"which")
+    quantile = attr(object,"quantile")
+    multiess = multiESS(cbind(object[[1]],object[[3]]))
+    multisgr = sqrt((nsim-1)/nsim +  1/multiess)
+    targetpsrfmulti = target.psrf(m = 1, p = 1, epsilon = 0.10)$psrf #to add the signif stars
+    stars = multisgr < targetpsrfmulti
     out <- list(statistics = varstats, quantums = varquant, run=nsim, burn=burnin, 
-                block=wich, quant=quantile, muless=multiess)
+                block=wich, quant=quantile, muless=multiess, musgr = multisgr, star = stars)
     
-    class(out) <- "summary.qbld"
+    class(out) <- "summary.qbld" 
     return(out)
   }
 
@@ -272,22 +353,26 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
     cat("\n1. Statistics for each variable,\n")
     print(x$statistics, ...)
     cat("\n")
+    cat("MultiESS value =", x$muless, "\n")
+    cat("Multi Gelman-Rubin Diagnostic =", x$musgr)
+    if(x$star == TRUE) cat(" *")
+    else cat(" #")
+    cat("\nNote : 1(0) indicates samples enough (not) for the covariate,*(#) indicates samples enough (not) for the whole sampler.\n")
     cat("\n2. Quantiles for each variable,\n")
     print(x$quantums)
     cat("\n")
-    cat("MultiESS value =", x$muless, "\n")
     invisible(x)
   }
 
 #' @rdname qbild
 #' @export
-"plot.qbld" <- function (data, trace = TRUE, density = TRUE, 
-                        auto.layout = TRUE, ask = dev.interactive(), ...) 
+"plot.qbld" <- function (x, trace = TRUE, density = TRUE, 
+                        auto.layout = TRUE, ask = dev.interactive(), ...) #trace and density can be chosen whether or not to output
 {
-  data <- as.qbld(data)
+  x <- as.qbld(x)
   pars <- NULL
   on.exit(par(pars))
-  vars <- attr(data,"varnames")
+  vars <- attr(x,"varnames")
   nvars = length(vars)
   
   if (auto.layout) {
@@ -298,7 +383,7 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
   for (i in 1:(nvars-1))
     {
       nam <- vars[i]
-      beta = ts(data[[1]][,i])
+      beta = ts(x[[1]][,i])
       myplot(beta, l = nam, trace, density)
       
       if (i==1)
@@ -306,7 +391,7 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
   }
   
     nam = vars[nvars]
-    myplot((data[[3]]), l = nam, trace, density)
+    myplot((x[[3]]), l = nam, trace, density)
   
 }
 
@@ -316,7 +401,7 @@ mofit <- function(y, fixed, random, beta, alpha, varphi2, p,
   {
         if(trace)
         {
-          plot.ts(x=dat, main=paste("Trace of", l))
+          plot.ts(x=dat, main=paste("Trace of", l),ylab="Trace")
         #  abline(h=mn,col="red")
         }
   

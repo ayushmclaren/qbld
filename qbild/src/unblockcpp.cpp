@@ -63,7 +63,7 @@ Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::m
   //}
   
   int MCMC  = nsim;    ///Total number of simulation
-  
+  int count = MCMC/10;
   
   //// Prior Distributions and Initializations!
   /// -------------------------------------------------------------------------
@@ -148,8 +148,11 @@ Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::m
   {
     //int sim = 1;
     
-     if(verbose && sim%200 == 0)
+    if(verbose && sim+1 == count)
+    {
       Rcpp::Rcout << "No. of sim: " << sim << "\n";
+      count += MCMC/10;
+    }
     
     ////--------- Sample beta,z marginally of alpha in a block --------------
     //beta_out.col(sim) = 
