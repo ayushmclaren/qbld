@@ -1,37 +1,25 @@
-//' @useDynLib qbild
-//' @importFrom Rcpp sourceCpp
-// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
-#include "qbld.h"
-// we only include RcppArmadillo.h which pulls Rcpp.h in for us
-#include "RcppArmadillo.h"
-//#include "RcppDist.h"
 
+// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
+//' @useDynLib qbld
+//' @importFrom Rcpp sourceCpp
+// we only include RcppArmadillo.h which pulls Rcpp.h in for us
+#include "qbld.h"
+#include "RcppArmadillo.h"
+#include "RcppDist.h"
 // via the depends attribute we tell Rcpp to create hooks for
 // RcppArmadillo so that the build process will know what to do
 //
 // [[Rcpp::depends(RcppArmadillo,RcppDist)]]
 
-// simple example of creating two matrices and
-// returning the result of an operatioon on them
-//
-// via the exports attribute we tell Rcpp to make this function
-// available from R
-//
 
-// picks out every jth column from a matrix from start to end
-/////////// Combined blocked SAMPLER - start  //////////
+
+/////////// Combined Unblocked SAMPLER - start  //////////
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
-
-arma::mat subset_mat(arma::mat* X, int start, int j) 
-{
-  arma::uvec IDX = arma::regspace<arma::uvec>(start,  j,  (*X).n_cols-1);
-  return (*X).cols(IDX);
-}
 
 // y is the output variable, x is fixed, s is random 
 // [[Rcpp::export]]
-Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, arma::vec b0, arma::mat B0, double c1, double d1, int m, int n, int k, int l, bool verbose)
+Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::mat datas, arma::vec b0, arma::mat B0, double c1, double d1,int m, int n, int k, int l,bool verbose)
 {
   
   // int m = y.n_rows;
@@ -39,14 +27,14 @@ Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat dat
   //int k =0,l=0;
   
   //if(x_intercept == FALSE)
-    //k = floor(datax.n_cols/n); 
+  //k = floor(datax.n_cols/n); 
   //else
-    //k = floor(datax.n_cols/n) + 1; //add an intercept column in model matrix
+  //k = floor(datax.n_cols/n) + 1; //add an intercept column in model matrix
   
   //if(s_intercept == FALSE)
-    //  l = floor(datas.n_cols/n);
+  //  l = floor(datas.n_cols/n);
   //else
-    //l = floor(datas.n_cols/n) + 1; //add an intercept column in model matrix
+  //l = floor(datas.n_cols/n) + 1; //add an intercept column in model matrix
   
   arma::mat z = y - 0.5; //start for z
   arma::mat zPrev = z;
@@ -101,7 +89,7 @@ Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat dat
   
   // w
   ////-------------------
-  arma::mat w(Rcpp::rexp(m*n,1.0));
+  arma::mat w(Rcpp::rexp(m*n,1));
   w.reshape(m,n);
   
   
@@ -137,12 +125,11 @@ Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat dat
   //      }
   //    }
   
-  
-  //Rcpp::Rcout << "Please wait while we're processing your request.\n";
-  //Rcpp::Rcout << "I recommend listening to Vienna by Billy Joel while you wait.\n";
-  //Rcpp::Rcout << "https://music.apple.com/in/album/vienna/158617952?i=158618071\n";
-  //Rcpp::Rcout << "OR Everywhere by Fleetwood Mac.\n";
-  //Rcpp::Rcout << "https://music.apple.com/in/album/everywhere/202271826?i=202272247\n";
+ // Rcpp::Rcout << "Please wait while we're processing your request.\n";
+//  Rcpp::Rcout << "I recommend listening to Vienna by Billy Joel while you wait.\n";
+//  Rcpp::Rcout << "https://music.apple.com/in/album/vienna/158617952?i=158618071\n";
+//  Rcpp::Rcout << "OR Everywhere by Fleetwood Mac.\n";
+//  Rcpp::Rcout << "https://music.apple.com/in/album/everywhere/202271826?i=202272247\n";
   
   
   ///-------------------------------------------------------------------------
@@ -163,33 +150,36 @@ Rcpp::List qbldf(int nsim, double p, arma::mat y, arma::mat datax, arma::mat dat
     
     ////--------- Sample beta,z marginally of alpha in a block --------------
     //beta_out.col(sim) = 
-    sampleBeta(&z,&X,&S,&w,varphi2(sim-1),tau2,theta,&invB0,&invB0b0,k,m,n,&beta_out,sim);
-    
-    //////--------- Sample z, marginally of alpha -----------------------------
-    ///// Draws random numbers from trucnated MVN (Geweke, 1991).
-    zPrev = z;
-    //z = 
-    sampleZ(&zPrev,&y,&X,beta_out.col(sim),&S,theta,&w,varphi2(sim-1),tau2,m,n,&z);
+    sampleBeta_2(&z,&X,&S,&w,&alpha,varphi2(sim-1),tau2,theta,&invB0,&invB0b0,k,m,n,&beta_out,sim);
+    //Rcpp::Rcout << "bet" << "\n";
     
     ////---------- Sample alpha conditionally on beta,z -------------------
     //alpha.slice(sim) = 
     sampleAlpha(&z,&X,&S,beta_out.col(sim),&w,tau2,theta,varphi2(sim-1),l,m,n,&alpha,sim);
     //sampleAlphafast(&z,&X,&S,beta_out.col(sim),&w,tau2,theta,varphi2(sim-1),l,m,n,&alpha,sim);
+    // Rcpp::Rcout << "alp" << "\n";
     
     /////--------- Sample w ---------------------------
     //w = 
     sampleW(&z,&X,&S,beta_out.col(sim),&alpha,tau2,theta,lambdaIndex,k,m,n,&w,sim);
+    //Rcpp::Rcout << "w" << "\n";
     
     ////--------- Sample varphi2 ---------------------
     varphi2(sim) = sampleVarphi2(&alpha,c1,d1,l,n,sim);
+    //  Rcpp::Rcout << "varphi2" << "\n";
     
+    //////--------- Sample z, marginally of alpha -----------------------------
+    ///// Draws random numbers from trucnated MVN (Geweke, 1991).
+    //z = 
+    sampleZ_2(&y,&X,beta_out.col(sim),&S,&alpha,theta,&w,varphi2(sim),tau2,m,n,&z,sim);
+    //  Rcpp::Rcout << "z" << "\n";
   }
   
   return (Rcpp::List::create(Rcpp::Named("Beta", beta_out.t()),Rcpp::Named("Alpha", alpha),Rcpp::Named("Varphi2", varphi2))); 
   // return (Rcpp::List::create(Rcpp::Named("w", w))); 
 }
 
+/////////// Combined unblocked SAMPLER - end //////////
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 
-/////////// Combined blocked SAMPLER - end  //////////
-//////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////

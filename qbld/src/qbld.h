@@ -13,9 +13,6 @@ arma::vec rgig(double n,double lambda,double a,double b);
 //AL distbn function
 arma::vec raldmix(double n,double mu,double sigma,double p);
 
-// Generic data generator for the model 
-Rcpp::List datagen(int n,int m,double p);
-
 // Samplers
 
 //sampleBeta - Block

@@ -1,11 +1,11 @@
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
-//' @useDynLib qbild
+//' @useDynLib qbld
 //' @importFrom Rcpp sourceCpp
 #include <RcppArmadillo.h>
 #include"qbld.h"
 // [[Rcpp::depends(RcppArmadillo)]]
 ////////////////////////////////////
-///// GIG function!
+///// RGIG function!
 
 double mode(double lambda,double omega)
 {

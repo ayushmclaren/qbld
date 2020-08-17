@@ -8,7 +8,7 @@
 // via the depends attribute we tell Rcpp to create hooks for
 // RcppArmadillo so that the build process will know what to do
 //
-// [[Rcpp::depends(RcppArmadillo,RcppDist)]]
+// [[Rcpp::depends(RcppArmadillo)]]
 
 
 // This function samples the latent variable Z marginally
