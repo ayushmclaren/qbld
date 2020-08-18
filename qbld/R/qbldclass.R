@@ -39,7 +39,14 @@
 #' @title QBLD Summary Class
 #' @name summary.qbld
 #' @description Outputs a `summary.qbld` class object, and prints as described.
-#' @details summary.qbld produces following sets of summary statistics for each variable:
+#' 
+#' @param object : `qbld` class object
+#' @param x : (for print.summary.qbld) `qbld.summary` class object
+#' @param quantiles : Vector of quantiles for summary of the covariates, defaulted to c(0.025, 0.25, 0.5, 0.75, 0.975)
+#' @param epsilon : epsilon value for calculating target.psrf and significiance stars, 0.05 by default.
+#' @param ... : Other summary arguments
+#' 
+#' @return  summary.qbld produces following sets of summary statistics for each variable:
 #' \itemize{
 #' \item {\code{statistics}} {Contains the mean, sd, markov std error, ess and gelman-ruben diagnostic}
 #' \item {\code{quantiles}}  {Contains quantile estimates for each variable}
@@ -51,12 +58,14 @@
 #' \item {\code{multigelman}} {multivariate version of gelman-ruben}
 #' }
 #' 
+#' 
+#' 
 
 
 #' @rdname summary.qbld
 #' @export
 "summary.qbld" <-
-  function (object, quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975), ...) 
+  function (object, quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975), epsilon=0.05, ...) 
   {
     object <- as.qbld(object)
     nsim <- attr(object,"nsim")
@@ -73,7 +82,7 @@
     else {
       stop("Error in summary, Not a List!")
     }
-    targetpsrfuni = target.psrf(m = 1, p = 1, epsilon = 0.10)$psrf #targte psrf
+    targetpsrfuni = target.psrf(m = 1, p = 1, epsilon = epsilon)$psrf #targte psrf
     varstats <- data.frame(Mean=xmean, SD=xsd, MCSE=xmcse, ESS=xess, GelmanRubin=xsgr, 
                            Signif.= ifelse( test = xsgr < targetpsrfuni, yes = '*', no = ''),
                            row.names=attr(object,"varnames")) #to add the signif stars
@@ -85,7 +94,7 @@
     quantile = attr(object,"quantile")
     multiess = multiESS(cbind(object[[1]],object[[3]]))
     multisgr = sqrt((nsim-1)/nsim +  1/multiess)
-    targetpsrfmulti = target.psrf(m = 1, p = 1, epsilon = 0.10)$psrf #to add the signif stars
+    targetpsrfmulti = target.psrf(m = 1, p = nrow(varstats), epsilon = epsilon)$psrf #to add the signif stars
     stars = multisgr < targetpsrfmulti
     out <- list(statistics = varstats, quantiles = varquant, nsim=nsim, burn=burnin, 
                 which=which, p=quantile, multiess=multiess, multigelman = multisgr, foo = stars)
@@ -120,12 +129,15 @@
 #' @title Plot QBLD
 #' @name plot.qbld
 #' @description Plots `qbld` class object.
-#' @details plot.qbld has following options:
-#' \itemize{
-#' \item {\code{trace}} {Whether or not to plot trace}
-#' \item {\code{density}}  {Whether or not to plot density}
-#' \item {\code{auto.layout}} {Auto set layout or not}
-#' }
+#' 
+#' @param x : `qbld` class object to plot.
+#' @param trace : Whether or not to plot trace plots for covariates, TRUE by default
+#' @param density : Whether or not to plot density for covariates, TRUE by default.
+#' @param auto.layout : Auto set layout or not, TRUE as default. Plots according to the local settings if false.
+#' @param ask : For Interactive plots
+#' @param ... : Other plot arguments
+#' 
+#' @return Plots as specified.
 
 
 #' @export

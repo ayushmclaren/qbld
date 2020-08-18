@@ -39,7 +39,7 @@ The Generalised Inverse Gaussian distrubtion(GIG), which has the following pdf
 \deqn{f(x) = x^{\lambda-1}exp{-\frac{\omega}{2}(x + \frac{1}{x})}}{f(x) = x^(\lambda-1) exp{-\omega/2 (x + 1/x)}}
 }
 \examples{
-rgig(0.5, 1, 2, 1)
+rgig(1,0.5, 1, 2)
 dgig(1, 1, 2, 0.5, FALSE)
 
 }

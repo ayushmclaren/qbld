@@ -29,7 +29,7 @@
 #' }
 #'
 #' @examples
-#' raldmix(1e5,5,10,0.5)
+#' raldmix(10,5,10,0.5)
 #' daldmix(c(4,5),mu=0,sigma=1,p=0.5)
 #' paldmix(c(1,4),mu=0,sigma=1,p=0.5,lower.tail=TRUE)
 #' qaldmix(0.5,mu=0,sigma=1,p=0.5,lower.tail=TRUE)

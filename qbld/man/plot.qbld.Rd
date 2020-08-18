@@ -13,14 +13,22 @@
   ...
 )
 }
+\arguments{
+\item{x}{: `qbld` class object to plot.}
+
+\item{trace}{: Whether or not to plot trace plots for covariates, TRUE by default}
+
+\item{density}{: Whether or not to plot density for covariates, TRUE by default.}
+
+\item{auto.layout}{: Auto set layout or not, TRUE as default. Plots according to the local settings if false.}
+
+\item{ask}{: For Interactive plots}
+
+\item{...}{: Other plot arguments}
+}
+\value{
+Plots as specified.
+}
 \description{
 Plots `qbld` class object.
-}
-\details{
-plot.qbld has following options:
-\itemize{
-\item {\code{trace}} {Whether or not to plot trace}
-\item {\code{density}}  {Whether or not to plot density}
-\item {\code{auto.layout}} {Auto set layout or not}
-}
 }

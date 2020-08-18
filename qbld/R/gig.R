@@ -23,7 +23,7 @@
 #' }
 #' 
 #' @examples
-#' rgig(0.5, 1, 2, 1)
+#' rgig(1,0.5, 1, 2)
 #' dgig(1, 1, 2, 0.5, FALSE)
 #' 
 #' @references

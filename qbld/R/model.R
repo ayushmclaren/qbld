@@ -34,7 +34,7 @@
 #' @param method : Choose between the "Block" vs "Unblock" sampler, Block is slower but produces lower correlation.
 #' @param burn : Burn in percentage, number between (0,1). Burn-in values are discarded and not used for summary calculations.
 #' @param summarize : Outputs a summary table (same as summary(output)), in addition also prints Model fit
-#' AIC/BIC/Log-likelihood values (same as calling the 'mofit' function with appropriate inputs). False by default.
+#' AIC/BIC/Log-likelihood values. False by default.
 #' @param verbose : False by default. Spits out progress reports while the sampler is running.
 #'
 #' @return
@@ -43,18 +43,16 @@
 #' }
 #' 
 #' @examples
-#' data = load("airpollution")
-#' data2 = load("locust")
-#' output <- (fixed_formula = wheeze~smoking+I(age^2)-1, data = data, id="id", 
+#' \dontrun{
+#' library(qbld)
+#' data = data("airpollution")
+#' output <- model.qbld(fixed_formula = wheeze~smoking+I(age^2)-1, data = data, id="id", 
 #'             random_formula = ~1, p=0.25, 
 #'            nsim=1000, method="block", burn=0, 
-#'            summarize=FALSE, verbose=FALSE)
-#' summary(output)
-#' plot(output) 
-#' output2 <- (fixed_formula = move~sex+I(time^2), data = data2, id="id", 
-#'             random_formula = ~1, p=0.50, 
-#'            nsim=1000, method="unblock", burn=0, 
 #'            summarize=TRUE, verbose=FALSE)
+#' plot(output)
+#'}
+#'
 #'
 #' @references
 #' Rahman, Mohammad & Vossmeyer, Angela. (2018). 
@@ -249,13 +247,6 @@ NULL
 #' @importFrom Rcpp sourceCpp
 ## usethis namespace: end
 NULL
-
-#' @title qbld
-#' @name qbldf
-#' @description R wrapper for internal use
-
-#' @rdname qbldf
-#' @export
 qbldf <- function(nsim, p, y, datax, datas, b0, B0, c1, d1, m, n, k, l, verbose) {
   .Call(`_qbld_qbldf`, nsim, p, y, datax, datas, b0, B0, c1, d1, m, n, k, l, verbose)
 }
@@ -270,13 +261,6 @@ NULL
 #' @importFrom Rcpp sourceCpp
 ## usethis namespace: end
 NULL
-
-#' @title qbld
-#' @name qbldunblock
-#' @description R wrapper for internal use
-
-#' @rdname qbldunblock
-#' @export
 qbldunblock <- function(nsim, p, y, datax, datas, b0, B0, c1, d1, m, n, k, l, verbose) {
   .Call(`_qbld_qbldunblock`, nsim, p, y, datax, datas, b0, B0, c1, d1, m, n, k, l, verbose)
 }

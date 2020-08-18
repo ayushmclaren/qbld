@@ -5,14 +5,27 @@
 \alias{print.summary.qbld}
 \title{QBLD Summary Class}
 \usage{
-\method{summary}{qbld}(object, quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975), ...)
+\method{summary}{qbld}(
+  object,
+  quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975),
+  epsilon = 0.05,
+  ...
+)
 
 \method{print}{summary.qbld}(x, ...)
 }
-\description{
-Outputs a `summary.qbld` class object, and prints as described.
+\arguments{
+\item{object}{: `qbld` class object}
+
+\item{quantiles}{: Vector of quantiles for summary of the covariates, defaulted to c(0.025, 0.25, 0.5, 0.75, 0.975)}
+
+\item{epsilon}{: epsilon value for calculating target.psrf and significiance stars, 0.05 by default.}
+
+\item{...}{: Other summary arguments}
+
+\item{x}{: (for print.summary.qbld) `qbld.summary` class object}
 }
-\details{
+\value{
 summary.qbld produces following sets of summary statistics for each variable:
 \itemize{
 \item {\code{statistics}} {Contains the mean, sd, markov std error, ess and gelman-ruben diagnostic}
@@ -24,4 +37,7 @@ summary.qbld produces following sets of summary statistics for each variable:
 \item {\code{multiess}}   {multiess value for the sample}
 \item {\code{multigelman}} {multivariate version of gelman-ruben}
 }
+}
+\description{
+Outputs a `summary.qbld` class object, and prints as described.
 }
