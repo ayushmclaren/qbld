@@ -83,7 +83,7 @@ int rgig_conc(arma::vec*out, int n, double lambda, int check, double omega, doub
   double Atot,k0,k1,k2,xm,x0,a,U,V,X,hx;
   
   if(lambda >=1 || omega > 1)
-    Rcpp::stop("Invalid parameters.");
+    Rcpp::stop("Invalid parameters: lambda or omega");
   
   xm = mode(lambda,omega);
   x0 = omega/(1-lambda);
@@ -166,11 +166,12 @@ arma::vec rgig(double n,double lambda,double a,double b)
   if(n<=0||std::floor(n) !=n)
     Rcpp::stop("sample size 'n' must be a positive integer");
   
+  
   if ( !(R_FINITE(lambda) && R_FINITE(b) && R_FINITE(a)) ||
-       (b <  0. || a < 0)      || 
-       (b == 0. && lambda <= 0.) ||
-       (a == 0. && lambda >= 0.) ) 
-    Rcpp::stop("Invalid Parameters");
+      (b < 0 || a < 0)      || 
+       (b == 0 && lambda <= 0) ||
+      (a == 0 && lambda >= 0) ) 
+    Rcpp::stop("Invalid Parameter, for a or b");
   
   if(b==0)
   {
@@ -220,7 +221,7 @@ arma::vec rgig(double n,double lambda,double a,double b)
       return(out);
     }
     
-    Rcpp::stop("Invalid parameters.");
+    Rcpp::stop("Invalid parameters for rgig.");
   }
   return(out);
 }

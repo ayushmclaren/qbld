@@ -125,9 +125,9 @@ Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::m
   //      }
   //    }
   
- // Rcpp::Rcout << "Please wait while we're processing your request.\n";
-//  Rcpp::Rcout << "I recommend listening to Vienna by Billy Joel while you wait.\n";
-//  Rcpp::Rcout << "https://music.apple.com/in/album/vienna/158617952?i=158618071\n";
+ Rcpp::Rcout << "Please wait while we're processing your request.\n";
+ Rcpp::Rcout << "I recommend listening to Vienna by Billy Joel while you wait.\n";
+ Rcpp::Rcout << "https://music.apple.com/in/album/vienna/158617952?i=158618071\n";
 //  Rcpp::Rcout << "OR Everywhere by Fleetwood Mac.\n";
 //  Rcpp::Rcout << "https://music.apple.com/in/album/everywhere/202271826?i=202272247\n";
   
@@ -144,7 +144,7 @@ Rcpp::List qbldunblock(int nsim, double p, arma::mat y, arma::mat datax, arma::m
     
     if(verbose && sim+1 == count)
     {
-      Rcpp::Rcout << "No. of sim: " << sim << "\n";
+      Rcpp::Rcout << "No. of sim: " << sim+1 << "\n";
       count += MCMC/10;
     }
     

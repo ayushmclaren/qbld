@@ -1,0 +1,16 @@
+#desc = packageDescription("qbld")
+year = sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
+vers = paste("R package version", meta$Version)
+citHeader("'qbld' is a package that provides tools for modelling hierarchical Bayesian quantile regression model for binary 
+longitudinal data (QBLD).\n\nThis version of 'qbld' is currently licensed under the GNU Public License, v3 or later.\n\nIf you are using 'qbld' for research that will be published, we request that you acknowledge this with the following citation:\n\n")
+citEntry(entry = "Manual",
+         title = "qbld: Quantile Regression for Binary Longitudinal Data",
+         author = as.person("Ayush Agarwal"),
+         year = year,
+         address = "Indian Institute of Technology, Kanpur",
+         note = vers,
+         textVersion =
+         paste("Ayush Agarwal (",
+               year,
+               "). qbld: Quantile Regression for Binary Longitudinal Data. ",
+               vers, ". Indian Institute of Technology, Kanpur.", sep = ""))

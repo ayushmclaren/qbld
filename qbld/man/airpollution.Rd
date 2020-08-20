@@ -10,7 +10,7 @@ air pollution (Ware, J. H. et al., 1984).}
   \describe{
     \item{\code{id}}{identifies de number of the individual profile. This vector contains observations of 32 individual profiles.}
     \item{\code{wheeze}}{a numeric vector that identify the wheezing status (1="yes", 0="no") of a child at each occasion.}
-    \item{\code{age}}{a numeric vector corresponding to the \code{age} in years since the child's 9th birthday.}
+    \item{\code{age}}{a numeric vector corresponding to the \code{age} in years.}
     \item{\code{smoking}}{a factor that identify if the mother smoke (1="smoke", 0="no smoke").}
     \item{\code{counts}}{a numeric vector corresponding to the replications of each individual profile.}
   }

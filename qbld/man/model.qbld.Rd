@@ -4,9 +4,9 @@
 \alias{model.qbld}
 \title{QBLD Sampler}
 \usage{
-model.qbld(fixed_formula, data, id="id", random_formula = ~1, p=0.25, 
-nsim, b0, B0, c1, d1, method="block", burn=0, 
-summarize=FALSE, verbose=FALSE)
+model.qbld(fixed_formula, data, id = "id", random_formula = ~1, p = 0.25, 
+nsim, b0 = 0, B0 = 1, c1 = 9, d1 = 10, method=c("block","unblock"), 
+burn = 0, summarize = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{fixed_formula}{: a description of the model to be fitted of the form 
@@ -16,16 +16,17 @@ response~fixed effects predictors i.e Xi in the model.}
 find airpollution.rda and locust.rda built into the package.}
 
 \item{id}{: variable name in the dataset, that specifies individual profile. By default, id="id" and
-data is expected to conatin an id variable.}
+data is expected to conatin an id variable. This is omitted while modelling.}
 
 \item{random_formula}{: a description of the model to be fitted of the form 
 response~random effects predictors i.e Si in the model. This defaults to Si being only an intercept.}
 
-\item{p}{: quantile for the AL distribution on the error term, p=0.25 by default.}
+\item{p}{: quantile for the AL distribution on the error term, p=0.25 by default. For very low (<=0.025) or
+very high (>=0.970) values of p, sampler forces to unblock version to avoid errors.}
 
 \item{nsim}{: number of simultions to run the sampler.}
 
-\item{b0, B0}{: Prior model parameters for Beta. These are defaulted to 0 vector, and Id matrix.}
+\item{b0, B0}{: Prior model parameters for Beta. These are defaulted to 0 vector, and Identity matrix.}
 
 \item{c1, d1}{: Prior model parameters for Varphi2. These are defaulted to 9,10 (arbitrary) respectively.}
 
@@ -55,6 +56,8 @@ a name. The simplest situation occurs when all subjects are observed at the same
 response variable represent the individual profiles of each subject, it is expected a variable in the
 data.frame that identifies the correspondence of each component of the response variable to the
 subject that it belongs, by default is named id variable. Hence NA values are not valid.
+For very low (<=0.025) or very high (>=0.970) values of p, sampler forces to unblock version to avoid errors.
+As block version in this case may lead to machine tolerance issues.
 
 `qbld` object contains markov chains and sampler run information as attributes , and is compatible 
 with S3 methods like summary,plot. make.qbld function can be used to convert a similar

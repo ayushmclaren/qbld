@@ -3,7 +3,7 @@ Type: Package
 Title: Quantile Regression for Binary Longitudinal Data
 Version: 1.0
 Date: 2020-08-17
-Author: Ayush Agarwal<ayush.agarwal50@gmail.com>
+Author: Ayush Agarwal [aut, cre]
 Maintainer: Ayush Agarwal<ayush.agarwal50@gmail.com>
 Description: This project follows Rahman and Vossmeyer (2019) as its motivating literature,    
    and contributes to the three literatures by extending the various methodologies to a 
@@ -18,7 +18,7 @@ Imports:
     Rcpp,stats,grDevices,graphics,R.rsp,mcmcse,stableGR
 LinkingTo: Rcpp, RcppArmadillo, RcppDist
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5)
 Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 7.1.0

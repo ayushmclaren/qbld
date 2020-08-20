@@ -10,26 +10,29 @@
 #' response variable represent the individual profiles of each subject, it is expected a variable in the
 #' data.frame that identifies the correspondence of each component of the response variable to the
 #' subject that it belongs, by default is named id variable. Hence NA values are not valid.
+#' For very low (<=0.025) or very high (>=0.970) values of p, sampler forces to unblock version to avoid errors.
+#' As block version in this case may lead to machine tolerance issues.
 #' 
 #' `qbld` object contains markov chains and sampler run information as attributes , and is compatible 
 #' with S3 methods like summary,plot. make.qbld function can be used to convert a similar
 #' type-object to `qbld` class.
 #'
 #' @name model.qbld
-#' @usage model.qbld(fixed_formula, data, id="id", random_formula = ~1, p=0.25, 
-#' nsim, b0, B0, c1, d1, method="block", burn=0, 
-#' summarize=FALSE, verbose=FALSE)
+#' @usage model.qbld(fixed_formula, data, id = "id", random_formula = ~1, p = 0.25, 
+#' nsim, b0 = 0, B0 = 1, c1 = 9, d1 = 10, method=c("block","unblock"), 
+#' burn = 0, summarize = FALSE, verbose = FALSE)
 #' @param fixed_formula : a description of the model to be fitted of the form 
-#' response~fixed effects predictors i.e Xi in the model.
+#' response~fixed effects predictors i.e Xi in the model. 
 #' @param data : data frame, NAs not allowed and should throw errors, factor variables are auto-converted, 
 #' find airpollution.rda and locust.rda built into the package.
 #' @param id : variable name in the dataset, that specifies individual profile. By default, id="id" and
-#' data is expected to conatin an id variable.  
+#' data is expected to conatin an id variable. This is omitted while modelling.
 #' @param random_formula : a description of the model to be fitted of the form 
 #' response~random effects predictors i.e Si in the model. This defaults to Si being only an intercept.
-#' @param p : quantile for the AL distribution on the error term, p=0.25 by default.
+#' @param p : quantile for the AL distribution on the error term, p=0.25 by default. For very low (<=0.025) or
+#' very high (>=0.970) values of p, sampler forces to unblock version to avoid errors.
 #' @param nsim : number of simultions to run the sampler.
-#' @param b0,B0 : Prior model parameters for Beta. These are defaulted to 0 vector, and Id matrix.
+#' @param b0,B0 : Prior model parameters for Beta. These are defaulted to 0 vector, and Identity matrix.
 #' @param c1,d1 : Prior model parameters for Varphi2. These are defaulted to 9,10 (arbitrary) respectively.
 #' @param method : Choose between the "Block" vs "Unblock" sampler, Block is slower but produces lower correlation.
 #' @param burn : Burn in percentage, number between (0,1). Burn-in values are discarded and not used for summary calculations.
@@ -64,9 +67,9 @@
 #' @rdname model.qbld
 #' @export
 
-model.qbld <- function(fixed_formula, data, id="id", random_formula = ~1, p=0.25, 
-                       nsim, b0, B0, c1, d1, method="block", burn=0, 
-                       summarize=FALSE, verbose=FALSE)
+model.qbld <- function(fixed_formula, data, id = "id", random_formula = ~1, p = 0.25, 
+                       nsim, b0 = 0, B0 = 1, c1 = 9, d1 = 10, method=c("block","unblock"), 
+                       burn = 0, summarize = FALSE, verbose = FALSE)
 {
   
   if(missing(nsim)||nsim==0||nsim%%1!=0)
@@ -84,6 +87,16 @@ model.qbld <- function(fixed_formula, data, id="id", random_formula = ~1, p=0.25
   if(missing(fixed_formula))
     stop("Please provide valid formulas for fixed effects.")
   
+  if(p>=1 || p<=0)
+    stop("p shpuld be between (0,1)")
+  
+  
+  if(!missing(id)) {indvs<-as.vector(data[[id]])} #to creeate individual profile.
+  if (missing(id)){ if (all(is.na(match(names(data), "id")))) stop ("id must be defined")
+    else indvs<-as.vector(data$id)}
+  
+  
+  data = data[ , ! colnames(data) %in% id ]  # remove the "id" variable 
   must_convert<-sapply(data,is.factor)       # logical vector telling if a variable needs to be displayed as numeric
   if(sum(must_convert))
   {
@@ -92,10 +105,6 @@ model.qbld <- function(fixed_formula, data, id="id", random_formula = ~1, p=0.25
     data<-cbind(data[,!must_convert],df2)  #converted and joined back appropriately 
   }
    
-  if(!missing(id)) {indvs<-as.vector(data[[id]])} #to creeate individual profile.
-  if (missing(id)){ if (all(is.na(match(names(data), "id")))) stop ("id must be defined")
-    else indvs<-as.vector(data$id)}
-  
   
   m = sum(indvs==1) #no. of rows for my data by counting no. of entries for each individual 
   
@@ -142,19 +151,23 @@ model.qbld <- function(fixed_formula, data, id="id", random_formula = ~1, p=0.25
   if(nrow(B0)!=k ||ncol(B0)!=k)
     stop("B0 dimensions are not compatible with fixed_formula.")
   
-  if(missing(c1))
-    c1 = 9
-  if(missing(d1))
-    d1 = 10
-  
-  
   var.names = c(var.names,"Varphi2") #Take names form the data frame and add varphi2
   
-  if(regexec("block",method,ignore.case=TRUE)[[1]][1]==1) #blocked
+  flag = 0
+  if(p <= 0.025 || p >= 0.970)
+      flag = 1   #for these values call only unblock
+  
+  run = FALSE #whether or not this has run
+  if(flag || regexec("unblock",method,ignore.case=TRUE)[[1]][1]==1) #unblocked
+    {
+        out = (qbldunblock(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose)) #check unblock.cpp
+        run = TRUE
+        method = "unblock"
+    }
+  
+  if(!run && regexec("block",method,ignore.case=TRUE)[[1]][1]==1) #blocked
     out = (qbldf(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose)) #check block.cpp
   
-  if(regexec("unblock",method,ignore.case=TRUE)[[1]][1]==1) #unblocked
-    out = (qbldunblock(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose)) #check unblock.cpp
   
   
   if(is.null(out))
