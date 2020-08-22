@@ -11,7 +11,7 @@
 #' data.frame that identifies the correspondence of each component of the response variable to the
 #' subject that it belongs, by default is named id variable. Hence NA values are not valid.
 #' For very low (<=0.025) or very high (>=0.970) values of p, sampler forces to unblock version to avoid errors.
-#' As block version in this case may lead to machine tolerance issues.
+#' Block version in this case may lead to machine tolerance issues.
 #' 
 #' `qbld` object contains markov chains and sampler run information as attributes , and is compatible 
 #' with S3 methods like summary,plot. make.qbld function can be used to convert a similar
@@ -40,18 +40,25 @@
 #' AIC/BIC/Log-likelihood values. False by default.
 #' @param verbose : False by default. Spits out progress reports while the sampler is running.
 #'
-#' @return
+#' @return Returns `qbld` class object. `qbld` class contains the following :
 #' \itemize{
-#' \item {\code{model.qbld}} {Returns `qbld` class object.}
+#' \item {\code{Beta:}} { Matrix of MCMC samples of fixed-effects parameters.}
+#' \item {\code{Alpha:}} { 3D Matrix of MCMC samples of random-effects parameters.}
+#' \item {\code{Varphi2:}} { Matrix of MCMC samples for varphi2.}
+#' \item {\code{nsim:}} { Attribute; No. of simulations of chain run.}
+#' \item {\code{burn:}} { Attribute; Whether or not burn-in used.}
+#' \item {\code{which:}} {Attribute; "block" or "unblock" sampler used}
 #' }
 #' 
 #' @examples
 #' 
 #' data(airpollution)
+#' 
 #' output <- model.qbld(fixed_formula = wheeze~smoking+I(age^2)-1, data = airpollution, id="id", 
 #'             random_formula = ~1, p=0.25, 
 #'            nsim=1000, method="block", burn=0, 
 #'            summarize=TRUE, verbose=FALSE)
+#'            
 #' plot(output)
 #'
 #'
@@ -59,9 +66,15 @@
 #' @references
 #' Rahman, Mohammad & Vossmeyer, Angela. (2018). 
 #' Estimation and Applications of Quantile Regression for Binary Longitudinal Data. 
-#' Advances in Econometrics. 40. 
-#' https://home.iitk.ac.in/~marshad/RahmanVossmeyer2019.pdf?
-#'
+#' Advances in Econometrics. 40.   
+#' URL: \url{https://home.iitk.ac.in/~marshad/RahmanVossmeyer2019.pdf?}
+#' 
+#' 
+#' @seealso A qbld object may be summarized by the summary function and visualized with the plot function.  
+#' 
+#' \code{\link{summary.qbld}}, \code{\link{plot.qbld}}  
+#' 
+#' Datasets : \code{\link{airpollution}}, \code{\link{locust}}
 
 
 #' @rdname model.qbld

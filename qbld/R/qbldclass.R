@@ -40,6 +40,13 @@
 #' @name summary.qbld
 #' @description Outputs a `summary.qbld` class object, and prints as described.
 #' 
+#' @details `qbld.summary` class summarizes the outputs of the model.qbld function. 
+#' Markov Std Error(MCSE), Effective sample size(ESS) are calcukated using mcmcse package. 
+#' Gelman-Ruben diagnostic, (R hat) is calculated using ESS values for each covariate. 
+#' The diagnostic is then compared to a target value to check whether enough samples are generated, 
+#' significance stars are added to indicate the same. MultiESS and multi-Gelman repeates the same process by treating
+#' the all the parameterc chains as one multi-variate chain.
+#' 
 #' @param object : `qbld` class object
 #' @param x : (for print.summary.qbld) `qbld.summary` class object
 #' @param quantiles : Vector of quantiles for summary of the covariates, defaulted to c(0.025, 0.25, 0.5, 0.75, 0.975)
@@ -48,17 +55,29 @@
 #' 
 #' @return  summary.qbld produces following sets of summary statistics for each variable:
 #' \itemize{
-#' \item {\code{statistics}} {Contains the mean, sd, markov std error, ess and gelman-ruben diagnostic}
-#' \item {\code{quantiles}}  {Contains quantile estimates for each variable}
-#' \item {\code{nsim}}       {No. of simulations run}
-#' \item {\code{burn}}       {Burn-in used or not}
-#' \item {\code{which}}      {Block, or Unblock version of sampler}
-#' \item {\code{p}}          {quantile for the AL distribution on the error term}
-#' \item {\code{multiess}}   {multiess value for the sample}
-#' \item {\code{multigelman}} {multivariate version of gelman-ruben}
+#' \item {\code{statistics:}} { Contains the mean, sd, markov std error, ess and Gelman-Ruben diagnostic}
+#' \item {\code{quantiles:}}  { Contains quantile estimates for each variable}
+#' \item {\code{nsim:}}       { No. of simulations run}
+#' \item {\code{burn:}}       { Burn-in used or not}
+#' \item {\code{which:}}      { Block, or Unblock version of sampler}
+#' \item {\code{p:}}          { quantile for the AL distribution on the error term}
+#' \item {\code{multiess:}}   { multiess value for the sample}
+#' \item {\code{multigelman:}} { multivariate version of Gelman-Ruben}
 #' }
 #' 
+#' @seealso \code{\link{plot.qbld}}, \code{\link{model.qbld}}  
 #' 
+#' Additional functions : \code{\link[mcmcse]{mcse.mat}}, \code{\link[mcmcse]{ess}}, \code{\link[mcmcse]{multiESS}}, 
+#' \code{\link[stableGR]{stable.GR}}, \code{\link[stableGR]{target.psrf}}
+#' 
+#' @references 
+#' Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv: Computation (2018): n. pag. 
+#' 
+#' James M. Flegal, John Hughes, Dootika Vats, and Ning Dai. (2020). mcmcse: Monte Carlo Standard Errors for MCMC. R
+#' package version 1.4-1. Riverside, CA, Denver, CO, Coventry, UK, and Minneapolis, MN.
+#' 
+#' Christina Knudson and Dootika Vats (2020). stableGR: A Stable Gelman-Rubin Diagnostic for Markov Chain Monte Carlo. R
+#' package version 1.0.
 #' 
 
 
@@ -139,6 +158,8 @@
 #' @param ... : Other plot arguments
 #' 
 #' @return Plots as specified.
+#' 
+#' @seealso \code{\link{summary.qbld}}, \code{\link{model.qbld}} 
 
 
 #' @export

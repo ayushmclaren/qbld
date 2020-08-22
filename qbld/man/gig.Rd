@@ -11,13 +11,13 @@ dgig(x, a, b, p, log_density)
 rgig(n, lambda, a, b)
 }
 \arguments{
-\item{x}{: vector of points}
+\item{x}{: Argument of pdf}
 
-\item{a}{: chi parameter}
+\item{a}{: chi parameter. Must be nonnegative for positive lambda and positive else.}
 
-\item{b}{: psi parameter}
+\item{b}{: psi parameter. Must be nonnegative for negative lambda and positive else.}
 
-\item{log_density}{: returns log density}
+\item{log_density}{: logical; returns log density if TRUE}
 
 \item{n}{: number of observations}
 
@@ -31,7 +31,7 @@ rgig(n, lambda, a, b)
 }
 \description{
 Probability distribution function, Quantile Random generation 
-for the Generalised Inverse Gaussian with three parameters a,b,p.
+for the Generalised Inverse Gaussian with three parameters a(chi),b(psi),p.
 }
 \details{
 The Generalised Inverse Gaussian distrubtion(GIG), which has the following pdf
@@ -39,11 +39,21 @@ The Generalised Inverse Gaussian distrubtion(GIG), which has the following pdf
 \deqn{f(x) = x^{\lambda-1}exp{-\frac{\omega}{2}(x + \frac{1}{x})}}{f(x) = x^(\lambda-1) exp{-\omega/2 (x + 1/x)}}
 }
 \examples{
-rgig(1,0.5, 1, 2)
-dgig(1, 1, 2, 0.5, FALSE)
+rgig(n = 1, lambda = 0.5, a = 1, b = 2)
+dgig(x = 1, a = 1, b = 2, p = 0.5, log_density = FALSE)
 
 }
 \references{
 Devroye, L. Random variate generation for the generalized inverse Gaussian distribution. 
 Stat Comput 24, 239–246 (2014).
+
+Wolfgang Hörmann and Josef Leydold (2013). 
+Generating generalized inverse Gaussian random variates, Statistics and Computing (to appear), 
+DOI: 10.1007/s11222-013-9387-3
+
+J. S. Dagpunar (1989). An easily implemented generalised inverse Gaussian generator, 
+Comm. Statist. B – Simulation Comput. 18, 703–710.
+}
+\seealso{
+\code{\link{raldmix}} for random sampling from Asymmetric Laplace distribution
 }

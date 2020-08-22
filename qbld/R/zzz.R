@@ -6,7 +6,7 @@
 #
 # Part of the R/qbld package
 #
-# .onLoad is run when the package is loaded with library(mcmcse)
+# .onLoad is run when the package is loaded with library(qbld)
 #
 ######################################################################
 

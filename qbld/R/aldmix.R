@@ -16,9 +16,9 @@
 #' @param mu : location parameter
 #' @param sigma : scale parameter
 #' @param n : number of observations
-#' @param x,q : quantiles
+#' @param x,q : vector of quantiles
 #' @param p,prob       : probability at which to calculate quantile
-#' @param lower.tail : decides b/w P(X<=p) or P(X>p) for p/q
+#' @param lower.tail : logical; decides b/w P(X<=p) or P(X>p) for p/q
 #'
 #' @return
 #' \itemize{
@@ -29,10 +29,10 @@
 #' }
 #'
 #' @examples
-#' raldmix(10,5,10,0.5)
-#' daldmix(c(4,5),mu=0,sigma=1,p=0.5)
-#' paldmix(c(1,4),mu=0,sigma=1,p=0.5,lower.tail=TRUE)
-#' qaldmix(0.5,mu=0,sigma=1,p=0.5,lower.tail=TRUE)
+#' raldmix(n = 10, mu = 5, sigma = 10, p = 0.5)
+#' daldmix(c(4,5),mu = 0,sigma = 1,p = 0.5)
+#' paldmix(c(1,4),mu = 0,sigma = 1,p = 0.5,lower.tail=TRUE)
+#' qaldmix(0.5,mu = 0,sigma = 1,p = 0.5,lower.tail=TRUE)
 #'
 #' @references
 #'
@@ -42,6 +42,8 @@
 #'
 #' Kobayashi, Genya. (2011). Gibbs Sampling Methods for Bayesian Quantile Regression.
 #' J Stat Comput Simul. 81. 1565. 10.1080/00949655.2010.496117.
+#' 
+#' @seealso \code{\link{rgig}} for random sampling from GIG distribution 
 
 
 ## usethis namespace: start

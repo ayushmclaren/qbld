@@ -32,3 +32,6 @@ Plots as specified.
 \description{
 Plots `qbld` class object.
 }
+\seealso{
+\code{\link{summary.qbld}}, \code{\link{model.qbld}}
+}

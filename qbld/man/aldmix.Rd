@@ -25,9 +25,9 @@ qaldmix(prob, mu = 0, sigma = 1, p = 0.5, lower.tail = TRUE)
 
 \item{p, prob}{: probability at which to calculate quantile}
 
-\item{x, q}{: quantiles}
+\item{x, q}{: vector of quantiles}
 
-\item{lower.tail}{: decides b/w P(X<=p) or P(X>p) for p/q}
+\item{lower.tail}{: logical; decides b/w P(X<=p) or P(X>p) for p/q}
 }
 \value{
 \itemize{
@@ -50,10 +50,10 @@ The Asymmetric Laplace distribution (ALD), which has the following pdf:
 If not specified, p=0.5, mu = 0, sigma = 1.
 }
 \examples{
-raldmix(10,5,10,0.5)
-daldmix(c(4,5),mu=0,sigma=1,p=0.5)
-paldmix(c(1,4),mu=0,sigma=1,p=0.5,lower.tail=TRUE)
-qaldmix(0.5,mu=0,sigma=1,p=0.5,lower.tail=TRUE)
+raldmix(n = 10, mu = 5, sigma = 10, p = 0.5)
+daldmix(c(4,5),mu = 0,sigma = 1,p = 0.5)
+paldmix(c(1,4),mu = 0,sigma = 1,p = 0.5,lower.tail=TRUE)
+qaldmix(0.5,mu = 0,sigma = 1,p = 0.5,lower.tail=TRUE)
 
 }
 \references{
@@ -63,4 +63,7 @@ and Its Extension, Communications in Statistics - Theory and Methods, 34:9-10,
 
 Kobayashi, Genya. (2011). Gibbs Sampling Methods for Bayesian Quantile Regression.
 J Stat Comput Simul. 81. 1565. 10.1080/00949655.2010.496117.
+}
+\seealso{
+\code{\link{rgig}} for random sampling from GIG distribution
 }
