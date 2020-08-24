@@ -16,7 +16,7 @@ air pollution (Ware, J. H. et al., 1984).}
   }
 }
 \details{The data set presented by Fitzmaurice and Laird (1993) contains complete records
-on 537 children from Steubnville, Ohio, each woman was examined annually at ages 7 through 10. 
+on 32 children from Steubnville, Ohio, each woman was examined annually at ages 7 through 10. 
 The repeated binary response is the wheezing status (1="yes", 0="no") of a child at each occasion. 
 Although mother's smoking status could vary with time, it was determined in the first interview and 
 was treated as a time-independent covariate. Maternal smoking was categorized as 1 if the mother

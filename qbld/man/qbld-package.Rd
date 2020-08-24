@@ -37,14 +37,13 @@ The package contains the following functions:
 Maintainer: \packageMaintainer{qbld}
 }
 \references{
-Rahman, Mohammad & Vossmeyer, Angela. (2018). 
+Rahman, Mohammad and Vossmeyer, Angela. (2018). 
 Estimation and Applications of Quantile Regression for Binary Longitudinal Data. 
 Advances in Econometrics. 40.   
-URL: \url{https://home.iitk.ac.in/~marshad/RahmanVossmeyer2019.pdf?}
 
 Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv: Computation (2018): n. pag. 
 
-Keming Yu & Jin Zhang (2005) A Three-Parameter Asymmetric Laplace Distribution
+Keming Yu and Jin Zhang (2005) A Three-Parameter Asymmetric Laplace Distribution
 and Its Extension, Communications in Statistics - Theory and Methods.
 
 Kobayashi, Genya. (2011). Gibbs Sampling Methods for Bayesian Quantile Regression.

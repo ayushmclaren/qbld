@@ -19,7 +19,7 @@
 
 \item{quantiles}{: Vector of quantiles for summary of the covariates, defaulted to c(0.025, 0.25, 0.5, 0.75, 0.975)}
 
-\item{epsilon}{: epsilon value for calculating target.psrf and significiance stars, 0.05 by default.}
+\item{epsilon}{: epsilon value for calculating target.psrf and significance stars, 0.05 by default.}
 
 \item{...}{: Other summary arguments}
 
@@ -47,7 +47,7 @@ Markov Std Error(MCSE), Effective sample size(ESS) are calcukated using mcmcse p
 Gelman-Ruben diagnostic, (R hat) is calculated using ESS values for each covariate. 
 The diagnostic is then compared to a target value to check whether enough samples are generated, 
 significance stars are added to indicate the same. MultiESS and multi-Gelman repeates the same process by treating
-the all the parameterc chains as one multi-variate chain.
+all the parameter chains as one multi-variate chain.
 }
 \references{
 Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv: Computation (2018): n. pag. 

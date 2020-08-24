@@ -15,8 +15,8 @@ response~fixed effects predictors i.e Xi in the model.}
 \item{data}{: data frame, NAs not allowed and should throw errors, factor variables are auto-converted, 
 find airpollution.rda and locust.rda built into the package.}
 
-\item{id}{: variable name in the dataset, that specifies individual profile. By default, id="id" and
-data is expected to conatin an id variable. This is omitted while modelling.}
+\item{id}{: variable name in the dataset that specifies individual profile. By default, id="id" and
+data is expected to contain an id variable. This is omitted while modelling.}
 
 \item{random_formula}{: a description of the model to be fitted of the form 
 response~random effects predictors i.e Si in the model. This defaults to Si being only an intercept.}
@@ -59,7 +59,7 @@ Runs the QBLD sampler as in Rahman and Vossmeyer(2019) and outputs a `qbld` clas
 For a detailed information on the sampler, please check the vignette.
 Data are contained in a data.frame. Each element of the data argument must be identifiable by
 a name. The simplest situation occurs when all subjects are observed at the same time points. The
-response variable represent the individual profiles of each subject, it is expected a variable in the
+id variable represent the individual profiles of each subject, it is expected a variable in the
 data.frame that identifies the correspondence of each component of the response variable to the
 subject that it belongs, by default is named id variable. Hence NA values are not valid.
 For very low (<=0.025) or very high (>=0.970) values of p, sampler forces to unblock version to avoid errors.
@@ -73,7 +73,7 @@ type-object to `qbld` class.
 
 data(airpollution)
 
-output <- model.qbld(fixed_formula = wheeze~smoking+I(age^2)-1, data = airpollution, id="id", 
+output <- model.qbld(fixed_formula = wheeze~smoking+I(age^2)+age+1, data = airpollution, id="id", 
             random_formula = ~1, p=0.25, 
            nsim=1000, method="block", burn=0, 
            summarize=TRUE, verbose=FALSE)
@@ -86,8 +86,7 @@ plot(output)
 \references{
 Rahman, Mohammad & Vossmeyer, Angela. (2018). 
 Estimation and Applications of Quantile Regression for Binary Longitudinal Data. 
-Advances in Econometrics. 40.   
-URL: \url{https://home.iitk.ac.in/~marshad/RahmanVossmeyer2019.pdf?}
+Advances in Econometrics. 40.
 }
 \seealso{
 A qbld object may be summarized by the summary function and visualized with the plot function.  

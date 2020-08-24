@@ -27,7 +27,7 @@ $x_{it}^{'}$ = $1 × k$ vector of fixed-effects covariates,
 $\beta$ = $k × 1$ vector of fixed-effects parameters,   
 $s_{it}^{'}$ = $1 × l$ vector of covariates that have individual-specific effects,   
 $\alpha_{i}$ = $l × 1$ vector of individual-specific parameters, and   
-$\epsilon_{it}$ = the error term $\overset{\mathrm{iid}}{\sim} AL(0, 1, p)$.     
+$\epsilon_{it}$ = the error term $\overset{\mathrm{iid}}{\sim} AL(0, 1, p)$. (AL is Asymmteric Laplace Distribution.)     
 
 
 **ALD Mixture**  

@@ -3,7 +3,7 @@ Type: Package
 Title: Quantile Regression for Binary Longitudinal Data
 Version: 1.0
 Date: 2020-08-17
-Author: Ayush Agarwal [aut, cre]
+Author: Ayush Agarwal [aut, cre], Dootika Vats [ctb]
 Maintainer: Ayush Agarwal<ayush.agarwal50@gmail.com>
 Description: This project follows Rahman and Vossmeyer (2019) as its motivating literature,    
    and contributes to the three literatures by extending the various methodologies to a 
@@ -15,7 +15,7 @@ Description: This project follows Rahman and Vossmeyer (2019) as its motivating 
    allow for straightforward calculations of covariate effects.
 License: GPL-3
 Imports: 
-    Rcpp,stats,grDevices,graphics,R.rsp,mcmcse,stableGR
+    Rcpp,stats,grDevices,graphics,mcmcse,stableGR
 LinkingTo: Rcpp, RcppArmadillo, RcppDist
 Depends: 
     R (>= 3.5)

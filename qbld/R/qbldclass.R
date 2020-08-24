@@ -4,7 +4,7 @@
     stop("Data must be provided.")
   
   attr(data,"burn") <- FALSE
-  
+  attr(data,"nsim") <- nsim*(1-burn)
   if(burn!=0)
   {
     burn = floor(burn*nsim)
@@ -14,7 +14,6 @@
     attr(data,"burn") <- TRUE
   }
   attr(data,"which") <- which
-  attr(data,"nsim") <- nsim
   attr(data,"varnames") <- varnames.fixed
   attr(data,"class") <- "qbld"
   attr(data,"quantile") <- p
@@ -45,12 +44,12 @@
 #' Gelman-Ruben diagnostic, (R hat) is calculated using ESS values for each covariate. 
 #' The diagnostic is then compared to a target value to check whether enough samples are generated, 
 #' significance stars are added to indicate the same. MultiESS and multi-Gelman repeates the same process by treating
-#' the all the parameterc chains as one multi-variate chain.
+#' all the parameter chains as one multi-variate chain.
 #' 
 #' @param object : `qbld` class object
 #' @param x : (for print.summary.qbld) `qbld.summary` class object
 #' @param quantiles : Vector of quantiles for summary of the covariates, defaulted to c(0.025, 0.25, 0.5, 0.75, 0.975)
-#' @param epsilon : epsilon value for calculating target.psrf and significiance stars, 0.05 by default.
+#' @param epsilon : epsilon value for calculating target.psrf and significance stars, 0.05 by default.
 #' @param ... : Other summary arguments
 #' 
 #' @return  summary.qbld produces following sets of summary statistics for each variable:
