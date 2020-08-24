@@ -65,7 +65,7 @@ std::vector<double> dgig(std::vector<double> x, double a, double b, double p,boo
   
   for(int i=0;i<nx;i++)
   {
-    if(x[i]<=0||isnan(x[i]))
+    if(x[i]<=0||std::isnan(x[i]))
       stop("X can't be non positive.");
     
     ans[i] = cons*pow(x[i],p)*exp(-0.5*(a*x[i]+b/x[i]));
