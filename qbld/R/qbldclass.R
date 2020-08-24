@@ -91,8 +91,8 @@
     if (is.list(object)) {
       xmean <- round(c(colMeans(object[[1]]),mean(object[[3]])),3) #Mean
       xsd <- c(round(apply(object[[1]], 2, sd),2),round(sd(object[[3]]),3)) #SD
-      xmcse <- c(round(mcse.mat(object[[1]]),3)[,2],round(mcse.mat(object[[3]]),3)[2]) #MCSE
-      xess <- floor(c(ess(object[[1]]), ess(object[[3]]))) #ESS
+      xmcse <- c(round(mcmcse::mcse.mat(object[[1]]),3)[,2],round(mcmcse::mcse.mat(object[[3]]),3)[2]) #MCSE
+      xess <- floor(c(mcmcse::ess(object[[1]]), mcmcse::ess(object[[3]]))) #ESS
       xsgr <- sqrt((nsim-1)/nsim +  1/xess) #Rhat via ESS
       varquant <- round(rbind(t(apply(object[[1]], 2, quantile, quantiles)), t(apply(object[[3]], 2, quantile, quantiles))),3)
       rownames(varquant) <- attr(object,"varnames")
@@ -100,7 +100,7 @@
     else {
       stop("Error in summary, Not a List!")
     }
-    targetpsrfuni = target.psrf(m = 1, p = 1, epsilon = epsilon)$psrf #targte psrf
+    targetpsrfuni = stableGR::target.psrf(m = 1, p = 1, epsilon = epsilon)$psrf #targte psrf
     varstats <- data.frame(Mean=xmean, SD=xsd, MCSE=xmcse, ESS=xess, GelmanRubin=xsgr, 
                            Signif.= ifelse( test = xsgr < targetpsrfuni, yes = '*', no = ''),
                            row.names=attr(object,"varnames")) #to add the signif stars
@@ -110,9 +110,9 @@
     burnin <- attr(object,"burn")
     which <- attr(object,"which")
     quantile = attr(object,"quantile")
-    multiess = multiESS(cbind(object[[1]],object[[3]]))
+    multiess = mcmcse::multiESS(cbind(object[[1]],object[[3]]))
     multisgr = sqrt((nsim-1)/nsim +  1/multiess)
-    targetpsrfmulti = target.psrf(m = 1, p = nrow(varstats), epsilon = epsilon)$psrf #to add the signif stars
+    targetpsrfmulti = stableGR::target.psrf(m = 1, p = nrow(varstats), epsilon = epsilon)$psrf #to add the signif stars
     stars = multisgr < targetpsrfmulti
     out <- list(statistics = varstats, quantiles = varquant, nsim=nsim, burn=burnin, 
                 which=which, p=quantile, multiess=multiess, multigelman = multisgr, foo = stars)
