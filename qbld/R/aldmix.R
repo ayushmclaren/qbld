@@ -1,15 +1,15 @@
 #' @title Asymmetric Laplace distribution
 #'
 #'
-#' @description Cumulative density, Probability distribution function, Quantile
-#' function and Random generation for the Asymmetric Laplace distribution with
-#' quantile p, location parameter mu and scale parameter sigma.
+#' @description Cumulative density, probability distribution function, quantile
+#' function and random generation for the asymmetric Laplace distribution with
+#' quantile \eqn{p}{p}, location parameter \code{mu} and scale parameter \code{sigma}.
 #'
-#' @details The Asymmetric Laplace distribution (ALD), which has the following pdf:
+#' @details The asymmetric Laplace distribution (ALD), which has the following pdf:
 #'
-#' \deqn{f(x;\mu,\sigma,p) = \frac{p(1-p)}{\sigma} exp{-\frac{(x-\mu)}{\sigma} (p-I(x \le \mu))}}{f(x;\mu,\sigma,p) = p(1-p)/\sigma exp{-(x-\mu)/\sigma (p-I(x \le \mu))}}
+#'\deqn{f(x;\mu,\sigma,p) = \frac{p(1-p)}{\sigma} \exp\{-\frac{(x-\mu)}{\sigma}(p-I(x \le \mu))\}}{f(x;\mu,\sigma,p) = p(1-p)/\sigma exp{-(x-\mu)/\sigma (p-I(x \le \mu))}}
 #'
-#' If not specified, p=0.5, mu = 0, sigma = 1.
+#' If not specified, \eqn{p=0.5}, \eqn{mu = 0}, \eqn{sigma = 1}.
 #'
 #' @name aldmix
 #' @aliases raldmix daldmix paldmix qaldmix
@@ -18,14 +18,14 @@
 #' @param n : number of observations
 #' @param x,q : vector of quantiles
 #' @param p,prob       : probability at which to calculate quantile
-#' @param lower.tail : logical; decides b/w P(X<=p) or P(X>p) for p/q
+#' @param lower.tail : logical; decides b/w \eqn{P(X<=p)} or \eqn{P(X>p)} for p/q
 #'
 #' @return
 #' \itemize{
-#' \item {\code{raldmix}} {returns a vector of random numbers from ALD(mu,sigma,p).}
-#' \item {\code{daldmix}} {returns returns density of AL(mu,sigma,p) at point x.}
-#' \item {\code{paldmix}} {returns CDF prob of AL(mu,sigma,p) at quantile q.}
-#' \item {\code{qaldmix}} {returns inverse CDF quantile of AL(mu,sigma,p) at prob.}
+#' \item {\code{raldmix}} {returns a vector of random numbers from \code{AL(mu,sigma,p).}}
+#' \item {\code{daldmix}} {returns returns density of \code{AL(mu,sigma,p)} at point x.}
+#' \item {\code{paldmix}} {returns CDF prob of \code{AL(mu,sigma,p)} at quantile q.}
+#' \item {\code{qaldmix}} {returns inverse CDF quantile of \code{AL(mu,sigma,p)} at prob.}
 #' }
 #'
 #' @examples

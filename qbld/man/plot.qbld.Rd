@@ -4,17 +4,10 @@
 \alias{plot.qbld}
 \title{Plot QBLD}
 \usage{
-\method{plot}{qbld}(
-  x,
-  trace = TRUE,
-  density = TRUE,
-  auto.layout = TRUE,
-  ask = dev.interactive(),
-  ...
-)
+\method{plot}{qbld}(x,trace = TRUE,density = TRUE,auto.layout = TRUE,ask = dev.interactive(),...)
 }
 \arguments{
-\item{x}{: `qbld` class object to plot.}
+\item{x}{: `qbld' class object to plot.}
 
 \item{trace}{: Whether or not to plot trace plots for covariates, TRUE by default}
 
@@ -30,7 +23,7 @@
 Plots as specified.
 }
 \description{
-Plots `qbld` class object.
+Plots `qbld' class object.
 }
 \seealso{
 \code{\link{summary.qbld}}, \code{\link{model.qbld}}

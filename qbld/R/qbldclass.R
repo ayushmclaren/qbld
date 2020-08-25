@@ -37,31 +37,31 @@
 
 #' @title QBLD Summary Class
 #' @name summary.qbld
-#' @description Outputs a `summary.qbld` class object, and prints as described.
+#' @description Outputs a `summary.qbld' class object, and prints as described.
 #' 
-#' @details `qbld.summary` class summarizes the outputs of the model.qbld function. 
-#' Markov Std Error(MCSE), Effective sample size(ESS) are calcukated using mcmcse package. 
-#' Gelman-Ruben diagnostic, (R hat) is calculated using ESS values for each covariate. 
-#' The diagnostic is then compared to a target value to check whether enough samples are generated, 
-#' significance stars are added to indicate the same. MultiESS and multi-Gelman repeates the same process by treating
-#' all the parameter chains as one multi-variate chain.
+#' @details `qbld.summary' class summarizes the outputs of the model.qbld function. 
+#' Markov Std Error (MCSE), Effective sample size (ESS) are calculated using mcmcse package. 
+#' Gelman-Rubin diagnostic (R hat), and significance stars are indicated using Vats and Knudson et. al.
 #' 
-#' @param object : `qbld` class object
-#' @param x : (for print.summary.qbld) `qbld.summary` class object
-#' @param quantiles : Vector of quantiles for summary of the covariates, defaulted to c(0.025, 0.25, 0.5, 0.75, 0.975)
-#' @param epsilon : epsilon value for calculating target.psrf and significance stars, 0.05 by default.
+#' @usage \method{summary}{qbld}(object,quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975),epsilon = 0.05,...)
+#' 
+#' @param object : `qbld' class object
+#' @param x : (for print.summary.qbld) `qbld.summary' class object
+#' @param quantiles : Vector of quantiles for summary of the covariates, 
+#' defaulted to \code{c(0.025, 0.25, 0.5, 0.75, 0.975)}
+#' @param epsilon : epsilon value for calculating significance stars (see details), 0.05 by default.
 #' @param ... : Other summary arguments
 #' 
 #' @return  summary.qbld produces following sets of summary statistics for each variable:
 #' \itemize{
-#' \item {\code{statistics:}} { Contains the mean, sd, markov std error, ess and Gelman-Ruben diagnostic}
+#' \item {\code{statistics:}} { Contains the mean, sd, markov std error, ess and Gelman-Rubin diagnostic}
 #' \item {\code{quantiles:}}  { Contains quantile estimates for each variable}
 #' \item {\code{nsim:}}       { No. of simulations run}
 #' \item {\code{burn:}}       { Burn-in used or not}
 #' \item {\code{which:}}      { Block, or Unblock version of sampler}
 #' \item {\code{p:}}          { quantile for the AL distribution on the error term}
 #' \item {\code{multiess:}}   { multiess value for the sample}
-#' \item {\code{multigelman:}} { multivariate version of Gelman-Ruben}
+#' \item {\code{multigelman:}} { multivariate version of Gelman-Rubin}
 #' }
 #' 
 #' @seealso \code{\link{plot.qbld}}, \code{\link{model.qbld}}  
@@ -70,7 +70,7 @@
 #' \code{\link[stableGR]{stable.GR}}, \code{\link[stableGR]{target.psrf}}
 #' 
 #' @references 
-#' Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv: Computation (2018): n. pag. 
+#' Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv 
 #' 
 #' James M. Flegal, John Hughes, Dootika Vats, and Ning Dai. (2020). mcmcse: Monte Carlo Standard Errors for MCMC. R
 #' package version 1.4-1. Riverside, CA, Denver, CO, Coventry, UK, and Minneapolis, MN.
@@ -82,8 +82,7 @@
 
 #' @rdname summary.qbld
 #' @export
-"summary.qbld" <-
-  function (object, quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975), epsilon=0.05, ...) 
+"summary.qbld" <- function (object,quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975),epsilon = 0.05,...) 
   {
     object <- as.qbld(object)
     nsim <- attr(object,"nsim")
@@ -147,9 +146,11 @@
 
 #' @title Plot QBLD
 #' @name plot.qbld
-#' @description Plots `qbld` class object.
+#' @description Plots `qbld' class object.
 #' 
-#' @param x : `qbld` class object to plot.
+#' @usage \method{plot}{qbld}(x,trace = TRUE,density = TRUE,auto.layout = TRUE,ask = dev.interactive(),...) 
+#' 
+#' @param x : `qbld' class object to plot.
 #' @param trace : Whether or not to plot trace plots for covariates, TRUE by default
 #' @param density : Whether or not to plot density for covariates, TRUE by default.
 #' @param auto.layout : Auto set layout or not, TRUE as default. Plots according to the local settings if false.
@@ -162,8 +163,8 @@
 
 
 #' @export
-"plot.qbld" <- function (x, trace = TRUE, density = TRUE, 
-                         auto.layout = TRUE, ask = dev.interactive(), ...) #trace and density can be chosen whether or not to output
+"plot.qbld" <- function (x,trace = TRUE,density = TRUE,auto.layout = TRUE,ask = dev.interactive(),...) 
+  #trace and density can be chosen whether or not to output
 {
   x <- as.qbld(x)
   pars <- NULL

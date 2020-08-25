@@ -5,52 +5,45 @@
 \alias{print.summary.qbld}
 \title{QBLD Summary Class}
 \usage{
-\method{summary}{qbld}(
-  object,
-  quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975),
-  epsilon = 0.05,
-  ...
-)
+\method{summary}{qbld}(object,quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975),epsilon = 0.05,...)
 
 \method{print}{summary.qbld}(x, ...)
 }
 \arguments{
-\item{object}{: `qbld` class object}
+\item{object}{: `qbld' class object}
 
-\item{quantiles}{: Vector of quantiles for summary of the covariates, defaulted to c(0.025, 0.25, 0.5, 0.75, 0.975)}
+\item{quantiles}{: Vector of quantiles for summary of the covariates, 
+defaulted to \code{c(0.025, 0.25, 0.5, 0.75, 0.975)}}
 
-\item{epsilon}{: epsilon value for calculating target.psrf and significance stars, 0.05 by default.}
+\item{epsilon}{: epsilon value for calculating significance stars (see details), 0.05 by default.}
 
 \item{...}{: Other summary arguments}
 
-\item{x}{: (for print.summary.qbld) `qbld.summary` class object}
+\item{x}{: (for print.summary.qbld) `qbld.summary' class object}
 }
 \value{
 summary.qbld produces following sets of summary statistics for each variable:
 \itemize{
-\item {\code{statistics:}} { Contains the mean, sd, markov std error, ess and Gelman-Ruben diagnostic}
+\item {\code{statistics:}} { Contains the mean, sd, markov std error, ess and Gelman-Rubin diagnostic}
 \item {\code{quantiles:}}  { Contains quantile estimates for each variable}
 \item {\code{nsim:}}       { No. of simulations run}
 \item {\code{burn:}}       { Burn-in used or not}
 \item {\code{which:}}      { Block, or Unblock version of sampler}
 \item {\code{p:}}          { quantile for the AL distribution on the error term}
 \item {\code{multiess:}}   { multiess value for the sample}
-\item {\code{multigelman:}} { multivariate version of Gelman-Ruben}
+\item {\code{multigelman:}} { multivariate version of Gelman-Rubin}
 }
 }
 \description{
-Outputs a `summary.qbld` class object, and prints as described.
+Outputs a `summary.qbld' class object, and prints as described.
 }
 \details{
-`qbld.summary` class summarizes the outputs of the model.qbld function. 
-Markov Std Error(MCSE), Effective sample size(ESS) are calcukated using mcmcse package. 
-Gelman-Ruben diagnostic, (R hat) is calculated using ESS values for each covariate. 
-The diagnostic is then compared to a target value to check whether enough samples are generated, 
-significance stars are added to indicate the same. MultiESS and multi-Gelman repeates the same process by treating
-all the parameter chains as one multi-variate chain.
+`qbld.summary' class summarizes the outputs of the model.qbld function. 
+Markov Std Error (MCSE), Effective sample size (ESS) are calculated using mcmcse package. 
+Gelman-Rubin diagnostic (R hat), and significance stars are indicated using Vats and Knudson et. al.
 }
 \references{
-Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv: Computation (2018): n. pag. 
+Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv 
 
 James M. Flegal, John Hughes, Dootika Vats, and Ning Dai. (2020). mcmcse: Monte Carlo Standard Errors for MCMC. R
 package version 1.4-1. Riverside, CA, Denver, CO, Coventry, UK, and Minneapolis, MN.

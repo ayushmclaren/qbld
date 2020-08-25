@@ -1,7 +1,7 @@
 #' @title QBLD Sampler
 #'
-#' @description Runs the QBLD sampler as in Rahman and Vossmeyer(2019) and outputs a `qbld` class object which 
-#'  consists of a list of markov chains for Beta(the fixed effects estimate), Alpha(the random effects estimate),
+#' @description Runs the QBLD sampler as in Rahman and Vossmeyer(2019) and outputs a `qbld' class object which 
+#'  consists of Markov chains for Beta(the fixed effects estimate), Alpha(the random effects estimate),
 #'  and Varphi2 (as per the model), of which Beta and Varphi2 are of interest.  
 #'
 #' @details For a detailed information on the sampler, please check the vignette.
@@ -10,40 +10,41 @@
 #' id variable represent the individual profiles of each subject, it is expected a variable in the
 #' data.frame that identifies the correspondence of each component of the response variable to the
 #' subject that it belongs, by default is named id variable. Hence NA values are not valid.
-#' For very low (<=0.025) or very high (>=0.970) values of p, sampler forces to unblock version to avoid errors.
+#' For very low \eqn{(<=0.025)} or very high \eqn{(>=0.970)} values of \eqn{p}, sampler forces to unblock version to avoid errors.
 #' Block version in this case may lead to machine tolerance issues.
 #' 
-#' `qbld` object contains markov chains and sampler run information as attributes , and is compatible 
+#' `qbld' object contains markov chains and sampler run information as attributes , and is compatible 
 #' with S3 methods like summary,plot. make.qbld function can be used to convert a similar
-#' type-object to `qbld` class.
+#' type-object to `qbld' class.
 #'
 #' @name model.qbld
 #' @usage model.qbld(fixed_formula, data, id = "id", random_formula = ~1, p = 0.25, 
-#' nsim, b0 = 0, B0 = 1, c1 = 9, d1 = 10, method=c("block","unblock"), 
-#' burn = 0, summarize = FALSE, verbose = FALSE)
+#' b0 = 0, B0 = 1, c1 = 9, d1 = 10, method = c("block","unblock"), 
+#' nsim, burn = 0, summarize = FALSE, verbose = FALSE)
 #' @param fixed_formula : a description of the model to be fitted of the form 
-#' response~fixed effects predictors i.e Xi in the model. 
+#' response~fixed effects predictors i.e \eqn{Xi} in the model. See vignette for more information.
 #' @param data : data frame, NAs not allowed and should throw errors, factor variables are auto-converted, 
 #' find airpollution.rda and locust.rda built into the package.
-#' @param id : variable name in the dataset that specifies individual profile. By default, id="id" and
+#' @param id : variable name in the dataset that specifies individual profile. By default, \code{id="id"} and
 #' data is expected to contain an id variable. This is omitted while modelling.
 #' @param random_formula : a description of the model to be fitted of the form 
-#' response~random effects predictors i.e Si in the model. This defaults to Si being only an intercept.
-#' @param p : quantile for the AL distribution on the error term, p=0.25 by default. For very low (<=0.025) or
-#' very high (>=0.970) values of p, sampler forces to unblock version to avoid errors.
-#' @param nsim : number of simultions to run the sampler.
+#' response~random effects predictors i.e \eqn{Si} in the model. This defaults to \eqn{Si} being only an intercept.
+#' See vignette for more information.
+#' @param p : quantile for the AL distribution on the error term, \eqn{p=0.25} by default. For very low \eqn{(<=0.025)} or
+#' very high \eqn{(>=0.970)} values of p, sampler forces to unblock version to avoid errors.
 #' @param b0,B0 : Prior model parameters for Beta. These are defaulted to 0 vector, and Identity matrix.
 #' @param c1,d1 : Prior model parameters for Varphi2. These are defaulted to 9,10 (arbitrary) respectively.
 #' @param method : Choose between the "Block" vs "Unblock" sampler, Block is slower but produces lower correlation.
+#' @param nsim : number of simultions to run the sampler.
 #' @param burn : Burn in percentage, number between (0,1). Burn-in values are discarded and not used for summary calculations.
-#' @param summarize : Outputs a summary table (same as summary(output)), in addition also prints Model fit
+#' @param summarize : Outputs a summary table (same as \code{summary(output)}), in addition also prints Model fit
 #' AIC/BIC/Log-likelihood values. False by default.
 #' @param verbose : False by default. Spits out progress reports while the sampler is running.
 #'
-#' @return Returns `qbld` class object. `qbld` class contains the following :
+#' @return Returns `qbld' class object. `qbld' class contains the following :
 #' \itemize{
 #' \item {\code{Beta:}} { Matrix of MCMC samples of fixed-effects parameters.}
-#' \item {\code{Alpha:}} { 3D Matrix of MCMC samples of random-effects parameters.}
+#' \item {\code{Alpha:}} { 3-dimensional matrix of MCMC samples of random-effects parameters.}
 #' \item {\code{Varphi2:}} { Matrix of MCMC samples for varphi2.}
 #' \item {\code{nsim:}} { Attribute; No. of simulations of chain run.}
 #' \item {\code{burn:}} { Attribute; Whether or not burn-in used.}
@@ -55,9 +56,8 @@
 #' data(airpollution)
 #' 
 #' output <- model.qbld(fixed_formula = wheeze~smoking+I(age^2)+age+1, data = airpollution, id="id", 
-#'             random_formula = ~1, p=0.25, 
-#'            nsim=1000, method="block", burn=0, 
-#'            summarize=TRUE, verbose=FALSE)
+#'                      random_formula = ~1, p=0.25, nsim=1000, method="block", burn=0, 
+#'                      summarize=TRUE, verbose=FALSE)
 #'            
 #' plot(output)
 #'
@@ -81,8 +81,8 @@
 #' @export
 
 model.qbld <- function(fixed_formula, data, id = "id", random_formula = ~1, p = 0.25, 
-                       nsim, b0 = 0, B0 = 1, c1 = 9, d1 = 10, method=c("block","unblock"), 
-                       burn = 0, summarize = FALSE, verbose = FALSE)
+                       b0 = 0, B0 = 1, c1 = 9, d1 = 10, method = c("block","unblock"), 
+                       nsim, burn = 0, summarize = FALSE, verbose = FALSE)
 {
   
   if(missing(nsim)||nsim==0||nsim%%1!=0)

@@ -21,11 +21,11 @@ License: \tab GPL (>= 3)\cr
 The package contains the following functions: 
 
 \itemize{
-\item \code{\link{model.qbld}} {: Runs the QBLD sampler as in Rahman and Vossmeyer(2019) and outputs a `qbld` class object.}
+\item \code{\link{model.qbld}} {: Runs the QBLD sampler as in Rahman and Vossmeyer(2019) and outputs a `qbld' class object.}
 \item \code{\link{summary.qbld}} {: S3 method that summarizes the outputs of the model.qbld function.}
-\item \code{\link{plot.qbld}} {: S3 method that plots `qbld` class object. }
-\item \code{\link{aldmix}} {: Cumulative density, Probability distribution function, Quantile function and Random generation for the Asymmetric Laplace distribution.}
-\item \code{\link{gig}} {: Probability distribution function, Quantile Random generation for the Generalised Inverse Gaussian.}
+\item \code{\link{plot.qbld}} {: S3 method that plots `qbld' class object. }
+\item \code{\link{aldmix}} {: Cumulative density, probability distribution function, quantile function and random generation for the asymmetric Laplace distribution.}
+\item \code{\link{gig}} {: Probability distribution function, random generation for the generalised inverse Gaussian.}
 \item \code{\link{airpollution}}, \code{\link{locust}} {: In-built datasets} 
 }
 
@@ -41,7 +41,7 @@ Rahman, Mohammad and Vossmeyer, Angela. (2018).
 Estimation and Applications of Quantile Regression for Binary Longitudinal Data. 
 Advances in Econometrics. 40.   
 
-Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv: Computation (2018): n. pag. 
+Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv
 
 Keming Yu and Jin Zhang (2005) A Three-Parameter Asymmetric Laplace Distribution
 and Its Extension, Communications in Statistics - Theory and Methods.
@@ -53,7 +53,7 @@ Devroye, L. Random variate generation for the generalized inverse Gaussian distr
 Stat Comput 24, 239–246 (2014).
 
 Wolfgang Hörmann and Josef Leydold (2013). 
-Generating generalized inverse Gaussian random variates, Statistics and Computing (to appear).
+Generating generalized inverse Gaussian random variates, Statistics and Computing.
 
 J. S. Dagpunar (1989). An easily implemented generalised inverse Gaussian generator, 
 Comm. Statist. B – Simulation Comput. 18, 703–710.
@@ -64,11 +64,13 @@ Comm. Statist. B – Simulation Comput. 18, 703–710.
 # Dataset
 data(airpollution)
 
-# output will be a qbld class object, summarize is TRUE
+# output will be a qbld class object
 output <- model.qbld(fixed_formula = wheeze~smoking+I(age^2)-1, data = airpollution, id="id", 
-            random_formula = ~1, p=0.25, 
-           nsim=1000, method="block", burn=0, 
-           summarize=TRUE, verbose=FALSE)
+                      random_formula = ~1, p=0.25, nsim=1000, method="block", burn=0, 
+                      summarize=FALSE, verbose=FALSE)
+                      
+# summary
+summary(output, epsilon=0.1)
            
 # plots           
 plot(output)

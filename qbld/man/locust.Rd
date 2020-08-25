@@ -1,7 +1,7 @@
 \name{locust}
 \alias{locust}
 \docType{data}
-\title{Locust}
+\title{Dataset}
 \description{This data set was presented by MacDonald and Raubenheimer (1995) 
 and analyze the effect of hunger on locomotory behaviour of 24 locust (\emph{Locusta migratoria}) 
 observed at 161 time points. The subjects were divided in two treatment groups ("fed" and "not fed"), 

@@ -2,12 +2,12 @@
 #' @name gig
 #' @aliases rgig dgig
 #' 
-#' @description Probability distribution function, Quantile Random generation 
-#' for the Generalised Inverse Gaussian with three parameters a(chi),b(psi),p.
+#' @description Probability distribution function, random generation 
+#' for the Generalised Inverse Gaussian with three parameters \eqn{a(chi)}, \eqn{b(psi)}, \eqn{p}.
 #' 
 #' @details The Generalised Inverse Gaussian distrubtion(GIG), which has the following pdf
 #' 
-#' \deqn{f(x) = x^{\lambda-1}exp{-\frac{\omega}{2}(x + \frac{1}{x})}}{f(x) = x^(\lambda-1) exp{-\omega/2 (x + 1/x)}}
+#' \deqn{f(x) = x^{\lambda-1}\exp\{-\frac{\omega}{2}(x + \frac{1}{x})\}}{f(x) = x^(\lambda-1) exp{-\omega/2 (x + 1/x)}}
 #' 
 #' @param lambda,p : lambda parameter
 #' @param a : chi parameter. Must be nonnegative for positive lambda and positive else.
@@ -18,8 +18,8 @@
 #' 
 #' @return
 #' \itemize{
-#' \item {\code{rgig}} {returns a vector of random numbers from GIG(a,b,p).}
-#' \item {\code{dgig}} {returns returns density of a GIG(a,b,p) at point x.}
+#' \item {\code{rgig}} {returns a vector of random numbers from \code{GIG(a,b,p)}.}
+#' \item {\code{dgig}} {returns returns density of a \code{GIG(a,b,p)} at point x.}
 #' }
 #' 
 #' @examples

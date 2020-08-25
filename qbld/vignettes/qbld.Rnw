@@ -21,7 +21,8 @@
 
 \break
 \section{Introduction}
-The R package \texttt{qbld} follows \textbf{Rahman and Vossmeyer (2019)} as its motivating literature, and contributes to the three literatures by extending the various methodologies to a hierarchical Bayesian quantile regression model for binary longitudinal data (QBLD) and proposing a Markov chain Monte Carlo (MCMC) algorithm to estimate the model. The model handles both common (fixed) and individual-specific (random) parameters (commonly referred to as mixed effects in statistics). The algorithm implements a blocking procedure that is computationally efficient and the distributions involved allow for straightforward calculations of covariate effects.
+The R package \texttt{qbld} follows \textbf{Rahman and Vossmeyer (2019)} as its motivating literature, and contributes by extending the various methodologies in quantile framework, to a hierarchical Bayesian quantile regression model for binary longitudinal data (QBLD) and proposing a Markov chain Monte Carlo (MCMC) algorithm to estimate the model. The model handles both common (fixed) and individual-specific (random) parameters (commonly referred to as mixed effects in statistics). The algorithm implements a blocking,  and an unblocking procedure that is computationally efficient and the distributions involved allow for straightforward calculations
+of covariate effects.
 
 
 \bigskip
@@ -69,9 +70,9 @@ $\theta = \frac{1-2p}{p(1-p)}$, and $\tau = \sqrt{\frac{2}{p(1-p)}}$.
 
 \bigskip
 This mixture implementation of the AL distribution as in (\ref{eq2}) is used to random sample, and I shall demonstarte the use of \texttt{raldmix} function to generate the said sample. For a sense of completeness, the package contains Cumulative density function, Probability distribution function, Quantile function for AL distribution as well. 
-For help using the functions, use help("aldmix").
+For help using the functions, use \texttt{?aldmix}.
 
-<<aldmix>>=
+<<aldmix,fig.height=5>>=
 library(qbld)
 set.seed(10)
 
@@ -124,16 +125,16 @@ This \textbf{blocked} approach significantly improves the mixing properties of t
 \bigskip
 \section{Generalized Inverse Gaussian Distribution}
 
-Gibbs sampler used in the model requires random sampling from Generalized Inverse Gaussian(GIG) distribution. For the sake of completion, the random generation function \texttt{rgig}, and the density function, \texttt{dgig} are made available to the user. For help using the functions, use help("gig").
+Gibbs sampler used in the model requires random sampling from Generalized Inverse Gaussian(GIG) distribution. For the sake of completion, the random generation function \texttt{rgig}, and the density function, \texttt{dgig} are made available to the user. For help using the functions, use \texttt{?gig}.
 
 The Generalised Inverse Gaussian distrubtion(GIG), which has the following pdf:
 
 \begin{equation}\label{gig}
-f(a,b,p)= \frac{(a/b)^{p/2}}{2K_{p}(\sqrt{ab})}exp(-\frac{ax + b/x}{2}),\hspace{10 pt} x > 0 \end{equation}
+f(a,b,p)= \frac{(a/b)^{p/2}}{2K_{p}(\sqrt{ab})}\exp{-\frac{ax + b/x}{2}},\hspace{10 pt} x > 0 \end{equation}
 
 where $a,b>0$ and $p\in\mathbb{R}$ are the parameters, and $K_{p}$ is a modified Bessel function of the second kind.
 
-<<gig>>=
+<<gig,fig.height=5>>=
 
 # random generation
 gig.sample <- rgig(n = 1e4, lambda = 0.5, a = 1, b = 2)
@@ -148,9 +149,9 @@ gig.density <- dgig(x = 1, a = 1, b = 2, p = 0.5, log_density = FALSE)
 \section{Using \texttt{qbld}}
 Let us examine the dataset we will use to demonstrate the sample usage of the package.
 \bigskip
-\subsection{Dataset:Airpollution}
+\subsection{Dataset:- Airpollution}
 
-This example datset is a subset of data from Six Cities study, a longitudinal study of the health effects of air pollution. The data set contains complete records on 32 children from Ohio, each woman was examined annually at ages 7 through 10. The repeated binary response is the wheezing status (1="yes", 0="no") of a child at each occasion. Although mother's smoking status could vary with time, it was determined in the first interview and was treated as a time-independent covariate. Maternal smoking was categorized as 1 if the mother smoked regularly and 0 otherwise.
+This example datset is a subset of data from Six Cities study, a longitudinal study of the health effects of air pollution. The data set contains complete records on 537 children from Ohio, each woman was examined annually at ages 7 through 10. The repeated binary response is the wheezing status (1=``yes", 0=``no") of a child at each occasion. Although mother's smoking status could vary with time, it was determined in the first interview and was treated as a time-independent covariate. Maternal smoking was categorized as 1 if the mother smoked regularly and 0 otherwise.
 
 <<data>>=
 data(airpollution)
@@ -160,7 +161,7 @@ str(airpollution)
 \bigskip
 \subsection{\texttt{model.qbld}: Estimation of QBLD model}
 
-\texttt{model.qbld} runs the QBLD sampler as described above, and outputs a \texttt{qbld} class object. In this example, we will model wheezing status ('wheeze') in terms of 'age' and 'smoking'. We will also treat 'counts' as a random-effect parameter and we will allow Intercepts for both fixed and random effects. 
+\texttt{model.qbld} runs the QBLD sampler as described above, and outputs a \texttt{qbld} class object. In this example, we will model wheezing status (\texttt{wheeze}) in terms of \texttt{age} and \texttt{smoking}. We will also treat \texttt{counts} as a random-effect parameter and we will allow intercepts for both fixed and random effects. 
 
 
 <<Block,results='hide'>>=
@@ -180,11 +181,11 @@ Let us look at the arguments one by one:
 
 \begin{itemize}
 
-\item{\texttt{fixed\char`_formula:} A description of the model to be fitted of the form $response\sim fixed$
+\item{\texttt{fixed\char`_formula:} A description of the model to be fitted of the form \texttt{$response\sim fixed$}
 effects predictors i.e $X_{i}$ in the model (\ref{eq3}). Response variable is mandatory, and empty formula will throw error.
 
 In this example, $wheeze\sim smoking+I(age^2)+age$
-translates to response variable, $y_{i}$ = $wheeze$, and $x_{i}$ as $smoking$, $age$, $age^2$, and $Intercept$.} 
+translates to response variable, $y_{i}$ = \texttt{wheeze}, and $x_{i}$ as \texttt{$smoking$, $age$, $age^2$, and $Intercept$}.} 
 
 \item{\texttt{id:} A variable name in the dataset that specifies individual profile. By default, id = "id", and hence, data 
 is expected to contain an id variable. Note that this is not a covariate, and is omitted while modelling. }
@@ -195,7 +196,7 @@ is expected to contain an id variable. Note that this is not a covariate, and is
 effects predictors i.e $S_{i}$ in the model. Response variable is not required, and is ignored. This defaults 
 to $S_{i}$ being only an intercept.
 
-In this example, $\sim counts+1$ translates to $s_{i}$ as $counts$, and $Intercept$.}
+In this example, \texttt{$\sim counts+1$} translates to $s_{i}$ as \texttt{$counts$, and $Intercept$}.}
 
 \item{\texttt{p:} Quantile for the AL distribution on the error term, $p = 0.25$ by default. For very low $(\leq 0.025)$
 or very high $(\geq 0.970)$ values of $p$, sampler forces to unblock version to avoid errors in the block procedure. }
@@ -207,8 +208,8 @@ and Identity matrix of appropriate dimensions. Full Gibbs Sampler is not affecte
 
 \item{\texttt{c1, d1:} Prior model parameters for Varphi2 as in the model (\ref{eq3}). These are defaulted to 9, 10 (arbitrary) respectively. Full Gibbs Sampler is not affected by starting values, and need not be specified. }
 
-\item{\texttt{method:} Choose between the "Block" vs "Unblock" sampler, Block is slower, but produces lower correlation. 
-Check section 3 for a detailed comparsion. I would recommend using "Unblock" for larger datasets. The code uses regex and is
+\item{\texttt{method:} Choose between the``Block" vs ``Unblock" sampler, Block is slower, but produces lower correlation. 
+Check section 3 for a detailed comparsion. I would recommend using ``Unblock" for larger datasets. The code uses regex and is
 impervious to  alphabet case related errors. }
 
 \item{\texttt{burn:} Burn in percentage, number between (0,1). Burn-in values are discarded while outputting and are
@@ -238,7 +239,7 @@ str(output.block)
 \item{\texttt{Varphi2:} Matrix of MCMC samples for varphi2.} 
 \item{\texttt{nsim:} Attribute; No. of simulations of chain run.}
 \item{\texttt{burn:} Attribute; Whether or not burn-in used.}
-\item{\texttt{which:} Attribute; "block" or "unblock" sampler used}
+\item{\texttt{which:} Attribute; ``block" or ``unblock" sampler used}
 \end{itemize}
 
 \bigskip
