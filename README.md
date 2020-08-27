@@ -5,7 +5,7 @@ The model handles both common (fixed) and individual-specific (random) parameter
 Author: [Ayush Agarwal](https://www.linkedin.com/in/ayushmclaren/)\[aut, cre\], [Dootika Vats](http://home.iitk.ac.in/~dootika/)\[ctb\]
 
 # Installation
-To download this development repo,  through the the `devtools` package:
+To download this development repo,  through the `devtools` package:
 
 ```{r}
 # install.packages("devtools")
