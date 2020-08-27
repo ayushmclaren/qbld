@@ -136,7 +136,7 @@
   cat("Multi Gelman-Rubin =", x$multigelman)
   if(x$foo == TRUE) cat(" ***")
   cat("\nNote : * indicates enough samples for the covariate\n")
-  cat("         *** indicates enough samples for the whole sampler.\n")
+  cat("       *** indicates enough samples for the whole sampler.\n")
   cat("\n2. Quantiles for each variable,\n")
   print(x$quantiles)
   cat("\n")
