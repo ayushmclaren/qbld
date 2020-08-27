@@ -200,15 +200,17 @@ model.qbld <- function(fixed_formula, data, id = "id", random_formula = ~1, p = 
     alpha = rowMeans(out[[2]],dims=2)
     varphi2 = mean(out[[3]])
     
-    model_fit = mofit(y, fixed, random, beta, alpha, varphi2, p, 
-                      fixed_intercept, random_intercept, k, l, m, n) #AIC/BIC
-    
     print(summary(out))
     
-    cat("\n3. Model Selection Criterion\n")
-    cat("Log likelihood =", model_fit[1], "\n")
-    cat("AIC =", model_fit[2], "\n")
-    cat("BIC =", model_fit[3], "\n")
+    tryCatch({
+      model_fit = mofit(y, fixed, random, beta, alpha, varphi2, p, 
+                        fixed_intercept, random_intercept, k, l, m, n) #AIC/BIC
+      
+      cat("\n3. Model Selection Criterion\n")
+      cat("Log likelihood =", model_fit[1], "\n")
+      cat("AIC =", model_fit[2], "\n")
+      cat("BIC =", model_fit[3], "\n")
+    }, error=function(e){cat("ERROR in model-fit :",conditionMessage(e), "\n")})
   }
   
   return(out)
