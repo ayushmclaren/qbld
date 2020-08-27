@@ -5,8 +5,8 @@
 \title{QBLD Sampler}
 \usage{
 model.qbld(fixed_formula, data, id = "id", random_formula = ~1, p = 0.25, 
-b0 = 0, B0 = 1, c1 = 9, d1 = 10, method = c("block","unblock"), 
-nsim, burn = 0, summarize = FALSE, verbose = FALSE)
+                  b0 = 0, B0 = 1, c1 = 9, d1 = 10, method = c("block","unblock"), 
+                  nsim, burn = 0, summarize = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{fixed_formula}{: a description of the model to be fitted of the form 
