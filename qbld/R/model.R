@@ -179,9 +179,14 @@ model.qbld <- function(fixed_formula, data, id = "id", random_formula = ~1, p = 
     }
   
   if(!run && regexec("block",method,ignore.case=TRUE)[[1]][1]==1) #blocked
+  {
     out = (qbldf(nsim, p, y, fixed, random, b0, B0, c1, d1, m, n, k, l, verbose)) #check block.cpp
+    method="block"
+    run=TRUE
+  }
   
-  
+  if(run==FALSE)
+    stop("Sampler did not run, please check inputs and try again.")
   
   if(is.null(out))
     stop("Method is either 'block' or 'unblock'.")
