@@ -20,4 +20,5 @@ I recommend updating to the latest R version, with appropriate compilation tools
 
 # Citation
 Please run `citation("qbld")` after loading the package for citation details.
+
 This project was developed through [Google Summer of Code, 2020](https://summerofcode.withgoogle.com/projects/#6628115486343168)
