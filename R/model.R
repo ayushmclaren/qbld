@@ -140,6 +140,7 @@ model.qbld <- function(fixed_formula, data, id = "id", random_formula = ~1, p = 
     var.names = c("Intercept",var.names)
   
   fixed = model.matrix(fixed_formula,data=data) #model matrix
+  var.names = attr(fixed,"dimnames")[[2]]
   if(ncol(fixed)==0)
     stop("Invalid/Empty fixed_formula resulting in empty model matrix.")
   fixed = matrix(fixed,nrow=m)
