@@ -275,7 +275,7 @@ Plot function has the following arguments:
 \bigskip
 \subsection{Asymmetric Laplace Distribution}
 
-The error term as described in (\ref(eq1)) is a random variable from the AL distribution. For the sake of completeness, random generation and a few other AL functions have been made available to the user. For help using the functions, use \texttt{?aldmix}.
+The error term as described in (\ref{eq1}) is a random variable from the AL distribution. For the sake of completeness, random generation and a few other AL functions have been made available to the user. For help using the functions, use \texttt{?aldmix}.
 
 The asymmetric Laplace distribution (ALD), has the following pdf:
 
