@@ -9,7 +9,7 @@
   {
     burn = floor(burn*nsim)
     data[[1]] = as.matrix(data[[1]][burn:nsim,])
-    data[[2]] = data[[2]][,,burn:nsim]
+    data[[2]] = data[[2]][,,burn:nsim,drop=FALSE]
     data[[3]] = as.matrix(data[[3]][burn:nsim])
     attr(data,"burn") <- TRUE
   }
