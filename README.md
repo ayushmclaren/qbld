@@ -11,7 +11,7 @@ To download this development repo,  through the `devtools` package:
 library(devtools)
 devtools::install_github("ayushmclaren/qbld")
 ```
-I recommend updating to the latest R version, with appropriate compilation tools.
+We recommend updating to the latest R version, with appropriate compilation tools.
 
 # Help using qbld
 * Manual:- [qbld-manual](https://github.com/ayushmclaren/ExplainIt/blob/master/qbld-manual.pdf)
