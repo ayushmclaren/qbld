@@ -3,7 +3,7 @@
 %\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{Using qbld}
 %\VignettePackage{qbld}
-
+\usepackage[left=1.2in,top=.8in,right=1.2in,nohead,bottom=1.2in]{geometry}
 \usepackage{amsmath}
 \usepackage[sort,longnamesfirst]{natbib}
 \usepackage{verbatim}   % useful for program listings
@@ -22,69 +22,54 @@
 \break
 \bigskip
 \section{Introduction}
-The R package \texttt{qbld} follows \textbf{Rahman and Vossmeyer (2019)} as its motivating literature, and contributes by extending the various methodologies in quantile framework, to a hierarchical Bayesian quantile regression model for binary longitudinal data (QBLD) and proposing a Markov chain Monte Carlo (MCMC) algorithm to estimate the model. The model handles both common (fixed) and individual-specific (random) parameters (commonly referred to as mixed effects in statistics). The algorithm implements a blocking,  and an unblocking procedure that is computationally efficient and the distributions involved allow for easy calculations of covariate effects.
+The R package \texttt{qbld} implements the Bayesian quantile regression model for binary longitudinal data (QBLD)  developed in \textbf{Rahman and Vossmeyer (2019)}. The model handles both fixed and random effects and implements both a blocked and an unblocked Gibbs sampler for posterior inference.
 
 
 \bigskip
 \section{Quantile Regression for Binary Longitudinal Data}
-\subsection{The Model}
+%\subsection{The Model}
 
-Let $y$ be the reponse variable, and $z$ be the introduced latent variable as described. The \textbf{QBLD} model can be conveniently expressed in the latent variable formulation (Albert \& Chib, 1993) as follows:
+Let $y_{it}$ be the response variable  at time $t$ for the $i^{th}$ case, , and $z_{it}$ be an unobserved latent variable. The \textbf{QBLD} model can be conveniently expressed in the latent variable formulation (Albert \& Chib, 1993) as follows:
 
 \begin{equation}\label{eq1}
 \begin{gathered}
-z_{it}=x_{it}^{'}\beta+s_{it}^{'}\alpha_{i}+\epsilon_{it},\hspace{30pt}\forall i = 1,...,n; t = 1,...,T_{i}\\y_{it}=\begin{cases}\text{1}  &\quad {if\,z_{it}> 0} \\\text{0} &\quad\text{otherwise,}\\\end{cases}\\\epsilon_{it} = w_{it}\theta + \tau\sqrt{w_{it}}u_{it} \hspace{30pt} \forall i = 1,...,n;  t = 1,...,T_{i}\,\end{gathered}\end{equation}  
+z_{it}=x_{it}^{'}\beta+s_{it}^{'}\alpha_{i}+\epsilon_{it},\hspace{30pt}\forall i = 1,...,n; t = 1,...,T_{i}\\y_{it}=\begin{cases}\text{1}  &\quad {if\,z_{it}> 0} \\\text{0} &\quad\text{otherwise,}\\\end{cases}\\\epsilon_{it} = w_{it}\theta + \tau\sqrt{w_{it}}u_{it} \hspace{30pt} \forall i = 1,...,n;  t = 1,...,T_{i}\,, \,\end{gathered}\end{equation} 
 
-$y_{it} =$ response variable $y$ at $t^{th}$ time period for the $i^{th}$ case, 
+%$y_{it} =$ response variable $y$ at $t^{th}$ time period for the $i^{th}$ case, 
 
-$z_{it} =$ unobserved latent variable $z$ at $t^{th}$ time period for the $i^{th}$ case, 
+%$z_{it} =$ unobserved latent variable $z$ at $t^{th}$ time period for the $i^{th}$ case, 
+where $x_{it}$ is a  $k \times 1$ vector of fixed-effects covariates,  $\beta$ is a $k \times 1$ vector of fixed-effects parameters, $s_{it}$ is an  $l \times 1$ vector of covariates that have case-specific effects,  $\alpha_{i}$ is an $l \times 1$ vector of case-specific parameters, and 
+$\epsilon_{it} \overset{\mathrm{iid}}{\sim} AL(0, 1, p)$ are the error terms where AL refers to an asymmteric Laplace distribution with location, $\mu = 0$, scale $\sigma = 1$, and skew parameter $p$. 
 
-$x_{it}$ = $k * 1$ vector of fixed-effects covariates, 
+The error term is decomposed into a normal-exponential mixture representation of the AL distribution, presented in Kozumi and Kobayashi (2011). 
+Here, $u_{it} \sim N(0,1)$, is mutually independent of $w_{it} \sim \text{Exp}(1)$, where $\text{Exp}(.)$ is the exponential distribution.  Random samples from the AL distribution are generated using \texttt{raldmix} function. (See Appendix) 
 
-$\beta =$ $k * 1$ vector of fixed-effects parameters,   
+%\bigskip
+%\subsection{Model priors}
 
-$s_{it}$ = $l * 1$ vector of covariates that have case-specific effects,  
+%Longitudinal data models often involve a moderately large amount of data, so we stack the model for each case $i$. 
+\medskip
 
-$\alpha_{i}$ = $l * 1$ vector of case-specific parameters, and   
+Define, $z_{i} = (z_{i1},...,z_{iT_{i}})^{'}$, $X_{i} = (x_{i1},...,x_{iT_{i}})$, $S_{i} = (s_{i1},...,s_{iT_{i}})$, $w_{i} = (w_{i1},...,w_{iT_{i}})^{'}$, $D_{\tau\sqrt{w_{i}}} =  \text{diag}(\tau\sqrt{w_{i1}},...,\tau\sqrt{w_{iT_{i}}})^{'}$, and $u_{i} = (u_{i1},...,u_{iT_{i}})^{'}$.  Further, define:
+\[
+\theta = \frac{1-2p}{p(1-p)} \text{ and } \tau = \sqrt{\frac{2}{p(1-p)}}. 
+\]
 
-$\epsilon_{it}$ = the error term $\overset{\mathrm{iid}}{\sim} AL(0, 1, p)$. 
-
-\bigskip
-
-AL refers to the Asymmteric Laplace Distribution with location, $\mu = 0$, scale $\sigma = 1$, and skew paramter $p$. The error term is decomposed into a normal-exponential mixture representation of the AL distribution, presented in Kozumi and Kobayashi (2011). 
-
-\bigskip
-Here, $u_{it} \sim N(0,1)$, is mutually independent of $w_{it} \sim \exp(1)$, where $\exp(.)$ is the exponential distribution. Define:
-$\theta = \frac{1-2p}{p(1-p)}$, and $\tau = \sqrt{\frac{2}{p(1-p)}}$. 
-
-Random samples from the AL distribution are generated using \texttt{raldmix} function. (See Appendix) 
-
-\bigskip
-\subsection{Model priors}
-
-Longitudinal data models often involve a moderately large amount of data, so we stack the model for each case $i$.
-
-\bigskip
-We define, $z_{i} = (z_{i1},...,z_{iT_{i}})^{'}$, $X_{i} = (x_{i1},...,x_{iT_{i}})$, $S_{i} = (s_{i1},...,s_{iT_{i}})$, $w_{i} = (w_{i1},...,w_{iT_{i}})^{'}$, $D_{\tau\sqrt{w_{i}}} =  diag(\tau\sqrt{w_{i1}},...,\tau\sqrt{w_{iT_{i}}})^{'}$, and $u_{i} = (u_{i1},...,u_{iT_{i}})^{'}$.  
-
-\bigskip
-Building on Eq.(\ref{eq1}),the resulting hierarchical model can be written as: 
-
+Building on Eq.(\ref{eq1}), the following priors are assumed on the model:
 \begin{equation}\label{eq3}
 \begin{gathered}
-z_{i} = X_{i}\beta+S_{i}\alpha_{i}+w_{i}\theta + D_{\tau\sqrt{w_{i}}}u_{i}\\y_{it}=\begin{cases}\text{1}  &\quad {if\,z_{it}> 0} \\\text{0} &\quad\text{otherwise,}\\\end{cases}\\\alpha_{i}|\varphi^{2}\sim N_{l}(0,\varphi^{2}I_{l}), w_{it} \sim \exp(1), u_{it} \sim N(0,1)\\\beta\sim N_{k}(\beta_{0},B_{0}), \varphi^{2}\sim IG(c1/2, d1/2)\end{gathered}\end{equation}
-$IG(.)$ refers to the Inverse-Gamma distribution, $\exp(.)$ refers to the exponential distribution. The starting values for the sampler are sampled from the respective assumed priors, however, one is free to tweak $\beta_{0}$, $B_{0}$, $c1$, and $d1$ values.
+%z_{i} = X_{i}\beta+S_{i}\alpha_{i}+w_{i}\theta + D_{\tau\sqrt{w_{i}}}u_{i}\\y_{it}=\begin{cases}\text{1}  &\quad {if\,z_{it}> 0} \\\text{0} &\quad\text{otherwise,}\\\end{cases}\\ 
+\alpha_{i}|\varphi^{2}\sim N_{l}(0,\varphi^{2}I_{l}), w_{it} \sim  \text{Exp}(1), u_{it} \sim N(0,1)\\\beta\sim N_{k}(\beta_{0},B_{0}), \varphi^{2}\sim IG(c_1/2, d_1/2)\end{gathered}\end{equation}
+$IG(.)$ refers to the Inverse-Gamma distribution, $\text{Exp}(.)$ refers to the exponential distribution. The starting values for the sampler are sampled from the respective assumed priors, however, one is free to tweak $\beta_{0}$, $B_{0}$, $c_1$, and $d_1$ values.
+
 
 \bigskip
+The resulting posterior of $(\alpha, \beta, \varphi^2, w)$ is intractable and two Gibbs samplers are available to sample from it. The \textbf{unblocked} Gibbs sampler is faster, but can demonstrate poor mixing properties due to correlation between the covariates. We recommend using \texttt{Unblock} for larger datasets. See Appendix for details of the sampler
 
-\subsection{Blocked vs Unblocked Sampler}
-The \textbf{unblocked} version of the Gibbs sampler is faster, but there is potential for poor mixing properties due to correlation between the covariates. I would recommend using ``Unblock" for larger datasets. See Appendix for details of the algorithm.
+\smallskip
+To avoid potential slow mixing, an alternative \textbf{blocked} algorithm is presented. This algorithm is computationally involved but exhibits superior mixing properites. We would recommend using \texttt{Block} for smaller datasets. See Appendix for details of the sampler
 
-\bigskip
-
-To avoid potential slow mixing, an alternative \textbf{blocked} algorithm is presented. This algorithm however, takes a longer time to sample the Markov chain. I would recommend using ``Block" for smaller datasets. See Appendix for details of the algorithm.
-
-\newpage
+%\newpage
 \section{Using \texttt{qbld} package}
 
 Let us examine the dataset we will use to demonstrate the sample usage of the package.
@@ -94,12 +79,10 @@ Let us examine the dataset we will use to demonstrate the sample usage of the pa
 %opts_knit$set(out.format = "latex")
 %knit_theme$set("seashell")
 %@
-\bigskip
 \subsection{Dataset:- Airpollution}
 
-This example datset is a subset of data from Six Cities study, a longitudinal study of the health effects of air pollution. The data set contains complete records on 537 children from Ohio, each child was examined annually at ages 7 through 10. The repeated binary response is the wheezing status (1=``yes", 0=``no") of a child at each occasion.
+This example datset is a subset of data from Six Cities study, a longitudinal study of the health effects of air pollution. The dataset contains complete records on 537 children from Ohio, each child was examined annually at ages 7 through 10. The repeated binary response is the wheezing status (1 = ``yes", 0 = ``no") of a child at each occasion.
 
-\bigskip
 
 Each mother's smoking pattern was also recorded at the time of the study. Although mother's smoking status could vary with time, it was determined in the first interview and was treated as a time-independent covariate. Maternal smoking was categorized as 1 if the mother smoked regularly and 0 otherwise.
 
@@ -110,10 +93,9 @@ data(airpollution)
 str(airpollution)
 @
 
-\newpage
 \subsection{\texttt{model.qbld}: Running the QBLD sampler}
 
-\texttt{model.qbld} estimates the QBLD model as described in section (1), and outputs a \texttt{qbld} class object. In this example, we will model the wheezing status (\texttt{wheeze}) in terms of \texttt{age} and \texttt{smoking}. We will not treat \texttt{counts} as a covariate of interest, and allow intercepts for both fixed and random effects. 
+\texttt{model.qbld} estimates the QBLD model as described in Section~1, and outputs a \texttt{qbld} class object. In this example, we will model the wheezing status (\texttt{wheeze}) in terms of \texttt{age} and \texttt{smoking}. We will not treat \texttt{counts} as a covariate of interest, and allow intercepts for both fixed and random effects. 
 
 <<Block,results='hide'>>=
 ##modelling the output :- Blocked 
@@ -126,20 +108,20 @@ output.block <- model.qbld(fixed_formula = wheeze~smoking+I(age^2),
                            summarize=FALSE, verbose=FALSE) 
 @
 
-Let us look at the arguments one by one:
 
 \begin{itemize}
 
 \item{\texttt{fixed\char`_formula:} A description of the model to be fitted of the form \texttt{$response\sim fixed$}
 effects predictors i.e $X_{i}$ in the model (\ref{eq3}). Response variable is mandatory, and empty formula will throw error.
 
-In this example, $wheeze\sim smoking+I(age^2)+age$ translates to response variable, $y_{i}$ = \texttt{wheeze}, and $x_{i}$ as \texttt{smoking, age, age$^2$, $and$ Intercept}.}
+In this example, \texttt{wheeze $\sim$ smoking+I(age$^2$)} translates to response variable, $y_{i}$ = \texttt{wheeze}, and $x_{i}$ as \texttt{smoking, age$^2$,} and  \texttt{Intercept}.}
 
 \item{\texttt{id:} An identifier variable in the dataset that specifies individual profile. Every row needs to contain an id value that maps the data point to the individual. By default, id = ``id", and hence, data is expected to contain an id variable. Note that this is not a covariate, and is omitted while modelling. }
 
-\item{\texttt{data:} Data are contained in a \texttt{data.frame}. Each element of the data argument must be identifiable by a name. All subjects need to be observed at the same number of time points. Using datasets with different time points should be avoided. NAs are not allowed and should throw errors. All factor variables are auto-converted to numeric levels. Two datasets, \texttt{airpollution} and \texttt{locust} are built into the package.}
+\item{\texttt{data:} Data are contained in a \texttt{data.frame}. Each element of the data argument must be identifiable by a name. All subjects need to be observed at the same number of time points. Using datasets with different time points is not allowed. NAs are not allowed and should throw errors. All factor variables are auto-converted to numeric levels.} 
+%Two datasets, \texttt{airpollution} and \texttt{locust} are built into the package.}
 
-\item{\texttt{random\char`_formula:} A description of the model to be fitted of the form $response\sim random$ 
+\item{\texttt{random\char`_formula:} A description of the model to be fitted of the form \texttt{response $\sim$ random}
 effects predictors i.e $S_{i}$ in the model. Response variable is not required, and is ignored. This defaults 
 to $S_{i}$ being only an intercept.
 
@@ -180,18 +162,18 @@ str(output.block)
 \texttt{qbld} class object contains the following attributes:
 \begin{itemize}
 \item{\texttt{Beta:} Matrix of MCMC samples of fixed-effects parameters.}
-\item{\texttt{Alpha:} 3-dimensional Matrix (of the form $\mathbb{R}^{k*l*m}$) of MCMC samples of random-effects parameters.}
-\item{\texttt{Varphi2:} Matrix of MCMC samples for varphi2.} 
+\item{\texttt{Alpha:} 3-dimensional matrix (of the form $\mathbb{R}^{k \times l \times m}$) of MCMC samples of random-effects parameters.}
+\item{\texttt{Varphi2:} Matrix of MCMC samples for $\varphi^2$.} 
 \item{\texttt{nsim:} numeric; No. of simulations of MCMC.}
 \item{\texttt{burn:} logical; Whether or not burn-in used.}
-\item{\texttt{which:} Attribute; ``block" or ``unblock" sampler used}
+\item{\texttt{which:} Attribute; \texttt{block} or \texttt{unblock} sampler used}
 \end{itemize}
 
 \bigskip
 \subsection{\texttt{summary.qbld:} Summarizing the \texttt{qbld} output}
 
 One way of summarizing the model is to use the \texttt{summarize} argument. Continuing with the example in the previous subsection, let us have a look at the unblocked sampler and understand the output.
-\newpage
+
 <<Unblock>>=
 
 ##modelling the output :- Unblocked 
@@ -226,22 +208,19 @@ output.unblock2 <- model.qbld(fixed_formula = wheeze~smoking+I(age^2)+age,
 summary.unblock2 = summary(output.unblock2, 
                           quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975), 
                           epsilon=0.10)
+print(summary.unblock2)
 str(summary.unblock2)
 @
-Note that the \texttt{foo} attribute is now TRUE, which means the significance on the \texttt{Multi Gelman-Rubin} level have been reached. Note that, in such a case, the summary table for this run will contain the stars unlike the last run.
-
-\bigskip
-
-\texttt{summary} function has the following arguments:
+Note that the \texttt{foo} attribute is now TRUE, which means the significance on the \texttt{Multi Gelman-Rubin} level have been reached. Note that, in such a case, the summary table for this run will contain the stars unlike the last run. The \texttt{summary} function has the following arguments:
 \begin{itemize}
 \item{\texttt{quantiles:} Vector of quantiles for summary of the covariates, defaulted to c(0.025, 0.25, 0.5, 0.75, 0.975)}
-\item{\texttt{epsilon:}  0.05 by default. Epsilon value is used for calculating \texttt{target.psrf} values, which estimate the ideal number of effective sample size required for a given level of significance. This value will be compared to generated ESS and significance stars are added accordingly. This process is repeated for individual chains and MultiESS, multi-Gelman by treating all the parameter chains as one multi-variate chain.}
+\item{\texttt{epsilon:}  0.05 by default. Epsilon value is used for calculating the target ESS and Gelman-Rubin criteria. The default value is recommended for producing reliable estimates of posterior quantities.}
 \end{itemize}
 
 \bigskip
 \texttt{qbld.summary} class object contains the following attributes:
 \begin{itemize}
-\item{\texttt{statistics:} Contains the mean, sd, markov std error, ess and Gelman-Rubin diagnostic}
+\item{\texttt{statistics:} Contains the mean, sd, MC std error, ess and Gelman-Rubin diagnostic}
 \item{\texttt{quantiles:} Contains quantile estimates for each variable}
 \item{\texttt{nsim:} No. of simulations run, adjusted for burn-in}
 \item{\texttt{burn:} Burn-in used or not}
@@ -256,7 +235,7 @@ Note that the \texttt{foo} attribute is now TRUE, which means the significance o
 
 Let us now try and create some diagnostic plots to understand the density spread of the covariate, as well as trace of the MCMC run.
 
-<<plot>>=
+<<plot, fig.height = 8>>=
 par(mfrow=c(4,2))
 plot(output.block, trace = TRUE, density = TRUE, 
      auto.layout = FALSE, ask = NULL)
@@ -269,8 +248,8 @@ Plot function has the following arguments:
 \item{\texttt{auto.layout:} Auto set layout or not, TRUE as default. Plots according to the local settings if false.}
 \end{itemize}
 
-\bigskip 
 
+\appendix
 \section{Appendix}
 \bigskip
 \subsection{Asymmetric Laplace Distribution}
@@ -287,7 +266,7 @@ where $\mu$ is the location paramter, $\sigma$ is the scale parameter, and $p$ i
 <<aldmix,fig.height=4>>=
 
 #generate 1e4 samples
-ald.sample <- raldmix(n = 1e4, mu = 0, sigma = 1, p = 0.5)
+ald.sample <- raldmix(n = 5e4, mu = 0, sigma = 1, p = 0.5)
 plot(density(ald.sample), main="AL(0,1,0.5)")
 
 ## additional functions
@@ -311,7 +290,7 @@ where $a,b>0$ and $p\in\mathbb{R}$ are the parameters, and $K_{p}$ is a modified
 <<gig,fig.height=4>>=
   
   # random generation
-  gig.sample <- rgig(n = 1e4, lambda = 0.5, a = 1, b = 2)
+  gig.sample <- rgig(n = 5e4, lambda = 0.5, a = 1, b = 2)
   plot(density(gig.sample),main="GIG(1,2,0.5)")
 
 # density
@@ -337,7 +316,7 @@ gig.density <- dgig(x = 1, a = 1, b = 2, p = 0.5, log_density = FALSE)
   where $z_{i,-t}^{j}=(z_{i1}^{j},...z_{i(t-1)}^{j},z_{i(t+1)}^{j-1},...,z_{iT_{i}}^{j-1})$, $(X_{i}\beta+w_{i}\theta)_{-t}$ is column vector with $t^{th}$ element removed, $\Sigma_{t,t},\Sigma_{t,-t},\Sigma_{-t,-t}$ are $(t,t)^{th}$ element, $t^{th}$ row with $t^{th}$ element removed, and $t^{th}$ row and column removed respectively.  }
   
     \end{itemize} 
-    \newpage
+
 \item{Sample $\alpha$
 
 \begin{equation}\begin{gathered}\label{eq6}\alpha_{i}|z,\beta,w,\varphi^{2}\sim N(\tilde{a},\tilde{A}),\hspace{10pt} \forall i = 1,...,n\\where,\hspace{10pt}\tilde{A^{-1}}=(S_{i}^{'}D^{-2}_{\tau\sqrt{w_{i}}}S_{i}+\frac{1}{\varphi^{2}}I_{l}),\\\tilde{a}=\tilde{A}(S_{i}^{'}D^{-2}_{\tau\sqrt{w_{i}}}(z_{i}-X_{i}\beta-w_{i}\theta)).\end{gathered}\end{equation}  }
@@ -351,7 +330,7 @@ gig.density <- dgig(x = 1, a = 1, b = 2, p = 0.5, log_density = FALSE)
 \begin{equation}\begin{gathered}\label{eq8}\varphi^{2}|\alpha\sim IG(\tilde{c_{1}}/2,\tilde{d_{1}}/2),\\where, \hspace{10pt}\tilde{c_{1}}=(nl+c_{1}),\\\tilde{d_{1}}=(\sum_{i=1}^{n}\alpha_{i}^{'}\alpha_{i} + d_{1}).\end{gathered}\end{equation}.  }
 
 \end{itemize}
-\bigskip
+\newpage
 
 \subsection{Unblocked Sampling}
 \bigskip
