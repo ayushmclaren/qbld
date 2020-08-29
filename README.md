@@ -1,6 +1,5 @@
 # qbld : Quantile Regression for Binary Longitudinal Data
-This R package follows [Rahman and Vossmeyer (2019)](https://arxiv.org/abs/1909.05560) as its motivating literature, and contributes by extending the various methodologies in quantile framework, to a hierarchical Bayesian quantile regression model for binary longitudinal data (QBLD) and proposing a Markov chain Monte Carlo (MCMC) algorithm to estimate the model. 
-The model handles both common (fixed) and individual-specific (random) parameters (commonly referred to as mixed effects in statistics). The algorithm implements a blocking, and an unblocking procedure that is computationally efficient and the distributions involved allow for straightforward calculations of covariate effects.
+The R package qbld implements the Bayesian quantile regression model for binary longitudinal data (QBLD) developed in [Rahman and Vossmeyer (2019)](https://arxiv.org/abs/1909.05560). The model handles both fixed and random effects and implements both a blocked and an unblocked Gibbs sampler for posterior inference.
 
 Author: [Ayush Agarwal](https://www.linkedin.com/in/ayushmclaren/)\[aut, cre\], [Dootika Vats](http://home.iitk.ac.in/~dootika/)\[ctb\]
 
