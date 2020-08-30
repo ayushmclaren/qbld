@@ -84,9 +84,9 @@ plot(output)
 
 }
 \references{
-Rahman, Mohammad & Vossmeyer, Angela. (2018). 
-Estimation and Applications of Quantile Regression for Binary Longitudinal Data. 
-Advances in Econometrics. 40.
+Rahman, Mohammad and Angela Vossmeyer, “Estimation and Applications of 
+Quantile Regression for Binary Longitudinal Data,” 
+Advances in Econometrics, 40B, 157-191, 2019.
 }
 \seealso{
 A qbld object may be summarized by the summary function and visualized with the plot function.  

@@ -356,11 +356,10 @@ gig.density <- dgig(x = 1, a = 1, b = 2, p = 0.5, log_density = FALSE)
 \section{References}
 \begin{itemize}
 
-\item{Rahman, Mohammad \& Vossmeyer, Angela. (2018). 
-  Estimation and Applications of Quantile Regression for Binary Longitudinal Data. 
-  Advances in Econometrics. 40. }
+\item{Rahman, Mohammad and Angela Vossmeyer, “Estimation and Applications of Quantile Regression 
+for Binary Longitudinal Data,”, Advances in Econometrics, 40B, 157-191, 2019.}
 
-\item{Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv: Computation (2018): n. pag.} 
+\item{Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv} 
 
 \item{Keming Yu \& Jin Zhang (2005) A Three-Parameter Asymmetric Laplace Distribution
   and Its Extension, Communications in Statistics - Theory and Methods.}

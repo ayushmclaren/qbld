@@ -37,9 +37,8 @@ The package contains the following functions:
 Maintainer: \packageMaintainer{qbld}
 }
 \references{
-Rahman, Mohammad and Vossmeyer, Angela. (2018). 
-Estimation and Applications of Quantile Regression for Binary Longitudinal Data. 
-Advances in Econometrics. 40.   
+Rahman, Mohammad and Angela Vossmeyer, “Estimation and Applications of Quantile Regression 
+for Binary Longitudinal Data,” Advances in Econometrics, 40B, 157-191, 2019. 
 
 Vats, Dootika and Christina Knudson. “Revisiting the Gelman-Rubin Diagnostic.” arXiv
 
