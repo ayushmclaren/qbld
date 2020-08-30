@@ -55,7 +55,7 @@
 #' 
 #' data(airpollution)
 #' 
-#' output <- model.qbld(fixed_formula = wheeze~smoking+I(age^2)+age+1, data = airpollution, id="id", 
+#' output <- model.qbld(fixed_formula = wheeze~smoking+I(age^2), data = airpollution, id="id", 
 #'                      random_formula = ~1, p=0.25, nsim=1000, method="block", burn=0, 
 #'                      summarize=TRUE, verbose=FALSE)
 #'            
