@@ -21,3 +21,8 @@ We recommend updating to the latest R version, with appropriate compilation tool
 Please run `citation("qbld")` after loading the package for citation details.
 
 This package was supported by [Google Summer of Code, 2020](https://summerofcode.withgoogle.com/projects/#6628115486343168)
+
+Special thanks to the mentors for all the support throughout the summer:
+
+* Prof. Dootika Vats(dootika@iitk.ac.in),   
+* Dr. Adam Maidman(abmaidman@gmail.com)
