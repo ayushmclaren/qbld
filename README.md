@@ -17,7 +17,7 @@ We recommend updating to the latest R version, with appropriate compilation tool
 * Manual:- [qbld-manual](https://github.com/ayushmclaren/ExplainIt/blob/master/qbld-manual.pdf)  
 * Vignette:- [Using qbld](https://github.com/ayushmclaren/ExplainIt/blob/master/Using%20qbld.pdf)  
 
-# Citation
+## Citation
 Please run `citation("qbld")` after loading the package for citation details.
 
 This package was supported by [Google Summer of Code, 2020](https://summerofcode.withgoogle.com/projects/#6628115486343168)
