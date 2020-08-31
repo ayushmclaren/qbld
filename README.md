@@ -3,7 +3,7 @@ The R package qbld implements the Bayesian quantile regression model for binary 
 
 Author: [Ayush Agarwal](https://www.linkedin.com/in/ayushmclaren/)\[aut, cre\], [Dootika Vats](http://home.iitk.ac.in/~dootika/)\[ctb\]
 
-# Installation
+## Installation
 To download this development repo,  through the `devtools` package:
 
 ```{r}
@@ -13,9 +13,9 @@ devtools::install_github("ayushmclaren/qbld")
 ```
 We recommend updating to the latest R version, with appropriate compilation tools.
 
-# Help using qbld
-* Manual:- [qbld-manual](https://github.com/ayushmclaren/ExplainIt/blob/master/qbld-manual.pdf)
-* Vignette:- [Using qbld](https://github.com/ayushmclaren/ExplainIt/blob/master/Using%20qbld.pdf)
+## Help using qbld
+* Manual:- [qbld-manual](https://github.com/ayushmclaren/ExplainIt/blob/master/qbld-manual.pdf)  
+* Vignette:- [Using qbld](https://github.com/ayushmclaren/ExplainIt/blob/master/Using%20qbld.pdf)  
 
 # Citation
 Please run `citation("qbld")` after loading the package for citation details.
@@ -24,5 +24,5 @@ This package was supported by [Google Summer of Code, 2020](https://summerofcode
 
 Special thanks to the mentors for all the support throughout the summer:
 
-* Prof. Dootika Vats(dootika@iitk.ac.in),   
-* Dr. Adam Maidman(abmaidman@gmail.com)
+* Prof. Dootika Vats(dootika@iitk.ac.in),     
+* Dr. Adam Maidman(abmaidman@gmail.com)  
