@@ -21,7 +21,7 @@ arma::vec raldmix(double n,double mu,double sigma,double p)
     Rcpp::stop("sigma (scale parameter) must be a positive number.");
   if(p >= 1 || p <= 0) 
     Rcpp::stop("p must be a real number in (0,1).");
-  if(abs(mu) ==R_PosInf) 
+  if(fabs(mu) ==R_PosInf) 
     Rcpp::stop("mu (location parameter) must be a finite real number.");
   
   double theta = (1-2*p)/(p*(1-p));
