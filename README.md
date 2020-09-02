@@ -1,4 +1,7 @@
 # qbld : Quantile Regression for Binary Longitudinal Data
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a3b8e6d79f2c4d76bc2ddaffd21917d7)](https://app.codacy.com/manual/ayushmclaren/qbld?utm_source=github.com&utm_medium=referral&utm_content=ayushmclaren/qbld&utm_campaign=Badge_Grade_Dashboard)
+
 The R package qbld implements the Bayesian quantile regression model for binary longitudinal data (QBLD) developed in [Rahman and Vossmeyer (2019)](https://arxiv.org/abs/1909.05560). The model handles both fixed and random effects and implements both a blocked and an unblocked Gibbs sampler for posterior inference.
 
 Author: [Ayush Agarwal](https://www.linkedin.com/in/ayushmclaren/)\[aut, cre\], [Dootika Vats](http://home.iitk.ac.in/~dootika/)\[ctb\]
