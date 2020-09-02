@@ -5,10 +5,7 @@
 %\VignettePackage{qbld}
 \usepackage[left=1.2in,top=.8in,right=1.2in,nohead,bottom=1.2in]{geometry}
 \usepackage{amsmath}
-\usepackage[sort,longnamesfirst]{natbib}
-\usepackage{verbatim}   % useful for program listings
-\usepackage{amsfonts, framed}
-\usepackage[small,compact]{titlesec} 
+\usepackage{amsfonts}
 \title{An Introduction to Bayesian Quantile Regression for Binary Longutudinal Data with R Package \texttt{qbld}}
 \author{Ayush Agarwal}
 
@@ -299,7 +296,6 @@ gig.density <- dgig(x = 1, a = 1, b = 2, p = 0.5, log_density = FALSE)
 
 
 
-
 \subsection{Blocked Sampling}
 \bigskip
 \begin{itemize}
@@ -329,8 +325,8 @@ gig.density <- dgig(x = 1, a = 1, b = 2, p = 0.5, log_density = FALSE)
 
 \begin{equation}\begin{gathered}\label{eq8}\varphi^{2}|\alpha\sim IG(\tilde{c_{1}}/2,\tilde{d_{1}}/2),\\where, \hspace{10pt}\tilde{c_{1}}=(nl+c_{1}),\\\tilde{d_{1}}=(\sum_{i=1}^{n}\alpha_{i}^{'}\alpha_{i} + d_{1}).\end{gathered}\end{equation}.  }
 
+
 \end{itemize}
-\newpage
 
 \subsection{Unblocked Sampling}
 \bigskip
