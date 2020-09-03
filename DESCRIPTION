@@ -5,8 +5,8 @@ Version: 1.0
 Date: 2020-08-17
 Author: Ayush Agarwal [aut, cre], Dootika Vats [ctb]
 Maintainer: Ayush Agarwal<ayush.agarwal50@gmail.com>
-Description: The R package qbld implements the Bayesian quantile regression model for   
-             binary longitudinal data (QBLD) developed in Rahman and Vossmeyer (2019). 
+Description: Implements the Bayesian quantile regression model for binary longitudinal data 
+             (QBLD) developed in Rahman and Vossmeyer (2019) <DOI:10.1108/S0731-90532019000040B009>.
              The model handles both fixed and random effects and implements both a blocked
              and an unblocked Gibbs sampler for posterior inference.
 License: GPL-3
