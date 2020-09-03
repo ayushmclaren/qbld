@@ -64,7 +64,7 @@
 #'
 #'
 #' @references
-#' Rahman, Mohammad and Angela Vossmeyer, “Estimation and Applications of 
+#' Rahman, Mohammad Arshad and Angela Vossmeyer, “Estimation and Applications of 
 #' Quantile Regression for Binary Longitudinal Data,” 
 #' Advances in Econometrics, 40B, 157-191, 2019. 
 #'
