@@ -1,7 +1,8 @@
 ## Resubmission
-This is a resubmission. In this version I have:
-* Fixed redundancies in DESCRIPTION
-* Added a doi reference to the literature
+This is a resubmission. In this version I have:  
+
+* Fixed redundancies in DESCRIPTION.  
+* Added a doi reference to the literature in DESCRIPTION.  
 
 ## Test environments
 * local MacOS Cadtalina install, (R 4.0.2)
