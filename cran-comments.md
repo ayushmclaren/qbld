@@ -1,5 +1,10 @@
+## Resubmission
+This is a resubmission. In this version I have:
+* Fixed redundancies in DESCRIPTION
+* Added a doi reference to the literature
+
 ## Test environments
-* local MacOS Catalina install, (R 4.0.2)
+* local MacOS Cadtalina install, (R 4.0.2)
 * ubuntu 16.04 (Github R actions), (R release, old-release and 3.5)
 * win-builder (devel, release and old-release)
 * Using R-hub:-  
