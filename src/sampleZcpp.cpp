@@ -53,7 +53,7 @@
 double erfc_my(double x, bool inverse) 
 {
   if (inverse) {
-    double ans = R::qnorm(x/2,0,1,false,false)/sqrt(2);
+    double ans = R::qnorm(x/2,0,1,false,false)/sqrt(2.0);
     
     if(x <  0) ans = NA_REAL;
     if(x > 2) ans = NA_REAL;
@@ -63,19 +63,19 @@ double erfc_my(double x, bool inverse)
     return(ans);
   } 
   else {
-    return(2*(R::pnorm(x*sqrt(2),0,1,false,false)));
+    return(2*(R::pnorm(x*sqrt(2.0),0,1,false,false)));
   }
 }
 
 
 double normcdf(double x)
 {
-  return(0.5*erfc_my(-x/sqrt(2),FALSE));
+  return(0.5*erfc_my(-x/sqrt(2.0),FALSE));
 }
 
 double norminv(double x)
 {
-  return(-sqrt(2)*erfc_my(2*x,TRUE));
+  return(-sqrt(2.0)*erfc_my(2*x,TRUE));
 }
 
 double limits(double y,int which)

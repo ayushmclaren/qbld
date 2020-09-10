@@ -1,8 +1,24 @@
 ## Resubmission
-This is a resubmission. In this version I have:  
 
-* Fixed redundancies in DESCRIPTION.  
-* Added a doi reference to the literature in DESCRIPTION.  
+The package was accepted to CRAN on 10th Sep 2020, URL :
+  https://cran.r-project.org/web/packages/qbld/index.html.
+
+
+However, an email was received almost immediately that there was 
+an error in the CRAN check (only on Solaris OS), and I needed to resubmit by 24th.
+
+In this version update (patch), I have identified and fixed issues as per 
+the install log and the package build has been checked on r-hub additionally 
+on the following platforms :-
+
+- Oracle Solaris 10, x86, 32 bit,
+  R-release
+- Oracle Solaris 10, x86, 32 bit,
+  R-release, Oracle Developer Studio 12.6
+
+No ERROR(s), WARNING(s) OR NOTE(s) found.
+
+
 
 ## Test environments
 * local MacOS Cadtalina install, (R 4.0.2)

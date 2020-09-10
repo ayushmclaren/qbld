@@ -1,7 +1,7 @@
 Package: qbld
 Type: Package
 Title: Quantile Regression for Binary Longitudinal Data
-Version: 1.0
+Version: 1.0.1
 Date: 2020-08-17
 Author: Ayush Agarwal [aut, cre], Dootika Vats [ctb]
 Maintainer: Ayush Agarwal<ayush.agarwal50@gmail.com>

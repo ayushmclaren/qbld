@@ -104,7 +104,7 @@ int rgig_conc(arma::vec*out, int n, double lambda, int check, double omega, doub
     k1 = exp(-omega);
     A(1) = (lambda==0) ? (k1*log(2/(omega*omega))) : ((k1/lambda)*(pow(2/omega,lambda) - pow(x0,lambda)));
     k2 = pow(2/omega,lambda-1);
-    A(2) = k2*2*exp(-1)/omega;
+    A(2) = k2*2*exp(-1.0)/omega;
   }
   
   Atot = A(0) + A(1) + A(2);
