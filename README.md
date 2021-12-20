@@ -28,7 +28,6 @@
 
 
 
-
 # qbld : Quantile Regression for Binary Longitudinal Data
 The R package `qbld` implements the Bayesian quantile regression model for binary longitudinal data (QBLD) developed in [Rahman and Vossmeyer (2019)](https://www.emerald.com/insight/content/doi/10.1108/S0731-90532019000040B009/full/html). The model handles both fixed and random effects and implements both a blocked and an unblocked Gibbs sampler for posterior inference.
 
