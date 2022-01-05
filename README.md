@@ -19,9 +19,11 @@
          alt="The R project for statistical computing"> 
     <a href="https://github.com/ayushmclaren/qbld/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/ayushmclaren/qbld"
-         alt="GitHub License"> </a>      
+         alt="GitHub License"> </a>   
+     <a href="https://cran.r-project.org/web/packages/qbld/index.html">
+    <img src="https://cranlogs.r-pkg.org/badges/grand-total/qbld"
+         alt="Downloads"> </a>   
 </p> 
-
 
 
 
